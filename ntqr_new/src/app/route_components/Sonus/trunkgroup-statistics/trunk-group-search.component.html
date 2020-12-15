@@ -1,0 +1,387 @@
+<breadcrumb #parent>  
+  <ol class="breadcrumb">
+    <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+      <div class="crumb my-0">
+          <a href="javascript:void()">Sonus</a> / {{ route.displayName }}
+      </div>
+    </ng-template>
+  </ol>
+</breadcrumb>
+
+<div class="filter_box mx-3 py-2 px-3 w-110pt">
+    <h3 class="f_size_18 color-black mt-2 mb-3">Trunkgroup Search</h3>
+    <form class="form_box py-0 call_log_form" name="filter_form" [formGroup]="filter_form" (ngSubmit)="filter_form_search()">
+      <div class="row mx-0">
+        <div class="col-sm-6 pl-0 pt-2">
+          <div class="row mx-0 mb-1">
+              <div class="col-sm-4 pl-0">Trunk Group Name</div>
+              <div class="col-sm-8">
+                  <input type="text" formControlName="trunk_group_name" class="form_text w-100">
+              </div>
+          </div>
+
+          <div class="row mx-0 mb-1">
+              <div class="col-sm-4 pl-0">Trunk Description</div>
+              <div class="col-sm-8">
+                  <input type="text" formControlName="trunk_description" class="form_text w-100">
+              </div>
+          </div>
+
+          <div class="row mx-0 mb-1 pt-1">
+              <div class="col-sm-4 pl-0">Service Type</div>
+              <div class="col-sm-8">
+                  <ng-multiselect-dropdown
+                      [placeholder]="'Select Type'"
+                      [data]="serviceTypes"
+                      formControlName="service_type"
+                      [settings]="filterTypeSettings"
+                      (onSelect)="on_type_select($event)"
+                      (onDeSelect)="on_type_deselect($event)"
+                      placement="top" [ngbTooltip]="tipContent"                       
+                      >
+                  </ng-multiselect-dropdown>
+              </div>          
+          </div>
+
+          <div class="row mx-0 mb-1 pt-1">
+              <div class="col-sm-4 pl-0">Gateway</div>
+              <div class="col-sm-8">
+                  <ng-multiselect-dropdown
+                      [placeholder]="'Select Gateway'"
+                      [data]="gateways"
+                      formControlName="gateway"
+                      [settings]="filterGatewaySettings"
+                      (onSelect)="on_gateway_select($event)"
+                      (onDeSelect)="on_gateway_deselect($event)"                        
+                      >
+                  </ng-multiselect-dropdown>
+              </div>
+          </div>
+
+          <div class="row mx-0 mb-1 pt-1">
+              <div class="col-sm-4 pl-0">Search type</div>
+              <div class="col-sm-8">                
+                  <label class="custom_radio float-left mr-2 ln_ht_13 mt-1" *ngFor="let search_item of searchTypeList">{{ search_item['label'] }}
+                      <input type="radio" checked="checked" formControlName="search_type" value="{{search_item['value']}}" (change)="search_type_change($event)">
+                      <span class="checkmark"></span>
+                  </label>
+                  <p class="small color-red" *ngIf="filter_form_controls.search_type.errors !== null && filter_form_controls.search_type.dirty">
+                    <span class="mr-3" *ngIf="filter_form_controls.search_type.errors.required"> Search type is required </span>
+                  </p>              
+              </div>
+          </div>          
+
+          <div class="row mx-0 mb-1">
+              <div class="col-sm-4 pl-0 pt-1">Time Range</div>
+              <div class="col-sm-8">
+                <div class="row mx-0">
+                  <div class="col-sm-6 px-0">
+                      <input type="date" formControlName="time_range" class="form_text">
+                      <p class="small color-red" *ngIf="filter_form_controls.time_range.errors !== null && filter_form_controls.time_range.dirty">
+                        <span class="mr-3" *ngIf="filter_form_controls.time_range.errors.required"> Time range is required </span>
+                      </p>
+                  </div>
+                  <div class="col-sm-6 px-0">
+                      <input type="date" formControlName="time_range_to" class="form_text" *ngIf="filter_form.value.search_type == 'Busiest Busy Hour'">
+                      <p class="small color-red" *ngIf="filter_form_controls.time_range_to.errors !== null && filter_form_controls.time_range_to.dirty">
+                        <span class="mr-3" *ngIf="filter_form_controls.time_range_to.errors.required"> Date to is required </span>
+                      </p>
+                  </div>
+                </div>
+              </div>  
+          </div>
+
+        </div>
+        <div class="col-sm-6 pt-2 pr-0">
+          
+        <p class="mb-3 mt-0 bold f_size_15">KPI's Description</p>
+        <p><span class="bold">Busiest hour : </span>	The Hour when CAC util. at its peak<br>
+          <span class="bold">In/Out : </span>	COLT Incoming and COLT Outgoing <br>
+          <span class="bold">In/Out Call Attempts : </span>	Peak of daily call attempts for selected range <br>
+          <span class="bold">In/Out CPS Attempted :</span>	Max Calls attempted per sec <br>
+          <span class="bold">In/Out CPS processed :</span>	Max Calls processed per sec <br>
+          <span class="bold">NA for SBC : </span>	Reports not available in system
+         </p>
+        </div>
+      </div>
+
+      <div class="row mx-0 mb-1 mt-3">
+          <div class="col-sm-12 pl-0">
+              <button class="btn btn-red" type="submit">Run Report</button>
+          </div>
+      </div>
+    </form>    
+</div>
+
+<div class="hr mx-3 w-110pt"></div>
+
+<form class="mx-3 w-110pt">
+    <div class="row mx-0 border-bottom-grey2 pb-2 mb-2">
+        <div class="col-sm-4 pt-2 pl-0">
+            <strong>{{ kpiList.length }}</strong> Records
+        </div>
+        <div class="col-sm-4">
+            <div class="row mx-0" *ngIf="filter_form.value.search_type == 'Daily Busy Hour'">
+                <div class="col-sm-3">
+                    <button class="btn-icon mt-2 mr-2" (click)="prev_date()"><i class="fas fa-arrow-circle-left"></i></button>
+                </div>
+                <div class="col-sm-6 text-center pt-1">
+                    <p class="my-0 small font-weight-bold ln_ht_13">{{ date_from }} </p>
+                    <p class="my-0 small ln_ht_13">00:00 to 23:59 </p>
+                </div>
+                <div class="col-sm-3 text-right">
+                    <button class="btn-icon mt-2 mr-2" (click)="next_date()"><i class="fas fa-arrow-circle-right"></i></button>
+                </div>
+            </div>
+
+            <div class="row mx-0" *ngIf="filter_form.value.search_type == 'Busiest Busy Hour'">
+              <div class="col-sm-2">
+                  <button class="btn-icon mt-2 mr-2" (click)="prev_date()"><i class="fas fa-arrow-circle-left"></i></button>
+              </div>
+              <div class="col-sm-4 text-center pt-1">
+                  <p class="my-0 small font-weight-bold ln_ht_13">{{ date_from }} </p>
+                  <p class="my-0 small ln_ht_13">00:00 to 23:59 </p>
+              </div>
+              <div class="col-sm-4 text-center pt-1">
+                <p class="my-0 small font-weight-bold ln_ht_13">{{ date_to }} </p>
+                <p class="my-0 small ln_ht_13">00:00 to 23:59 </p>
+            </div>
+              <div class="col-sm-2 text-right">
+                  <button class="btn-icon mt-2 mr-2" (click)="next_date()"><i class="fas fa-arrow-circle-right"></i></button>
+              </div>
+          </div>
+        </div>
+        <div class="col-sm-4 text-right pr-0">
+            <div class="input-group w-200px green d-inline-flex mr-2">
+              <input type="text" class="form-control" placeholder="Keyword" [(ngModel)]="search_text" [ngModelOptions]="{standalone: true}">
+              <button class="btn btn-outline-secondary" type="button" (click)="applyFilter($event)"><i class="fas fa-search"></i></button>
+            </div>
+            
+            <button class="btn-icon mt-2" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+        </div>
+    </div>    
+    <div class="border-grey py-3 mb-3">
+        <div class="table-sticky overflow-visible">
+            <table mat-table [dataSource]="dataSource" matSort class="mat-table bordered">
+        
+              <!-- Actions Column -->
+              <ng-container matColumnDef="actions" sticky="true">
+                <th mat-header-cell *matHeaderCellDef> Actions </th>
+                <td mat-cell *matCellDef="let row">
+                    <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="open_new_window(row.tgId, row.tgName, row.tgDescr, row.gateway, row.tgservicetype, filter_form.value.search_type)">
+                        <i class="fas fa-chart-bar"></i>
+                      </button>
+                  <button class="btn-icon mr-2" (click)="open_watchlist_confirmation(row)" data-toggle="popover" data-toggle="tooltip"  title="Add to watchlist">
+                    <i class="fas fa-eye"></i>
+                  </button>              
+                  <button class="btn-icon mr-2" (click)="open_tg_edit_details(row)" data-toggle="popover" data-toggle="tooltip"  title="Edit" *ngIf="userPermission">
+                    <i class="fas fa-pen"></i>
+                  </button>
+                </td>
+              </ng-container>
+          
+              <!-- Trunkgroup Column -->
+              <ng-container matColumnDef="tgName" sticky="true">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Trunkgroup Name </th>
+                <td mat-cell *matCellDef="let row"> {{row.tgName}}</td>
+              </ng-container>
+          
+              <!-- gateway Column -->
+              <ng-container matColumnDef="gateway">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Gateway </th>
+                <td mat-cell *matCellDef="let row"> {{row.gateway}} </td>
+              </ng-container>
+          
+              <!-- Trunkgroup Column -->
+              <ng-container matColumnDef="tgDescr">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Trunkgroup Description </th>
+                <td mat-cell *matCellDef="let row"> {{row.tgDescr}} </td>
+              </ng-container>
+        
+              <!-- service type  Column -->
+              <ng-container matColumnDef="tgservicetype">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Service Type </th>
+                <td mat-cell *matCellDef="let row"> {{row.tgservicetype}} </td>
+              </ng-container>
+          
+              <!-- Circuits available Column -->
+              <ng-container matColumnDef="circuitsAvailable">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Circuits Available (Total)</th>
+                <td mat-cell *matCellDef="let row"> 
+                  <ratings-bar current_value="{{row.circuitsAvailable}}" max_value="{{ row.totalCircuits }}" [row_object]="row"></ratings-bar> </td>
+              </ng-container>
+        
+              <!-- utilisation available Column -->
+              <ng-container matColumnDef="tgUtilisation">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Utilisation </th>
+                <td mat-cell *matCellDef="let row">
+                   <ratings-bar percentage="{{row.tgUtilisation}}" [row_object]="row" tooltip_desc="Busy hour: {{row.busiestHour}}" [threshold_trunkgroup_utilisation]="threshold_tg_utilisation" [show_percent]="true" [show_max]="false"></ratings-bar>
+                  </td>
+              </ng-container>
+        
+              <!-- Busiest hours available Column -->
+              <ng-container matColumnDef="busiestHour">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Busiest Hour(BST) </th>
+                <td mat-cell *matCellDef="let row"> {{row.busiestHour}} </td>
+              </ng-container>
+        
+              <!-- Call attempts available Column -->
+              <ng-container matColumnDef="tgInCallAtempts">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> In/Out Call Attempts </th>
+                <td mat-cell *matCellDef="let row">                
+                    <ratings-bar current_value="{{row.inBandwidth | nullToZero}}" max_value="{{ higher_in_bandwidth | nullToZero }}" [gateway]="row.gateway" [row_object]="row" [show_max]="false"></ratings-bar>
+    
+                    <ratings-bar current_value="{{ row.outBandwidth | nullToZero }}" max_value="{{higher_out_bandwidth | nullToZero }}" [gateway]="row.gateway" [row_object]="row" [show_max]="false"></ratings-bar>
+                                   
+                  
+                </td>
+              </ng-container>
+              
+              <!-- utilisation available Column -->
+              <ng-container matColumnDef="maxInCpsProcessed">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> In/Out CPS (Processed) </th>
+                <td mat-cell *matCellDef="let row">
+                    <ratings-bar current_value="{{row.maxInCpsProcessed | nullToZero}}" max_value="{{ row.maxInCpsProcessed | nullToZero }}" [gateway]="row.gateway" [row_object]="row" column_name="InCpsProcessed" [show_max]="false"></ratings-bar>
+    
+                    <ratings-bar current_value="{{row.maxOutCpsProcessed | nullToZero}}" max_value="{{ row.maxOutCpsProcessed | nullToZero }}" [gateway]="row.gateway" [row_object]="row" column_name="OutCpsProcessed" [show_max]="false"></ratings-bar>
+                    
+    
+                </td>
+              </ng-container> 
+        
+              <!-- utilisation available Column -->
+              <ng-container matColumnDef="maxInCpsAttempted">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> In/Out CPS (Attempted) </th>
+                <td mat-cell *matCellDef="let row">                
+                    <ratings-bar current_value="{{row.maxInCpsAttempted | nullToZero}}" max_value="{{ row.maxInCpsAttempted | nullToZero}}" [gateway]="row.gateway" [row_object]="row" column_name="InCpsAttempted" [show_max]="false"></ratings-bar>
+                    <ratings-bar current_value="{{row.maxOutCpsAttempted | nullToZero}}" max_value="{{ row.maxOutCpsAttempted | nullToZero}}" [gateway]="row.gateway" [row_object]="row" column_name="OutCpsAttempted" [show_max]="false"></ratings-bar>                              
+                  
+                </td>
+              </ng-container>         
+          
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    
+          
+              <!-- Row shown when there is no matching data. -->
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" colspan="11">No data matching the filter value..</td>
+              </tr>
+    
+              
+            </table>
+          
+            <mat-paginator [length]="kpiList.length" [pageSizeOptions]="[5, 10, 25, 30, 50, 75, 100]" [pageSize]="30" ></mat-paginator>
+        </div>
+    </div>
+    
+</form> 
+
+<!-- template for adding trunkgroup for the watchlist -->
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Add To Watchlist</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p class="text-center px-3">Would you like to add trunkgroup <span class="color-red">{{ watchlist_row_data['tgName'] }}</span> to watchlist</p>
+    <p class="text-center my-3">
+      <button class="btn btn-grey mr-2" (click)="watchlist_yes_clicked()">Yes</button>
+      <button class="btn btn-red" (click)="modal.dismiss('Cross click')">No</button>
+    </p>
+  </div>
+  
+</ng-template>
+
+<!-- template for adding trunkgroup for the watchlist -->
+<ng-template #editTgDetails let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Edit TrunkGroup Details</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="py-0" name="tg_edit_details_form" [formGroup]="tg_edit_details_form" (ngSubmit)="tg_edit_submit()">
+      <div class="row mx-0 mb-3">
+        <div class="col-sm-2">TrunkGroup Name</div>
+        <div class="col-sm-4">{{ tg_edit_data['tgName'] }}</div>
+
+        <div class="col-sm-2">TrunkGroup Description</div>
+        <div class="col-sm-4">{{ tg_edit_data['tgDescr'] }}</div>
+      </div>
+
+      <div class="row mx-0 mb-3">
+          <div class="col-sm-2">Category</div>
+          <div class="col-sm-4">
+            <ng-multiselect-dropdown
+              [placeholder]="'Select Category'"
+              [settings]="categorySettings"
+              [data]="categories_list"
+              formControlName="category"              
+              (onSelect)="on_category_select($event)"
+              (onDeSelect)="on_category_deselect($event)"                        
+              >
+            </ng-multiselect-dropdown>
+          </div>
+      </div>
+
+      <div class="row mx-0 mb-3">          
+        <div class="col-sm-2">Tags</div>
+        <div class="col-sm-10">
+          <div class="row mx-0">
+            <div class="col-sm-3 pl-0">
+                <select formControlName="tags" size="7" class="w-100 form-control" id="select1">  
+                    <option value="{{tag.label}}" *ngFor="let tag of tags_list; let i = index;">{{tag.value}} </option> 
+                </select>
+            </div>
+            <div class="col-sm-3 text-center">
+                <button class="btn btn-grey mb-1 w-120px text-left" type="button" (click)="copyAll()"> <i class="fas fa-angle-double-right color-white mr-1"></i> Copy All</button>
+                <button class="btn btn-grey mb-1 w-120px text-left" type="button" (click)="copy()"> <i class="fas fa-caret-right color-white mr-1" ></i>Copy</button>
+                <button class="btn btn-red mb-1 w-120px text-left" type="button" (click)="remove()"> <i class="fas fa-caret-left color-white mr-1"></i> Remove</button>
+                <button class="btn btn-red mb-1 w-120px text-left" type="button" (click)="removeAll()"><i class="fas fa-angle-double-left color-white mr-1"></i> Remove All</button>
+            </div>
+            <div class="col-sm-3 pr-0">
+                <!-- <select formControlName="tag_selected" size="7" multiple class="w-100 form-control" id="select2">  
+                    <option value="{{tag_sel.label}}" *ngFor="let tag_sel of selected_tags;"> {{ tag_sel.value }}</option> 
+                </select> -->
+
+                <select multiple formControlName="tag_selected" size="7" class="w-100 form-control"  id="select2">
+                    <option *ngFor="let v of selected_tags" [value]="v.label">{{v.value}}</option>
+                  </select>
+            </div>
+          </div>
+            
+        </div>
+          
+      </div>
+
+      <div class="row mx-0 mb-3">
+        <div class="col-sm-12 text-center">
+            <button class="btn btn-grey mb-1 text-left mr-2" type="submit"> Ok </button>
+
+            <button class="btn btn-red mb-1" type="button" (click)="modal.dismiss('Cross click')"> cancel </button>
+        </div>
+      </div>
+    </form>
+    
+  </div>
+  
+</ng-template>
+
+<!-- template for tool tip -->
+<ng-template #tipContent>
+    <span style="white-space: nowrap">
+      Service Type filtering is based on the naming convention in the TG name.<br>
+      e.g.: UKLNAS<strong>A</strong>0002010000300<br>
+      A = Voip Access<br>
+      C = Colt Total<br>
+      I = CarrierVoip<br>
+      For Number Hosting ATBHA<strong>SN</strong>CB2203<br>
+      For IMT FRBHA<strong>CX</strong>LYT013
+    </span>
+</ng-template>
+  
+  

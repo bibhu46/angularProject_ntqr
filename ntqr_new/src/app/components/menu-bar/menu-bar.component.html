@@ -1,0 +1,76 @@
+<nav class="navbar navbar-expand-lg menu_bar mt-1">    
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item" routerLinkActive="active">
+                <a class="nav-link" routerLink="/home">Home <span class="sr-only">(current)</span></a>
+            </li>           
+
+            <li class="nav-item" routerLinkActive="active">
+                <div ngbDropdown class="d-inline-block">
+                    <button class="btn nav-drop" id="NGIN_5_2" ngbDropdownToggle>NGIN 5.2 </button>
+                    <div ngbDropdownMenu aria-labelledby="NGIN_5_2">
+                      <button ngbDropdownItem routerLink='/ngin5.2/installedNumbers'>Installed Numbers</button>
+                      <button ngbDropdownItem routerLink='/ngin5.2/serviceKeys'>Service Keys</button>
+                      <button ngbDropdownItem routerLink="/ngin5.2/customerReports">Customer Reports</button>
+                      <button ngbDropdownItem routerLink='/ngin5.2/objectCapacity'>Object Capacity</button>
+                      <button ngbDropdownItem routerLink='/ngin5.2/callAttempts'>Call Attempts</button>
+                      <button ngbDropdownItem routerLink='/ngin5.2/systemStatistics'>System Statistics</button>
+                      <button ngbDropdownItem routerLink='/ngin5.2/mrfStatistics'>MRF Statistics</button>
+                      <button ngbDropdownItem routerLink='/ngin5.2/dataAvilability'>Data Availability</button>
+                    </div>
+                </div>
+            </li>
+
+            <li class="nav-item" routerLinkActive="active">
+                <div ngbDropdown class="d-inline-block">
+                    <button class="btn nav-drop" id="NGIN_7" ngbDropdownToggle>NGIN 20 </button>
+                    <div ngbDropdownMenu aria-labelledby="NGIN_7">
+                        <button ngbDropdownItem routerLink='/ngin20/installedNumbers'>Installed Numbers</button>
+                        <button ngbDropdownItem routerLink='/ngin20/serviceKeys'>Service Keys</button>
+                        <button ngbDropdownItem routerLink="/ngin20/customerReports">Customer Reports</button>
+                        <button ngbDropdownItem routerLink='/ngin20/objectCapacity'>Object Capacity</button>
+                        <button ngbDropdownItem routerLink='/ngin20/callAttempts'>Call Attempts</button>
+                        <button ngbDropdownItem routerLink='/ngin20/systemStatistics'>System Statistics</button>
+                        <button ngbDropdownItem routerLink='/ngin20/mrfStatistics'>MRF Statistics</button>
+                        <button ngbDropdownItem routerLink='/ngin20/dataAvilability'>Data Availability</button>              
+                    </div>
+                </div>
+            </li>
+
+            <li class="nav-item " routerLinkActive="active">                
+                <div ngbDropdown class="d-inline-block">
+                    <button class="btn nav-drop" id="sonus_dropdown" ngbDropdownToggle>Sonus </button>
+                    <div ngbDropdownMenu aria-labelledby="sonus_dropdown">
+                      <button ngbDropdownItem routerLink='/sonus/dashboard'>Dashboard</button>
+                      <button ngbDropdownItem routerLink="/sonus/devicestats">Device Statistics</button>
+                      <button ngbDropdownItem routerLink="/sonus/dataAvilability">Data Availability</button>
+                      <button ngbDropdownItem routerLink="/sonus/trunkGroupStatistics">Trunk Group Statistics</button>
+                      <button ngbDropdownItem routerLink="/sonus/watchlist">Watchlist</button>
+                      <button ngbDropdownItem routerLink='/sonus/help'>Help</button>
+                    </div>
+                </div>
+            </li>
+
+            <li class="nav-item" routerLinkActive="active">
+                <div ngbDropdown class="d-inline-block">
+                    <button class="btn nav-drop" id="settings_dropdown" ngbDropdownToggle>Settings</button>
+                    <div ngbDropdownMenu aria-labelledby="settings_dropdown">
+                      <button ngbDropdownItem routerLink="/userManagement">User Management</button>
+                      <button ngbDropdownItem routerLink="/myProfile">My Profile</button>
+                      <button ngbDropdownItem routerLink="/options">Options</button>
+                      <button ngbDropdownItem routerLink="/manageWatchlist">Manage Watchlist</button>
+                      
+                    </div>
+                </div>
+            </li>        
+        </ul>        
+    </div>
+</nav>
+
+<div class="crumb my-2 px-3">
+    <!-- <a href="javascript:void()">Sonus</a> / Trunkgroup Statistics Search -->
+</div>

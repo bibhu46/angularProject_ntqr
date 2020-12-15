@@ -1,0 +1,30 @@
+<div class="filter_box mx-3 py-2 px-3">
+    <h3 class="f_size_18 color-black mt-2 mb-3">INCN Customer</h3>
+    
+    <table class="table">
+        <thead>
+            <tr class="heading">
+                <th colspan="2">Customer Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of customerList">
+                <td class="content">{{data.name}}</td>
+                <td class="content">
+                    <button class="btn-icon mt-2 mr-2" (click)="editCustomer(data.name, data.id)">
+                        <i class="fas fa-pencil"></i>
+                    </button>
+                    <button class="btn-icon mt-2 mr-2" (click)="deleteCustomer(data.name)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="row mx-0 mb-1 mt-4">
+            <div class="col-sm-12 pl-0">
+                <button class="btn btn-grey mr-2" type="button" (click)="onCancel()">Cancel</button>
+                <button type="submit" id="padded" class="btn btn-red" (click)="addCustomer()">Add Customer</button>
+            </div>
+        </div>
+</div>

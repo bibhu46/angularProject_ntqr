@@ -1,0 +1,211 @@
+<breadcrumb #parent>  
+    <ol class="breadcrumb">
+      <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+        <div class="crumb my-0">
+            <a href="javascript:void()">Sonus</a> / {{ route.displayName }}
+        </div>
+      </ng-template>
+    </ol>
+</breadcrumb>
+
+<div class="row mx-0">
+    <div class="col-sm-12 px-4">
+        <div class="row mx-0 border-bottom-grey2 pb-2 mb-2">
+            <div class="col-sm-6 pt-2 pl-0">
+                <strong>{{ total_records }}</strong> Records
+            </div>
+
+            <div class="col-sm-6 pt-2 pr-0 text-right">
+                <button class="btn-icon mr-2" (click)="acc.expandAll()">
+                    <i class="fas fa-plus"></i>
+                </button>
+
+                <button class="btn-icon" (click)="acc.collapseAll()">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>            
+        </div>
+        <div class="border-grey py-3 mb-3">
+            <form name="availability_form" [formGroup]="availability_form">
+                <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0">
+                    <ngb-panel>                
+                        <ng-template ngbPanelHeader let-opened="opened">
+                            <button ngbPanelToggle class="btn my-0 py-0 px-3 w-100 text-left">
+                                <i class="fas fa-chevron-right color-grey mx-2"></i> 
+                                <i class="fas fa-chevron-down color-green mx-2"></i>PSX - Policy Server
+                            </button>                   
+                        </ng-template>
+                        <ng-template ngbPanelContent>
+                            <table class="table" cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <th class="pl-5">Device</th>
+                                    <th>Description</th>
+                                    <th>IP Address</th>
+                                    <th>Latest Performance Data</th>
+                                </thead>
+                                <tbody formArrayName="psx_arr">
+                                    <tr *ngFor="let psx of psx_array.controls; let i = index;" [formGroupName]="i">
+                                        <td class="pl-5">{{ psxList[i].deviceName }}</td>
+                                        <td>                                        
+                                            <input type="text" name="desc" formControlName="device_descr" class="form_text mt-0 mr-2 float-left">  
+                                            <button class="btn-icon float-left" (click)="edit_psx(i)" *ngIf="!psx.value.check_state">
+                                                <i class="fas fa-pen"></i></button> 
+                                            <button class="btn-icon float-left" (click)="save_psx(i)" *ngIf="psx.value.check_state">
+                                                <i class="fas fa-save" ></i></button>
+                                        </td>
+                                        <td>{{ psxList[i].address }}</td>
+                                        <td>{{ psxList[i].timestampFormatted }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ng-template>
+                    </ngb-panel>
+            
+                    <ngb-panel>                
+                        <ng-template ngbPanelHeader let-opened="collapsed">
+                            <button ngbPanelToggle class="btn my-0 py-0 px-3 w-100 text-left">
+                                <i class="fas fa-chevron-right color-grey mx-2"></i> 
+                                <i class="fas fa-chevron-down color-green mx-2"></i>GSX - Open Services Switch
+                            </button>                   
+                        </ng-template>
+                        <ng-template ngbPanelContent>
+                            <table class="table" cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <th class="pl-5">Device</th>
+                                    <th>Description</th>
+                                    <th>IP Address</th>
+                                    <th>Latest Performance Data</th>
+                                </thead>
+                                <tbody formArrayName="gsx_arr">
+                                    <tr *ngFor="let gsx of gsx_array.controls; let i = index;" [formGroupName]="i">
+                                        <td class="pl-5">{{ gsxList[i].deviceName }}</td>
+                                        <td>
+                                            <input type="text" [disabled]='check' formControlName="device_descr" class="form_text mr-2 float-left mt-0">  
+                                            <button class="btn-icon float-left" *ngIf="!gsx.value.check_state" (click)="edit_gsx(i)">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
+                                            <button class="btn-icon float-left" *ngIf="gsx.value.check_state" (click)="save_gsx(i)">
+                                                <i class="fas fa-save"></i>
+                                            </button>
+                                        </td>
+                                        <td>{{ gsxList[i].address }}</td>
+                                        <td>{{ gsxList[i].timestampFormatted }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ng-template>
+                    </ngb-panel>
+            
+                    <ngb-panel>                
+                        <ng-template ngbPanelHeader let-opened="collapsed">
+                            <button ngbPanelToggle class="btn my-0 py-0 px-3 w-100 text-left">
+                                <i class="fas fa-chevron-right color-grey mx-2"></i> 
+                                <i class="fas fa-chevron-down color-green mx-2"></i>NBS - Network Border Switch
+                            </button>                   
+                        </ng-template>
+                        <ng-template ngbPanelContent>
+                            <table class="table" cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <th class="pl-5">Device</th>
+                                    <th>Description</th>
+                                    <th>IP Address</th>
+                                    <th>Latest Performance Data</th>
+                                </thead>
+                                <tbody formArrayName="nbs_arr">
+                                    <tr *ngFor="let nbs of nbs_array.controls; let i = index;" [formGroupName]="i">
+                                        <td class="pl-5">{{ nbsList[i].deviceName }}</td>
+                                        <td>
+                                            <input type="text" [disabled]='check' formControlName="device_descr" class="form_text mr-2 mt-0 float-left">  
+                                            <button class="btn-icon float-left" *ngIf="!nbs.value.check_state" (click)="edit_nbs(i)">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
+                                            <button class="btn-icon float-left" *ngIf="nbs.value.check_state" (click)="save_nbs(i)">
+                                                <i class="fas fa-save"></i>
+                                            </button>
+                                        </td>
+                                        <td>{{ nbsList[i].address }}</td>
+                                        <td>{{ nbsList[i].timestampFormatted }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ng-template>
+                    </ngb-panel>
+            
+                    <ngb-panel>
+                        <ng-template ngbPanelHeader let-opened="collapsed">
+                            <button ngbPanelToggle class="btn my-0 py-0 px-3 w-100 text-left">
+                                <i class="fas fa-chevron-right color-grey mx-2"></i> 
+                                <i class="fas fa-chevron-down color-green mx-2"></i>EMS - Element Management System
+                            </button>                   
+                        </ng-template>
+                        
+                        <ng-template ngbPanelContent>
+                            <table class="table" cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <th class="pl-5">Device</th>
+                                    <th>Description</th>
+                                    <th>IP Address</th>
+                                    <th>Latest Performance Data</th>
+                                </thead>
+                                <tbody formArrayName="ems_arr">
+                                    <tr *ngFor="let ems of ems_array.controls; let i = index;" [formGroupName]="i">
+                                        <td class="pl-5">{{ emsList[i].deviceName }}</td>
+                                        <td>
+                                            <input type="text" [disabled]='check' formControlName="device_descr" class="form_text mr-2 float-left mt-0">  
+                                            <button class="btn-icon float-left" *ngIf="!ems.value.check_state" (click)="edit_ems(i)">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
+                                            <button class="btn-icon float-left" *ngIf="ems.value.check_state" (click)="save_ems(i)">
+                                                <i class="fas fa-save"></i>
+                                            </button> 
+                                        </td>
+                                        <td>{{ emsList[i].address }}</td>
+                                        <td>{{ emsList[i].timestampFormatted }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ng-template>
+                    </ngb-panel>
+            
+                    <ngb-panel>                
+                        <ng-template ngbPanelHeader let-opened="collapsed">
+                                <button ngbPanelToggle class="btn my-0 py-0 px-3 w-100 text-left">
+                                    <i class="fas fa-chevron-right color-grey mx-2"></i> 
+                                    <i class="fas fa-chevron-down color-green mx-2"></i> DSI - DataStream Integrator
+                                </button>                   
+                        </ng-template>
+                        <ng-template ngbPanelContent>
+                            <table class="table" cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <th class="pl-5">Device</th>
+                                    <th>Description</th>
+                                    <th>IP Address</th>
+                                    <th>Latest Performance Data</th>
+                                </thead>
+                                <tbody formArrayName="dsi_arr">
+                                    <tr *ngFor="let dsi of dsi_array.controls; let i = index;" [formGroupName]="i">
+                                        <td class="pl-5"> {{ dsiList[i].deviceName }}</td>
+                                        <td>
+                                            <input type="text" [disabled]='check' formControlName="device_descr" class="form_text mt-0 mr-2 float-left">
+                                            <button class="btn-icon float-left" *ngIf="!dsi.value.check_state" (click)="edit_dsi(i)">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
+                                            <button class="btn-icon float-left" *ngIf="dsi.value.check_state" (click)="save_dsi(i)">
+                                                <i class="fas fa-save"></i>
+                                            </button>                                            
+                                        </td>
+                                        <td>{{ dsiList[i].address }}</td>
+                                        <td>{{ dsiList[i].timestampFormatted }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ng-template>
+                    </ngb-panel>
+                    
+                </ngb-accordion>
+            </form>
+        </div>
+    </div>
+
+</div>  
+    

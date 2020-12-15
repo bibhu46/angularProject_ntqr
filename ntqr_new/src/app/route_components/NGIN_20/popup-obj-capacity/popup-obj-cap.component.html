@@ -1,0 +1,79 @@
+<div class="filter_box mx-3 py-2 px-3 mt-10">
+        <h3 class="f_size_18 color-black mt-2 mb-3">Object Capacity Month History</h3>
+        <form #dates="ngForm" (ngSubmit)="onSubmit(dates.value)" class="form_box py-0 call_log_form">
+
+                <div class="row mx-0 mb-1">
+                        <div class="col-sm-6">
+                                <h3>Object Info</h3>
+                                <div class="row mx-0 mb-1">
+                                        <div class="col-sm-3 pl-0">Object Name</div>
+                                        <div class="col-sm-3">{{name}}</div>
+                                </div>
+                                <div class="row mx-0 mb-1">
+                                        <div class="col-sm-3 pl-0">Service Type</div>
+                                        <div class="col-sm-3">{{desc}}</div>
+                                </div>
+                        </div>
+                        <div class="col-sm-6">
+                                <ng-month-picker [(ngModel)]="sel_month" name="sel_month"></ng-month-picker>
+                                <div class="row mx-0 mb-1 mt-4">
+                                        <div class="col-sm-12 pl-0">
+                                                <button type="submit" id="padded" class="btn btn-red mr-2">Run
+                                                        Report</button>
+
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </form>
+</div>
+
+
+<form class="mx-3">
+        <div class="hr"></div>
+        <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                        <strong>{{monthHistoryList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                        <div class="input-group w-200px green d-inline-flex mr-2">
+                                <!-- <mat-form-field>
+                                                        <mat-label>Filter</mat-label>
+                                                        <input type="text"  class="green-search" placeholder="keyword" #input>
+                                                </mat-form-field> -->
+                        </div>
+                        <button class="btn-icon " type="submit" (click)="onClickdwnldcsv()" data-toggle="popover"
+                                data-toggle="tooltip" title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+        </div>
+        <div class="border-grey py-3 mt-2 mb-3">
+                <table class="table mt-2">
+                        <thead>
+                                <tr class="active">
+                                        <th class="pl-3">Date</th>
+                                        <th class="">Max RI</th>
+                                        <th class="">RI Used</th>
+                                        <th class="">Percentage</th>
+                                </tr>
+                        </thead>
+                        <tbody >
+                                <tr *ngFor="let monthHistory of monthHistoryList">
+                                        <td class="content pl-3">{{monthHistory.date}}</td>
+                                        <td class="content">{{monthHistory.maxRi}}</td>
+                                        <td class="content">{{monthHistory.riUsed}}</td>
+                                        <td class="content" *ngIf="monthHistory.percentage<=80">
+                                                <ratings-bar percentage="{{monthHistory.percentage}}" [show_max]="false"
+                                                        [show_percent]='true' bar_color="green" *ngIf="monthHistory.percentage>0"></ratings-bar>
+                                        </td>
+                                        <td class="content" *ngIf="monthHistory.percentage>80">
+                                                <ratings-bar percentage="{{monthHistory.percentage}}" [show_max]="false"
+                                                        [show_percent]='true' bar_color="red" *ngIf="monthHistory.percentage>0"></ratings-bar>
+
+                                        </td>
+                                </tr>
+                        </tbody>
+                </table>
+        </div>
+</form>

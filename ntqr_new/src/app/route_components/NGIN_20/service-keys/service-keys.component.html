@@ -1,0 +1,82 @@
+<breadcrumb #parent>
+  <ol class="breadcrumb">
+    <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+      <div class="crumb my-2 px-3">
+        <a href="#">NGIN 20</a> / {{ route.displayName }}
+      </div>
+    </ng-template>
+  </ol>
+</breadcrumb>
+
+<div class="mx-3 pb-2 px-3">
+  <div class="row mx-0 border-bottom-grey2 pb-2 mb-2">
+    <div class="col-sm-6 pt-2 pl-0">
+
+    </div>
+
+    <div class="col-sm-6 pt-2 pr-0 text-right">
+      <button class="btn-icon  mr-2" (click)="acc.expandAll()">
+        <i class="fas fa-plus"></i>
+      </button>
+
+      <button class="btn-icon" (click)="acc.collapseAll()">
+        <i class="fas fa-minus"></i>
+      </button>
+    </div>
+  </div>
+  <div class="border-grey py-3 my-2">
+      <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" class="service-key-table">
+        <ngb-panel *ngFor="let data of serviceTypeList; let i=index ">
+          <ng-template ngbPanelHeader let-opened="opened" >
+            <button ngbPanelToggle class="btn my-0 p-0 w-100 text-left">
+              <i class="fas fa-chevron-right color-grey mx-2"></i>
+              <i class="fas fa-chevron-down color-green mx-2"></i><span class="bold">{{i+1}}.Service Type: </span>{{data.serviceType}}
+            </button>
+          </ng-template>
+          <ng-template ngbPanelContent>
+            <table class="table" cellpadding="0" cellspacing="0">
+              <thead>
+                <th class="pl-3">Country/Group</th>
+                <th>Service Keys</th>
+                <th *ngIf="userPermission">Actions</th>
+              </thead>
+              <tbody >
+                  
+                  <tr *ngFor="let element of data.countryGroup">
+          
+                    <td class="pl-3">{{element.countryName}}</td>
+                    <td>
+                      <div class="row mx-0" *ngFor="let serviceKey of element.serviceKey">
+                        <div class="col-sm-6 pl-0"> Service Key <br>
+                          <button class="link no-bg" (click)="serviceKeyDetails($event, element.countryId)">
+                            <span class="bold link">{{serviceKey.serviceKey}}</span>
+                          </button>
+                        </div>
+                        <div class="col-sm-6 pl-0"> Number Range <br>
+                        {{serviceKey.numberRange}}
+                        </div>                        
+                      </div>
+                    </td>
+                    <td *ngIf="userPermission">
+                        
+                      <button class="btn-icon mt-2 mr-2" (click)="onEdit($event, element.countryId)">
+                        <i class="fas fa-pencil"></i>
+                      </button>
+                      <button class="btn-icon mt-2 mr-2" (click)="onDelete($event, element.countryId)">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+            </table>
+          </ng-template>
+        </ngb-panel>
+        
+      </ngb-accordion>
+  </div>
+ 
+  <button class="btn btn-grey ml-2 mt-10" type="button" (click)="add_serviceKey()"> Create Service Key </button>
+
+</div>
+
+<!-- ////// -->

@@ -1,0 +1,39 @@
+<div class="container-fluid px-0">
+    <div class="row page-header mx-0">
+        <div class="col-sm-6">
+            <a href="javascript:void()" ><img src="../../../assets/images/colt-logo.jpg" class="mt-10px" alt="colt logo"></a>
+        </div>
+        <div class="col-sm-6 text-right">
+            <span class="mr-3 mt-2 d-inline-block f_size_15 color-black">No Account ? <a href="javascript: void()">Sign up</a></span>
+            <button class="btn-icon mt-2 mr-2"><i class="fas fa-question"></i></button>            
+            <span class="d-inline-block mt-1">
+                <img src="../../../assets/images/ntqr-logo.jpg" class="mt-1 ml-3 mr-2">
+            </span>
+        </div>
+    </div>
+</div>
+<div class="body-bg w-100 mt-1">
+    <div class="login-form">
+        <form (ngSubmit)="onSubmit()" name="userForm" [formGroup]="userForm">
+            <h3 class="text-center">Login</h3>       
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Enter the username" required="required" formControlName="username">
+                <p class="color-red my-0" *ngIf="LoginForm.username.errors !== null && show_errors">
+                    <span class="mr-3" *ngIf="LoginForm.username.errors.required"> Username is required </span>
+                </p>
+            </div>
+            
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="Enter the password" required="required" formControlName="password" >
+                <p class="color-red my-0" *ngIf="LoginForm.password.errors !== null && show_errors">
+                    <span class="mr-3" *ngIf="LoginForm.password.errors.required"> password is required </span>
+                </p>
+            </div>
+            
+            <div class="form-group text-center">
+                <button type="submit" class="btn btn-red submit-btn" >Log in</button>
+                <div class="forget-password"><a class="link">Request a new password</a></div>
+            </div>
+        </form>
+</div>
+</div>

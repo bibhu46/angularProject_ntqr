@@ -1,0 +1,418 @@
+
+{
+  "header": {
+    "reportVersion": 1,
+    "event": "Allocation failed - JavaScript heap out of memory",
+    "trigger": "FatalError",
+    "filename": "report.20201119.170232.10804.0.001.json",
+    "dumpEventTime": "2020-11-19T17:02:32Z",
+    "dumpEventTimeStamp": "1605785552694",
+    "processId": 10804,
+    "cwd": "C:\\ntqr2.0\\ntqr_gui2",
+    "commandLine": [
+      "H:\\softwares\\node-v12.13.0-win-x64\\\\node.exe",
+      "H:\\softwares\\node-v12.13.0-win-x64\\\\node_modules\\@angular\\cli\\bin\\ng",
+      "serve"
+    ],
+    "nodejsVersion": "v12.13.0",
+    "wordSize": 64,
+    "arch": "x64",
+    "platform": "win32",
+    "componentVersions": {
+      "node": "12.13.0",
+      "v8": "7.7.299.13-node.12",
+      "uv": "1.32.0",
+      "zlib": "1.2.11",
+      "brotli": "1.0.7",
+      "ares": "1.15.0",
+      "modules": "72",
+      "nghttp2": "1.39.2",
+      "napi": "5",
+      "llhttp": "1.1.4",
+      "http_parser": "2.8.0",
+      "openssl": "1.1.1d",
+      "cldr": "35.1",
+      "icu": "64.2",
+      "tz": "2019a",
+      "unicode": "12.1"
+    },
+    "release": {
+      "name": "node",
+      "lts": "Erbium",
+      "headersUrl": "https://nodejs.org/download/release/v12.13.0/node-v12.13.0-headers.tar.gz",
+      "sourceUrl": "https://nodejs.org/download/release/v12.13.0/node-v12.13.0.tar.gz",
+      "libUrl": "https://nodejs.org/download/release/v12.13.0/win-x64/node.lib"
+    },
+    "osName": "Windows_NT",
+    "osRelease": "10.0.17134",
+    "osVersion": "Windows 10 Enterprise",
+    "osMachine": "x86_64",
+    "cpus": [
+      {
+        "model": "Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz",
+        "speed": 2594,
+        "user": 1651671,
+        "nice": 0,
+        "sys": 3592859,
+        "idle": 16718453,
+        "irq": 27093
+      },
+      {
+        "model": "Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz",
+        "speed": 2594,
+        "user": 1664203,
+        "nice": 0,
+        "sys": 3571203,
+        "idle": 16727250,
+        "irq": 33640
+      },
+      {
+        "model": "Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz",
+        "speed": 2594,
+        "user": 1834140,
+        "nice": 0,
+        "sys": 3469312,
+        "idle": 16659203,
+        "irq": 24281
+      },
+      {
+        "model": "Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz",
+        "speed": 2594,
+        "user": 1923125,
+        "nice": 0,
+        "sys": 3438140,
+        "idle": 16601390,
+        "irq": 22203
+      }
+    ],
+    "networkInterfaces": [
+      {
+        "name": "Ethernet0",
+        "internal": false,
+        "mac": "00:50:56:8d:80:ec",
+        "address": "10.97.21.97",
+        "netmask": "255.255.248.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "Loopback Pseudo-Interface 1",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "::1",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "Loopback Pseudo-Interface 1",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "127.0.0.1",
+        "netmask": "255.0.0.0",
+        "family": "IPv4"
+      }
+    ],
+    "host": "ULP99251"
+  },
+  "javascriptStack": {
+    "message": "No stack.",
+    "stack": [
+      "Unavailable."
+    ]
+  },
+  "nativeStack": [
+    {
+      "pc": "0x00007ff7ca8c1389",
+      "symbol": "std::basic_ostream<char,std::char_traits<char> >::operator<<+10873"
+    },
+    {
+      "pc": "0x00007ff7ca8c57cc",
+      "symbol": "std::basic_ostream<char,std::char_traits<char> >::operator<<+28348"
+    },
+    {
+      "pc": "0x00007ff7ca8c4778",
+      "symbol": "std::basic_ostream<char,std::char_traits<char> >::operator<<+24168"
+    },
+    {
+      "pc": "0x00007ff7ca9b332b",
+      "symbol": "v8::base::CPU::has_sse+37723"
+    },
+    {
+      "pc": "0x00007ff7cb1b6f4e",
+      "symbol": "v8::Isolate::ReportExternalAllocationLimitReached+94"
+    },
+    {
+      "pc": "0x00007ff7cb19ef91",
+      "symbol": "v8::SharedArrayBuffer::Externalize+833"
+    },
+    {
+      "pc": "0x00007ff7cb06c85c",
+      "symbol": "v8::internal::Heap::EphemeronKeyWriteBarrierFromCode+1436"
+    },
+    {
+      "pc": "0x00007ff7cb077c00",
+      "symbol": "v8::internal::Heap::ProtectUnprotectedMemoryChunks+1312"
+    },
+    {
+      "pc": "0x00007ff7cb074734",
+      "symbol": "v8::internal::Heap::PageFlagsAreConsistent+3204"
+    },
+    {
+      "pc": "0x00007ff7cb069fc3",
+      "symbol": "v8::internal::Heap::CollectGarbage+1283"
+    },
+    {
+      "pc": "0x00007ff7cb068794",
+      "symbol": "v8::internal::Heap::AddRetainedMap+2356"
+    },
+    {
+      "pc": "0x00007ff7cb089a65",
+      "symbol": "v8::internal::Factory::NewFillerObject+53"
+    },
+    {
+      "pc": "0x00007ff7cadf6239",
+      "symbol": "v8::internal::interpreter::JumpTableTargetOffsets::iterator::operator=+4057"
+    },
+    {
+      "pc": "0x00007ff7cb5e2c6d",
+      "symbol": "v8::internal::SetupIsolateDelegate::SetupHeap+567949"
+    },
+    {
+      "pc": "0x0000019eeb52a9a8",
+      "symbol": ""
+    }
+  ],
+  "javascriptHeap": {
+    "totalMemory": 2184318976,
+    "totalCommittedMemory": 2184318976,
+    "usedMemory": 2149736912,
+    "availableMemory": 39452624,
+    "memoryLimit": 2197815296,
+    "heapSpaces": {
+      "read_only_space": {
+        "memorySize": 262144,
+        "committedMemory": 262144,
+        "capacity": 261872,
+        "used": 32296,
+        "available": 229576
+      },
+      "new_space": {
+        "memorySize": 20971520,
+        "committedMemory": 20971520,
+        "capacity": 10474880,
+        "used": 2441632,
+        "available": 8033248
+      },
+      "old_space": {
+        "memorySize": 2073669632,
+        "committedMemory": 2073669632,
+        "capacity": 2071204024,
+        "used": 2063985424,
+        "available": 7218600
+      },
+      "code_space": {
+        "memorySize": 5144576,
+        "committedMemory": 5144576,
+        "capacity": 4453312,
+        "used": 4453312,
+        "available": 0
+      },
+      "map_space": {
+        "memorySize": 8392704,
+        "committedMemory": 8392704,
+        "capacity": 3271840,
+        "used": 3271840,
+        "available": 0
+      },
+      "large_object_space": {
+        "memorySize": 75255808,
+        "committedMemory": 75255808,
+        "capacity": 75002008,
+        "used": 75002008,
+        "available": 0
+      },
+      "code_large_object_space": {
+        "memorySize": 622592,
+        "committedMemory": 622592,
+        "capacity": 550400,
+        "used": 550400,
+        "available": 0
+      },
+      "new_large_object_space": {
+        "memorySize": 0,
+        "committedMemory": 0,
+        "capacity": 10474880,
+        "used": 0,
+        "available": 10474880
+      }
+    }
+  },
+  "resourceUsage": {
+    "userCpuSeconds": 1178.39,
+    "kernelCpuSeconds": 120.5,
+    "cpuConsumptionPercent": 6.4938,
+    "maxRss": 2168885248,
+    "pageFaults": {
+      "IORequired": 4252681,
+      "IONotRequired": 0
+    },
+    "fsActivity": {
+      "reads": 15638,
+      "writes": 66
+    }
+  },
+  "libuv": [
+  ],
+  "environmentVariables": {
+    "": "::=::\\",
+    "": "C:=C:\\ntqr2.0\\ntqr_gui2",
+    "ALLUSERSPROFILE": "C:\\ProgramData",
+    "APPDATA": "C:\\Users\\AKumar7\\AppData\\Roaming",
+    "BROWSERSLIST_IGNORE_OLD_DATA": "1",
+    "clientipaddress": "192.168.1.3",
+    "CLIENTNAME": "SAK-RENTAL18",
+    "CommonProgramFiles": "C:\\Program Files\\Common Files",
+    "CommonProgramFiles(x86)": "C:\\Program Files (x86)\\Common Files",
+    "CommonProgramW6432": "C:\\Program Files\\Common Files",
+    "COMPUTERNAME": "ULP99251",
+    "ComSpec": "C:\\Windows\\system32\\cmd.exe",
+    "dp0": "H:\\softwares\\node-v12.13.0-win-x64\\",
+    "DriverData": "C:\\Windows\\System32\\Drivers\\DriverData",
+    "fullusername": "Kumar7, Arun (C)",
+    "HDBADONET": "C:\\Program Files (x86)\\SAP\\hdbclient\\ado.net\\",
+    "HOMEDRIVE": "Z:",
+    "HOMEPATH": "\\",
+    "HOMESHARE": "\\\\ULVMCTMFIL154\\AKumar7$",
+    "LOCALAPPDATA": "C:\\Users\\AKumar7\\AppData\\Local",
+    "LOGONSERVER": "\\\\ULPGCTMADS003",
+    "NUMBER_OF_PROCESSORS": "4",
+    "OS": "Windows_NT",
+    "Path": "C:\\ProgramData\\Oracle\\Java\\javapath;C:\\app\\Administrator\\product\\11.2.0\\client_1\\bin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files (x86)\\Common Files\\microsoft shared\\OFFICE16;C:\\Program Files (x86)\\Webex\\Plugins;C:\\Program Files\\Common Files\\ThinPrint\\;C:\\Program Files (x86)\\Common Files\\Hitachi ID\\;C:\\Users\\AKumar7\\AppData\\Local\\Microsoft\\WindowsApps;H:\\softwares\\node-v12.13.0-win-x64;C:\\Users\\AKumar7\\AppData\\Local\\Programs\\Git\\cmd",
+    "PATHEXT": ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC",
+    "PFSESSIONSTART": "20201119-110410",
+    "PROCESSOR_ARCHITECTURE": "AMD64",
+    "PROCESSOR_IDENTIFIER": "Intel64 Family 6 Model 79 Stepping 1, GenuineIntel",
+    "PROCESSOR_LEVEL": "6",
+    "PROCESSOR_REVISION": "4f01",
+    "ProgramData": "C:\\ProgramData",
+    "ProgramFiles": "C:\\Program Files",
+    "ProgramFiles(x86)": "C:\\Program Files (x86)",
+    "ProgramW6432": "C:\\Program Files",
+    "PROMPT": "$P$G",
+    "PSModulePath": "C:\\Program Files\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules",
+    "PUBLIC": "C:\\Users\\Public",
+    "RESPFDIR": "C:\\PROGRA~2\\Ivanti\\WORKSP~1",
+    "RESSHELL": "MS",
+    "SESSIONNAME": "Console",
+    "SNC_LIB": "C:\\Program Files (x86)\\SAP\\FrontEnd\\SecureLogin\\lib\\sapcrypto.dll",
+    "SNC_LIB_64": "C:\\Program Files\\SAP\\FrontEnd\\SecureLogin\\lib\\sapcrypto.dll",
+    "SSF_LIBRARY_PATH": "C:\\Program Files (x86)\\SAP\\FrontEnd\\SecureLogin\\lib\\sapcrypto.dll",
+    "SSF_LIBRARY_PATH_64": "C:\\Program Files\\SAP\\FrontEnd\\SecureLogin\\lib\\sapcrypto.dll",
+    "SystemDrive": "C:",
+    "SystemRoot": "C:\\Windows",
+    "TEMP": "C:\\Users\\AKumar7\\AppData\\Local\\Temp",
+    "TMP": "C:\\Users\\AKumar7\\AppData\\Local\\Temp",
+    "USERDNSDOMAIN": "INTERNAL.COLT.NET",
+    "USERDOMAIN": "INTERNAL",
+    "USERDOMAIN_ROAMINGPROFILE": "INTERNAL",
+    "USERNAME": "AKumar7",
+    "USERPROFILE": "C:\\Users\\AKumar7",
+    "USERSID": "S-1-5-21-2404701332-79391348-2085898168-4139721",
+    "ViewClient_Broker_DNS_Name": "ULVMCTMVMV055.INTERNAL.COLT.NET",
+    "ViewClient_Broker_DomainName": "INTERNAL",
+    "ViewClient_Broker_Farm_ID": "vdi-pgt01-europe32",
+    "ViewClient_Broker_GatewayHost": "white.colt.net",
+    "ViewClient_Broker_GatewayLocation": "External",
+    "ViewClient_Broker_GatewayType": "SG",
+    "ViewClient_Broker_Gateway_IP_Address": "10.44.41.83",
+    "ViewClient_Broker_Remote_IP_Address": "115.97.254.222",
+    "ViewClient_Broker_Tunneled": "true",
+    "ViewClient_Broker_Tunnel_URL": "https://white.colt.net:443",
+    "ViewClient_Broker_URL": "https://white.colt.net:443",
+    "ViewClient_Broker_UserName": "AKumar7",
+    "ViewClient_Client_ID": "AgAAAERFTExMABBGgEfIwE9WUzE=",
+    "ViewClient_Client_Version": "4.10.0-11021086",
+    "ViewClient_Displays.Number": "1",
+    "ViewClient_Displays.SystemDpi": "96",
+    "ViewClient_Displays.Topology": "{1366,768,0,0,32,1}",
+    "ViewClient_Displays.TopologyV2": "{1366,768,0,0,32,1,96}",
+    "ViewClient_IP_Address": "192.168.1.3",
+    "ViewClient_Keyboard.KeyDelayToRepeat": "1",
+    "ViewClient_Keyboard.KeyRepeatRate": "31",
+    "ViewClient_Keyboard.Language": "1033",
+    "ViewClient_Keyboard.Layout": "00004009",
+    "ViewClient_Keyboard.NumFuncKeys": "12",
+    "ViewClient_Keyboard.NumIndicators": "3",
+    "ViewClient_Keyboard.NumKeys": "101",
+    "ViewClient_Keyboard.ScanCodeMode": "1",
+    "ViewClient_Keyboard.SubType": "0",
+    "ViewClient_Keyboard.Type": "7",
+    "ViewClient_Language": "en-IN",
+    "ViewClient_Launch_ID": "VDI-PGT01-Europe32",
+    "ViewClient_Launch_SessionType": "DESKTOP",
+    "ViewClient_LoggedOn_Domainname": "SAKSOFT",
+    "ViewClient_LoggedOn_FQDN": "saksoft.co.in",
+    "ViewClient_LoggedOn_Username": "arun.s",
+    "ViewClient_Machine_Domain": "SAKSOFT",
+    "ViewClient_Machine_FQDN": "saksoft.co.in",
+    "ViewClient_Machine_Name": "SAK-RENTAL18",
+    "ViewClient_MAC_Address": "8C-70-5A-11-79-E8",
+    "ViewClient_Mouse.Identifier": "256",
+    "ViewClient_Mouse.NumButtons": "3",
+    "ViewClient_Protocol": "PCOIP",
+    "ViewClient_Type": "Windows",
+    "ViewClient_TZID": "Asia/Calcutta",
+    "ViewClient_Windows_Timezone": "India Standard Time",
+    "WEBPACK_DEV_SERVER": "true",
+    "windir": "C:\\Windows",
+    "_prog": "H:\\softwares\\node-v12.13.0-win-x64\\\\node.exe"
+  },
+  "sharedObjects": [
+    "H:\\softwares\\node-v12.13.0-win-x64\\node.exe",
+    "C:\\Windows\\SYSTEM32\\ntdll.dll",
+    "C:\\Windows\\System32\\KERNEL32.DLL",
+    "C:\\Windows\\System32\\KERNELBASE.dll",
+    "C:\\Windows\\System32\\WS2_32.dll",
+    "C:\\Windows\\System32\\RPCRT4.dll",
+    "C:\\Windows\\System32\\ADVAPI32.dll",
+    "C:\\Windows\\System32\\msvcrt.dll",
+    "C:\\Windows\\System32\\sechost.dll",
+    "C:\\Windows\\System32\\USER32.dll",
+    "C:\\Windows\\System32\\win32u.dll",
+    "C:\\Windows\\System32\\GDI32.dll",
+    "C:\\Windows\\SYSTEM32\\dbghelp.dll",
+    "C:\\Windows\\System32\\gdi32full.dll",
+    "C:\\Windows\\System32\\ucrtbase.dll",
+    "C:\\Windows\\System32\\msvcp_win.dll",
+    "C:\\Windows\\System32\\PSAPI.DLL",
+    "C:\\Windows\\System32\\CRYPT32.dll",
+    "C:\\Windows\\System32\\MSASN1.dll",
+    "C:\\Windows\\SYSTEM32\\IPHLPAPI.DLL",
+    "C:\\Windows\\SYSTEM32\\USERENV.dll",
+    "C:\\Windows\\SYSTEM32\\bcrypt.dll",
+    "C:\\Windows\\System32\\profapi.dll",
+    "C:\\Windows\\SYSTEM32\\WINMM.dll",
+    "C:\\Windows\\SYSTEM32\\winmmbase.dll",
+    "C:\\Windows\\System32\\cfgmgr32.dll",
+    "C:\\Windows\\System32\\IMM32.DLL",
+    "C:\\Windows\\system32\\vmwsci.dll",
+    "C:\\Windows\\System32\\powrprof.dll",
+    "C:\\Windows\\system32\\uxtheme.dll",
+    "C:\\Windows\\System32\\combase.dll",
+    "C:\\Windows\\System32\\bcryptPrimitives.dll",
+    "C:\\Windows\\system32\\mswsock.dll",
+    "C:\\Windows\\System32\\kernel.appcore.dll",
+    "\\\\?\\C:\\ntqr2.0\\ntqr_gui2\\node_modules\\node-sass\\vendor\\win32-x64-72\\binding.node",
+    "C:\\Windows\\SYSTEM32\\CRYPTBASE.DLL",
+    "C:\\Windows\\System32\\NSI.dll",
+    "C:\\Windows\\SYSTEM32\\dhcpcsvc6.DLL",
+    "C:\\Windows\\SYSTEM32\\dhcpcsvc.DLL",
+    "C:\\Windows\\SYSTEM32\\DNSAPI.dll",
+    "C:\\Windows\\System32\\rasadhlp.dll",
+    "C:\\Windows\\System32\\fwpuclnt.dll",
+    "C:\\Windows\\system32\\napinsp.dll",
+    "C:\\Windows\\system32\\pnrpnsp.dll",
+    "C:\\Windows\\system32\\NLAapi.dll",
+    "C:\\Windows\\System32\\winrnr.dll"
+  ]
+}

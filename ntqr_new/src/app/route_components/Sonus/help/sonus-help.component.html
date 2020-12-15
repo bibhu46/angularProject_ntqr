@@ -1,0 +1,82 @@
+<breadcrumb #parent>  
+    <ol class="breadcrumb">
+      <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+        <div class="crumb my-0">
+            <a href="javascript:void()">Sonus</a> / {{ route.displayName }}
+        </div>
+      </ng-template>
+    </ol>
+</breadcrumb>
+
+<div class="border-grey py-3 mx-3">
+  <div class = 'container-fluid'>
+    <div class='row mx-0'>
+    <div class='col-sm-12 px-2'>    
+
+        <h3 class="mt-2 mb-2">GSX</h3>
+        <p class="my-2">The GSX is the core media gateway component of the Sonus platform. It is responsible for terminating all TDM circuits and converting them to IP. It carries all actual voice bearer traffic as well as the associated IP signalling protocols. It also terminates the SS7 signalling for the TDM circuits.</p>
+        <p class="my-2">GSX chassis deployed in COLT's network are sub-divided into two distinct categories:</p>
+        <ul>
+            <li>Media Gateway GSX chassis deployed in all 6 POPs handle circuit-to-packet and packet-to-circuit traffic and conversion.</li>
+            <li>Network Border Switch GSX chassis with no circuit capacity handle IP-to-IP traffic only and are deployed in 4 high capacity POPs (Frankfurt, London, Paris and Zurich)</li>
+        </ul>
+      
+        <h3 class="mt-4 mb-2">PSX</h3>
+        <p class="my-2">The PSX is the core routing engine of the Sonus platform. It is responsible for all call-routing logic and decisions.</p>
+        
+        <h3 class="mt-4 mb-2">Active Call Count</h3>
+        <p class="my-2">The active call count represents the number of stable and transient calls. An anomalous drop in active calls can indicate an overload event.</p>
+      
+        <h3 class="mt-4 mb-2">PSX Dip Retries and Failures</h3>
+        <p class="my-2">Possible causes for Retries and Failures are GSX congestion, PSX capacity shortage, and TCAP timeout. Depending on the cause GSX, or PSX capacities or the timer values should be reviewed.</p>
+      
+        <h3 class="mt-4 mb-2">Machine Congestion Rejects -NRM</h3>
+        <p class="my-2">Machine Congestion Rejects indicates the number of calls shed as a result of machine overload. The reasons can include processor or memory shortage due to high traffic volume, or excessive call terminations due to an internal or external failure.</p>
+        
+        <h3 class="mt-4 mb-2">Server Congestion Rejects - DS</h3>
+        <p class="my-2">Server Congestion Rejects indicates the number of calls shed as a result of server overload. The reasons can include processor or memory shortage on a server due to high traffic volume, or excessive call terminations due to an internal or external failure focused to a particular server.</p>
+      
+        <h3 class="mt-4 mb-2">Memory Utilization</h3>
+        <p class="my-2">If the reading is consistently above the threshold in the busy hour then box capacity should be reviewed.</p>
+      
+        <h3 class="mt-4 mb-2">CPU Utilization</h3>
+        <p class="my-2">If the reading is consistently above the threshold in the busy hour then box capacity should be reviewed.</p>
+      
+        <h3 class="mt-4 mb-2">VLAN Numbers</h3>
+        <p class="my-2">This command shows a summary of all interfaces on a GSX or NBS chassis. From the output the number of configured VLANs can be deduced.</p>
+      
+        <h3 class="mt-4 mb-2">External Timeout Count</h3>
+        <p class="my-2">This is an indication of external query timeouts. The reasons include SS7 network issues, SCP failure, or PSX processor shortage.</p>
+      
+        <h3 class="mt-4 mb-2">Internal Service Time</h3>
+        <p class="my-2">Internal service time reflects the time that it takes for PSX to answer the policy inquiries. A spike in service times may be an indication of a performance bottleneck.</p>
+      
+        <h3 class="mt-4 mb-2">Dip Rate</h3>
+        <p class="my-2">Dip rate is useful when analyzing a performance issue.</p>
+        
+        <h3 class="mt-4 mb-2">Disk Busy Percentage</h3>
+        <p class="my-2">Spikes due to maintenance activities (such as CDR file processing) should be monitored closely against the threshold.</p>
+      
+        <h3 class="mt-4 mb-2">Read-Write Rate</h3>
+        <p class="my-2">When Read-Write Rate is above 250 (for local disk) and 1500 (for RAID) CDR/log loss is likely to occur. Spikes due to maintenance activities (such as CDR file processing) should be monitored closely against the thresholds.</p>
+      
+        <h3 class="mt-4 mb-2">Waiting Transactions</h3>
+        <p class="my-2">A waiting transactions value above zero is an indication for I/O bottleneck. If the threshold is crossed due to GSX logging capacity augmentation should be considered.</p>
+      
+        <h3 class="mt-4 mb-2">Disk Space Utilization</h3>
+        <p class="my-2">If the system partitions (such as /, /var) or the ones that are used by Sonus applications cross the threshold older or unwanted files should be cleaned up</p>
+      
+        <h3 class="mt-4 mb-2">MNS - Management Network Server</h3>
+        <p class="my-2">Communicate with all other Sonus devices on the management network, such as the PSX, SGX, EMS, and DSI.Load software from the NFS server at boot-up and direct download files to other server modules in the chassis.</p>
+        <p class="my-2">Monitor system power, cooling, and the operational state of all other modules. Write events to log files on the NFS server, including call detail records (CDRs).Generate SNMP alarms and send them to the EMS server.</p>
+      
+        <h3 class="mt-4 mb-2">CNS - Circuit Network Server</h3>
+        <p class="my-2">Provides time-division multiplexed (TDM) connections to the PSTN.</p>
+      
+        <h3 class="mt-4 mb-2">PNS - Packet Network Server</h3>
+        <p class="my-2">Provides Ethernet connections to a packet network for carrying packetized voice. Ports can carry both call signaling packets and voice traffic</p>
+
+    </div>
+    </div>
+  </div>
+</div>

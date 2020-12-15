@@ -1,0 +1,2137 @@
+<breadcrumb #parent>  
+    <ol class="breadcrumb">
+      <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+        <div class="crumb my-0">
+            <a href="javascript:void()">Sonus</a> / {{ route.displayName }}
+        </div>
+      </ng-template>
+    </ol>
+</breadcrumb>
+
+<div class="filter_box mx-3 py-2 px-3">
+    <h3 class="f_size_18 color-black mt-2 mb-3">Device Statistics Search</h3>
+
+    <form class="form_box py-0 call_log_form" #userForm="ngForm" (ngSubmit)="onSubmit(userForm.value)">
+        <div class="row mx-0 mb-1">
+            <div class="col-sm-1 pl-0" id="Search">Statistics Group</div>
+            <div class="col-sm-5">
+                <ng-multiselect-dropdown [placeholder]="'Select Type'" [data]="statGroup" name="statGrp"
+                    [(ngModel)]="statGrp" [settings]="filterTypeSettings" (onSelect)="onChange($event)"
+                    (onDeSelect)="on_statistics_deselect($event)" ngModel>
+                </ng-multiselect-dropdown>
+            </div>
+        </div>
+
+        <div class="row mx-0 pt-3">
+            <div class="col-sm-6 px-0">
+                <div class="row mx-0">
+                    <div class="col-sm-2 px-0">Device Types</div>
+                    <div class="col-sm-10">
+                        <div class="row mx-0">                        
+                            <div class="col-sm-4 px-0">
+                                <select multiple size="7" class="form-control w-100" id="select1">
+                                    
+                                </select>
+                            </div>
+                            <div class="col-sm-4 px-0 text-center">
+                                <button class="btn btn-grey w-120px mb-1" type="button" (click)="copyAll()"><i class="fas fa-angle-double-right mr-1"></i> Copy All</button>
+        
+                                <button class="btn btn-grey w-120px mb-1" type="button" (click)="copy()"><i class="fas fa-caret-right mr-1"></i> Copy</button>
+        
+                                <button class="btn btn-red w-120px mb-1" type="button" (click)="remove()"><i class="fas fa-caret-left mr-1"></i> Remove</button>
+        
+                                <button class="btn btn-red w-120px mb-1" type="button" (click)="removeAll()"><i class="fas fa-angle-double-left mr-1"></i> Remove All</button>
+                            </div>
+                            <div class="col-sm-4 px-0">
+                                <select multiple class="form-control w-100" size="7" ngModel name="selDevTp" id="select2">
+                                    <option *ngFor="let v of selDevType" [value]="v.value">{{v.value}}</option>
+                                </select>
+                            </div>
+                        </div>                
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 px-0">
+                <div class="row mx-0">
+                    <div class="col-sm-2 pr-0">Devices</div>
+                    <div class="col-sm-10 pl-0">
+                        <div class="row mx-0">                        
+                            <div class="col-sm-4 px-0">
+                                <select multiple size="7" class="form-control w-100" id="sct1">
+                                    <option  *ngFor="let v of dev" [value]="v.value">{{v.value}}</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-4 px-0 text-center">
+                                <button class="btn btn-grey w-120px mb-1" type="button" (click)="copyAll1()"><i class="fas fa-angle-double-right mr-1"></i> Copy All</button>
+        
+                                <button class="btn btn-grey w-120px mb-1" type="button" (click)="copy1()"><i class="fas fa-caret-right mr-1"></i> Copy</button>
+        
+                                <button class="btn btn-red w-120px mb-1" type="button" (click)="remove1()"><i class="fas fa-caret-left mr-1"></i> Remove</button>
+        
+                                <button class="btn btn-red w-120px mb-1" type="button" (click)="removeAll1()"><i class="fas fa-angle-double-left mr-1"></i> Remove All</button>
+                            </div>
+                            <div class="col-sm-4 px-0">
+                                <select multiple class="form-control w-100" size="7"  name="slDev" id="sct2">
+                                    <option  *ngFor="let v of selDev" [value]="v.value">{{v.value}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>        
+
+        <div class="row mx-0 pt-2" *ngIf="show_slot">
+            <div class="col-sm-1 pl-0">Slot</div>
+            <div class="col-sm-5">
+                <ng-multiselect-dropdown [placeholder]="'Select Slot'" [settings]="slotSettings" [data]="slot"
+                    name="slotSel1" [(ngModel)]="slotSel1" (onSelect)="on_slot_select($event)"
+                    (onDeSelect)="on_slot_deselect($event)" ngModel>
+                </ng-multiselect-dropdown>
+                <span style="font-weight:bold;color:red;">*Note : Slot is not applicable  for selected device type SBC.</span>
+            </div>
+        </div>
+
+        <div class="row mx-0 pt-2">
+            <div class="col-sm-1 pt-1 pl-0">Date Range</div>
+            <div class="col-sm-5">
+                <input type="date" name='fromDate' [(ngModel)]='fromDate' class="form_text w-150px mr-3 float-left"        placeholder="from">
+                <input type="date" name='toDate' [(ngModel)]='toDate' class="form_text w-150px float-left"
+                    placeholder="to">
+               </div>
+        </div>
+        <div class="row mx-0 pt-2" *ngIf="show_slot">
+            <span style="font-weight:bold">	* Note ALL: It shows peak value per card for the slots statistics available during the time period selected. </span>     
+        </div>
+        <div class="row mx-0 mb-1 mt-4">
+            <div class="col-sm-12 pl-0">
+                <button class="btn btn-red" type="submit">Run Report</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="hr mx-3"></div>
+<div class="border-grey px-2 py-3 mx-3 mb-3" *ngIf="resultCheck"> 
+    <!-- GSX Result-->
+    <div class="container-fluid">
+        <!-- System Health Stats-->    
+        <div *ngIf="!sbcCon && selectedStatGroup[0] === 'System Health Stats'">
+            <div class="row" id="spacing_bottom">
+                <div class="col-sm-12" id="spacing_left">
+                    <h3 class="page-head-border mt-0 mb-0 pb-2 f_size_18">
+                        <span class="pr-5 border-right-grey mr-3"> System Usage </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                        <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                
+                        <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                    </h3>                
+                </div>            
+            </div>
+        </div>
+
+        <div *ngIf="selectedStatGroup[0] ==='Call Count Stats'">
+            <div class="row" id="spacing_bottom">
+                <div class="col-sm-12" id="spacing_left">
+                    <h3 class="page-head-border mt-0 mb-0 pb-2 f_size_18">
+                        <span class="pr-5 border-right-grey mr-3"> Call Count Stats </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                        <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                
+                        <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                    </h3>                
+                </div>            
+            </div>
+        </div>
+
+        <div *ngIf="selectedStatGroup[0] === 'Congestion Rejects and Dips'">
+            <div class="row" id="spacing_bottom">
+                <div class="col-sm-12" id="spacing_left">
+                    <h3 class="page-head-border mt-0 mb-0 pb-2 f_size_18">
+                        <span class="pr-5 border-right-grey mr-3"> Congestion Rejects and Dips </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                        <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                
+                        <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                    </h3>                
+                </div>            
+            </div>
+        </div>
+
+        <div *ngIf="selectedStatGroup[0] === 'Call Attempts Chassis wise'">
+            <div class="row" id="spacing_bottom">
+                <div class="col-sm-12" id="spacing_left">
+                    <h3 class="page-head-border mt-0 mb-0 pb-2 f_size_18">
+                        <span class="pr-5 border-right-grey mr-3"> Call Attempts Chassis wise </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                        <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                
+                        <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                    </h3>                
+                </div>            
+            </div>
+        </div>
+
+        <div *ngIf="selectedStatGroup[0] === 'Call Attempts Slot wise'">
+            <div class="row" id="spacing_bottom">
+                <div class="col-sm-12" id="spacing_left">
+                    <h3 class="page-head-border mt-0 mb-0 pb-2 f_size_18">
+                        <span class="pr-5 border-right-grey mr-3"> Call Attempts Slot wise </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                        <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                
+                        <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                    </h3>                
+                </div>            
+            </div>
+        </div>
+
+        <div *ngIf="selectedStatGroup[0] === 'Ethernet Stats Slot wise'">
+            <div class="row" id="spacing_bottom">
+                <div class="col-sm-12" id="spacing_left">
+                    <h3 class="page-head-border mt-0 mb-0 pb-2 f_size_18">
+                        <span class="pr-5 border-right-grey mr-3"> Ethernet Stats Slot wise </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                        <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                
+                        <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                    </h3>                
+                </div>            
+            </div>
+        </div>
+
+        <div *ngIf="selectedStatGroup[0] === 'Machine Congestion Stats'">
+            <div class="row" id="spacing_bottom">
+                <div class="col-sm-12" id="spacing_left">
+                    <h3 class="page-head-border mt-0 mb-0 pb-2 f_size_18">
+                        <span class="pr-5 border-right-grey mr-3"> Machine Congestion Stats </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                        <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                
+                        <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                    </h3>                
+                </div>            
+            </div>
+        </div>
+
+        <div *ngIf="systemGsxList">
+            <div *ngIf="selectedStatGroup[0] ==='System Health Stats'">            
+
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">GSX - Open Services Switch</span> 
+                </h4>
+
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>                            
+                                <th class="w-40pt">Slot</th>
+                                <th class="w-30pt">CPU Usage(%)</th>
+                                <th class="w-30pt">Memory Usage(%)</th>
+                            </tr>
+                            <tbody *ngFor="let gsx of systemGsxList index as i">
+                                <tr>
+                                    <td colspan="3" class="bg_grey f_size_12"><span class="bold">{{i+1}}. Device:</span> {{gsx.name}}-{{gsx.descr}}</td>
+                                </tr>
+                                <tr *ngFor="let kpi of gsx.kpiList" data-toggle="popover" data-toggle="tooltip"
+                                    title="{{kpi.cardInformation.description}}">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(gsx.name,'GSX',kpi.shelf,kpi.slot,'','','',gsx.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>
+                                                {{kpi.shelf}} - {{kpi.slot}} -
+                                        {{kpi.cardInformation.name}}
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.cpuUsage}}" [bar_color]="cpu_usage(kpi.cpuUsage, thresholdRes.thresholdCpu)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.memoryUsage}}" [show_max]="false" [bar_color]="cpu_usage(kpi.memoryUsage, thresholdRes.thresholdMemory)" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call Count Stats-->
+            <div *ngIf="systemGsxList">
+                <div *ngIf="selectedStatGroup[0] ==='Call Count Stats'">            
+
+                    <h4 class="py-2 my-0 page-head-border">
+                        <span class="pr-5 py-1 mr-3 bold">GSX - Open Services Switch</span> 
+                    </h4>
+        
+                    <div class="row mx-0">
+                        <div class="col-sm-12 px-0">
+                            <table class="table mb-1">
+                                <tr>                            
+                                    <th class="w-40pt">Slot</th>
+                                    <th class="w-30pt">Calls per Second</th>
+                                    <th class="w-30pt">Active Call Counts</th>
+                                </tr>
+                                <tbody *ngFor="let gsx of systemGsxList index as i">
+                                    <tr>
+                                        <td colspan="3" class="bg_grey f_size_12"><span class="bold">{{i+1}}. Device:</span> {{gsx.name}}-{{gsx.descr}}</td>
+                                    </tr>
+                                    <tr *ngFor="let kpi of gsx.kpiList" data-toggle="popover" data-toggle="tooltip"
+                                        title="{{kpi.cardInformation.description}}">
+                                        <td>
+                                            <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History"  (click)="showPopUpHistory(gsx.name,'GSX',kpi.shelf,kpi.slot,'','','',gsx.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>
+                                                    {{kpi.shelf}} - {{kpi.slot}} -
+                                            {{kpi.cardInformation.name}}
+                                        </td>
+                                        <td class="pt-2">
+                                            <ratings-bar percentage="{{(kpi.callsPerSecond/higherTableValues[0])*100}}" display_value="{{kpi.callsPerSecond}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[0],kpi.callsPerSecond, thresholdRes.thresholdCallsPerSecond)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                        </td>
+                                        <td class="pt-2">
+                                            <ratings-bar percentage="{{(kpi.activeCallCounts/higherTableValues[0])*100}}" display_value="{{kpi.activeCallCounts}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[1],kpi.activeCallCounts, thresholdRes.thresholdActiveCallCounts)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+        
+            </div>
+
+            <!-- Congestion Rejects and Dips-->
+            <div *ngIf="selectedStatGroup[0] ==='Congestion Rejects and Dips'">            
+
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">GSX - Open Services Switch</span> 
+                </h4>
+
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>                            
+                                <th class="w-20pt">Machine Congestion Rejects</th>
+                                <th class="w-20pt">PSX Congestion Rejects</th>
+                                <th class="w-20pt">PSX Dip Retries</th>
+                                <th class="w-20pt">PSX Dip Failures</th>
+                            </tr>
+                            <tbody *ngFor="let gsx of systemGsxList index as i">
+                                <tr>
+                                    <td colspan="4" class="bg_grey f_size_12">
+                                    <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(gsx.name,'GSX','','','','','',gsx.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>
+                                    <span class="bold">{{i+1}}. Device:</span> {{gsx.name}}-{{gsx.descr}}</td>
+                                </tr>
+                                <tr *ngFor="let kpi of gsx.kpiList">
+                                    <td class="pt-2">
+                                    <ratings-bar percentage="{{kpi.machineCongestionRejects}}" [bar_color]="call_counts(higherTableValues[0],kpi.machineCongestionRejects, thresholdRes.thresholdMachineCongestion)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.psxCongestionRejects}}" [bar_color]="call_counts(higherTableValues[1],kpi.psxCongestionRejects, thresholdRes.thresholdPsxCongestionRejects)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.psxDipRetries}}" [show_max]="false" [bar_color]="call_counts(higherTableValues[2],kpi.psxDipRetries, thresholdRes.thresholdPsxDipRetries)" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.psxDipFailures}}" [show_max]="false" [bar_color]="call_counts(higherTableValues[3],kpi.psxDipFailures, thresholdRes.thresholdPsxDipFailures)" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- DSP Card Usage-->
+        <div *ngIf="dspDeviceModelCardResourceList || dspDeviceModelsbcdcuCardResourceList">
+            <div *ngIf="selectedStatGroup[0] ==='DSP Card Usage'">           
+                <div class="row" id="spacing_bottom">
+                    <div class="col-sm-12" id="spacing_left">
+                        <h3 class="page-head-border mt-2 mb-0 pb-2 f_size_18">
+                            <span class="pr-5 border-right-grey mr-3"> Resource Utillization Report </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                            <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                    
+                            <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                        </h3>                
+                    </div>            
+                </div> 
+
+                <h4 class="py-2 my-0 border-bottom-grey normal"  *ngIf="gsxCheck">
+                    <span class="pr-5 py-1 mr-3 bold">GSX - Open Services Switch</span> 
+                </h4>
+
+                <h4 class="py-2 my-0 border-bottom-grey normal"  *ngIf="nbsCheck">
+                    <span class="pr-5 py-1 mr-3 bold">NBS - Network Border Switch</span> 
+                </h4>
+
+                <h4 class="py-2 my-0 border-bottom-grey normal"  *ngIf="sbcCheck">
+                    <span class="pr-5 py-1 mr-3 bold">SBC - Session Border Controller</span> 
+                </h4>
+
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0"  *ngIf="sbcCheck"> 
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-20pt">Codec Name</th>
+                                <th class="w-20pt">Total</th>
+                                <th class="w-30pt">Utilization</th>
+                                <th class="w-30pt">Allocation Failures</th>
+                            </tr>
+                            <tbody *ngFor="let dsp of dspDeviceModelsbcdcuCardResourceList index as i">
+                                <tr>
+                                    <td colspan="4" class="bg_grey f_size_12"><span class="bold">{{i+1}}. Device:</span> {{dsp.name}}-{{dsp.descr}}</td>
+                                </tr>
+                                <tr *ngFor="let kpi of dsp.dspDeviceKpiModelList">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(dsp.name,'GSX','','','','','',dsp.descr,kpi.codecName,true,'')"><i class="fas fa-chart-bar"></i></button>
+                                        {{kpi.codecName}}
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.total/higherValuesDspList[3])*100}}" display_value="{{kpi.total}}" [show_display]="true" [bar_color]="'green'" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.utilisation}}" [bar_color]="cpu_usage(kpi.utilisation, thresholdRes.thresholdUtilisation)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.allocationFailures}}" [bar_color]="cpu_usage(kpi.allocationFailures, thresholdRes.thresholdAllocationFailure)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-12 px-0" *ngIf="!sbcCheck">
+                        <table class="table mb-1">
+                            <tr id="height_size" style="height: 5px;">
+                                <th class="w-20pt">Codec Name</th>
+                                <th class="w-20pt">Total</th>
+                                <th class="w-30pt">Utilization</th>
+                                <th class="w-30pt">Allocation Failures</th>
+                            </tr>
+                            <tbody *ngFor="let dsp of dspDeviceModelCardResourceList index as i">
+                                <tr>
+                                    <td colspan="4" class="bg_grey f_size_12"><span class="bold">{{i+1}}. Device:</span> {{dsp.name}}-{{dsp.descr}}</td>
+                                </tr>
+                                <tr *ngFor="let kpi of dsp.dspDeviceKpiModelList">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(dsp.name,'GSX','','','','','',dsp.descr,kpi.codecName,true,'')"><i class="fas fa-chart-bar"></i></button>
+                                        {{kpi.codecName}}
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.total/higherValuesDspList[3])*100}}" display_value="{{kpi.total}}" [show_display]="true" [bar_color]="'green'" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.utilisation}}" [bar_color]="cpu_usage(kpi.utilisation, thresholdRes.thresholdUtilisation)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.allocationFailures}}" [bar_color]="cpu_usage(kpi.allocationFailures, thresholdRes.thresholdAllocationFailure)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row" id="left-padding">
+                            <div class="col-sm-12">
+                            <table class="table table-bordered table-sm" style="width: 590px;">
+                                        <tr>
+                                        <td>
+                                                Notes:<br>
+                                                Total: Total number of a resource <br>
+                                                Utilization: Percentage Utilization of a resource <br>
+                                                Allocation Failure: Percentage of a resource allocation failure
+                                        </td>
+                                        </tr>
+                                    </table>
+                            </div>
+                        </div>
+                </div>
+                <div class="row" id="spacing_bottom">
+                        <div class="col-sm-12" id="spacing_left">
+                            <h3 class="page-head-border mt-2 mb-0 pb-2 f_size_18">
+                                <span class="pr-5 border-right-grey mr-3"> Performance Statistics Report </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                                <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                        
+                                <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                            </h3>                
+                        </div>            
+                </div> 
+        
+
+
+                <h4 class="py-2 my-0 border-bottom-grey normal"  *ngIf="gsxCheck">
+                    <span class="pr-5 py-1 mr-3 bold">GSX - Open Services Switch</span> 
+                </h4>
+
+                <h4 class="py-2 my-0 border-bottom-grey normal"  *ngIf="nbsCheck">
+                    <span class="pr-5 py-1 mr-3 bold">NBS - Network Border Switch</span> 
+                </h4>
+        
+                <h4 class="py-2 my-0 border-bottom-grey normal"  *ngIf="sbcCheck">
+                    <span class="pr-5 py-1 mr-3 bold">SBC - Session Border Controller</span> 
+                </h4>
+
+                <div class="row mx-0" *ngIf="sbcCheck">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-20pt">Codec Name</th>
+                                <th class="w-20pt">Peak Used</th>
+                                <th class="w-30pt">Average Used</th>
+                                <th class="w-30pt">Average Available</th>
+                            </tr>
+                            <tbody *ngFor="let dsp of dspDeviceModelsbcdcuPerformanceList index as i">
+                                <tr>
+                                    <td colspan="4"> {{i+1}}.Device:{{dsp.name}}-{{dsp.descr}}</td>
+                                </tr>
+                                <tr *ngFor="let kpi of dsp.dspDeviceKpiModelList">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(dsp.name,'GSX','','','','','',dsp.descr,kpi.codecName,false,'sbcdcuperformance')"><i class="fas fa-chart-bar"></i></button>        
+                                        {{kpi.codecName}}
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.peakUsed/higherValuesDspList[0])*100}}" display_value="{{kpi.peakUsed}}" [show_display]="true"  [bar_color]="cpu_usage(kpi.peakUsed, thresholdRes.thresholdPeakUsed)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.averageUsed/higherValuesDspList[1])*100}}" display_value="{{kpi.averageUsed}}" [show_display]="true" [bar_color]="cpu_usage(kpi.averageUsed, thresholdRes.thresholdAverageUsed)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.averageAvailable/higherValuesDspList[2])*100}}" display_value="{{kpi.averageAvailable}}" [show_display]="true" [bar_color]="cpu_usage(kpi.averageAvailable, thresholdRes.thresholdAverageAvailable)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row mx-0" *ngIf="gsxCheck || nbsCheck">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-20pt">Codec Name</th>
+                                <th class="w-20pt">Peak Used</th>
+                                <th class="w-30pt">Average Used</th>
+                                <th class="w-30pt">Average Available</th>
+                            </tr>
+                            <tbody *ngFor="let dsp of dspDeviceModelPerformanceList index as i">
+                                <tr>
+                                    <td colspan="4" class="bg_grey f_size_12"><span class="bold">{{i+1}}. Device:</span> {{dsp.name}}-{{dsp.descr}}</td>
+                                </tr>
+                                <tr *ngFor="let kpi of dsp.dspDeviceKpiModelList">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(dsp.name,'GSX','','','','','',dsp.descr,kpi.codecName,false,'')"><i class="fas fa-chart-bar"></i></button>         
+                                        {{kpi.codecName}}
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.peakUsed/higherValuesDspList[0])*100}}" display_value="{{kpi.peakUsed}}" [show_display]="true" [bar_color]="cpu_usage(kpi.peakUsed, thresholdRes.thresholdPeakUsed)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.averageUsed/higherValuesDspList[1])*100}}" display_value="{{kpi.averageUsed}}" [show_display]="true" [bar_color]="cpu_usage(kpi.averageUsed, thresholdRes.thresholdAverageUsed)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.averageAvailable/higherValuesDspList[2])*100}}" display_value="{{kpi.averageAvailable}}" [show_display]="true" [bar_color]="cpu_usage(kpi.averageAvailable, thresholdRes.thresholdAverageAvailable)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row" id="left-padding">
+                        <div class="col-sm-12">
+                        <table class="table table-bordered table-sm" style="width: 590px;">
+                                    <tr>
+                                    <td>
+                                            Notes: <br>
+                                            Peak Used: Peak usage of a DSP pad <br>
+                                            Average Used: Average usage of a DSP pad <br>
+                                            Average Avaliable: Average availablility of a DSP pad
+                                    </td>
+                                    </tr>
+                                </table>
+                        </div>
+                    </div>
+                <div *ngIf="sbcCheck">
+                    <div class="row" id="spacing_bottom">
+                            <div class="col-sm-12" id="spacing_left">
+                                <h3 class="page-head-border mt-2 mb-0 pb-2 f_size_18">
+                                    <span class="pr-5 border-right-grey mr-3"> DSP Call Interval Stat Report </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                                    <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                            
+                                    <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                                </h3>                
+                            </div>            
+                        </div>
+                    <h4 class="py-2 my-0 page-head-border">
+                        <span class="pr-5 py-1 mr-3 bold">SBC - Session Border Controller</span> 
+                    </h4>
+                    <div class="row mx-0">
+                        <div class="col-sm-12 px-0">
+                            <table class="table mb-1">
+                                <tr>
+                                    <th class="w-60pt">Codec Name</th>
+                                    <th class="w-60pt">Code Value</th>
+                                </tr>
+                                <tbody *ngFor="let dsp of dspDeviceModelCardStatList index as i">
+                                    <tr>
+                                            <td colspan="2" class="bg_grey f_size_12"><span class="bold">{{i+1}}. Device:</span> {{dsp.name}}-{{dsp.descr}}</td>
+                                    </tr>
+                                    <tr *ngFor="let kpi of dsp.dspDeviceKpiModelList">
+                                        <td>
+                                            <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(dsp.name,'SBC','','','','','',dsp.descr,kpi.codecName,false,'sbcdcustat')"><i class="fas fa-chart-bar"></i></button>
+                                            {{kpi.codecName}}
+                                        </td>
+                                        <td>
+                                            {{kpi.codecval}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row" id="spacing_bottom">
+                            <div class="col-sm-12" id="spacing_left">
+                                <h3 class="page-head-border mt-2 mb-0 pb-2 f_size_18">
+                                    <span class="pr-5 border-right-grey mr-3"> SBC Display Card Usage Slot Report </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                                    <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                            
+                                    <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                                </h3>                
+                            </div>            
+                    </div>
+
+                    <h4 class="py-2 my-0 border-bottom-grey normal"  *ngIf="gsxCheck">
+                        <span class="pr-5 py-1 mr-3 bold">GSX - Open Services Switch</span> 
+                    </h4>
+        
+                    <h4 class="py-2 my-0 border-bottom-grey normal"  *ngIf="nbsCheck">
+                        <span class="pr-5 py-1 mr-3 bold">NBS - Network Border Switch</span> 
+                    </h4>
+            
+                    <h4 class="py-2 my-0 border-bottom-grey normal"  *ngIf="sbcCheck">
+                        <span class="pr-5 py-1 mr-3 bold">SBC - Session Border Controller</span> 
+                    </h4>
+                    <div class="row mx-0">
+                        <div class="col-sm-12 px-0">
+                            <table class="table mb-1">
+                                <tr>
+                                    <th class="w-60pt">Codec Name</th>
+                                    <th class="w-60pt">Code Value</th>
+                                </tr>
+                                <tbody *ngFor="let dsp of dspDeviceModelCardsbcslotList index as i">
+                                    <tr>
+                                            <td colspan="2" class="bg_grey f_size_12"><span class="bold">{{i+1}}. Device:</span> {{dsp.name}}-{{dsp.descr}}</td>
+                                    </tr>
+                                    <tr *ngFor="let kpi of dsp.dspDeviceKpiModelList">
+                                        <td>
+                                            <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(dsp.name,'SBC','','','','','',dsp.descr,kpi.codecName,false,'sbcdcuslot')"><i class="fas fa-chart-bar"></i></button>
+                                            {{kpi.codecName}}
+                                        </td>
+                                        <td>
+                                            {{kpi.codecslotval}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="systemGsxChassisList">
+            <!-- Call Attempts Chassis wise-->
+            <div *ngIf="selectedStatGroup[0] ==='Call Attempts Chassis wise'">
+                    <h4 class="py-2 my-0 page-head-border">
+                        <span class="pr-5 py-1 mr-3 bold">GSX - Open Services Switch</span> 
+                    </h4>
+
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-10pt">Device</th>
+                                <th class="w-20pt">Busy Hour Call Attempts</th>
+                                <th class="w-20pt">Call Completion</th>
+                                <th class="w-20pt">Call Attempt Rate</th>
+                                <th class="w-20pt">Total Call Attempts</th>
+                            </tr>
+                            <tr *ngFor="let gsx of systemGsxChassisList index as i">
+                                <td>
+                                    <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(gsx.name,'GSX','','','','','',gsx.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>
+                                    {{i+1}}. {{gsx.name}}
+                                </td>
+                                <td>
+                                    <ratings-bar percentage="{{gsx.callAttemptCounts}}" [bar_color]="call_counts(higherTableValues[0],gsx.callAttemptCounts, thresholdRes.thresholdcallAttemptsUsed)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{gsx.callCompletionCounts}}" [bar_color]="call_counts(higherTableValues[1],gsx.callCompletionCounts, thresholdRes.thresholdcallCompletionsUsed)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{gsx.callAttemptRate}}" [bar_color]="call_counts(higherTableValues[2],gsx.callAttemptRate, thresholdRes.thresholdcallAttemptRateUsed)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{gsx.totalCallAttempt}}" [bar_color]="call_counts(higherTableValues[3],gsx.totalCallAttempt, thresholdRes.thresholdTotalCallAttempts)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="systemNbsChassisList">
+            <div *ngIf="selectedStatGroup[0] ==='Call Attempts Chassis wise'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">NBS - Network Border Switch</span> 
+                </h4>
+
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-10pt">Device</th>
+                                <th class="w-20pt">Busy Hour Call Attempts</th>
+                                <th class="w-20pt">Call Completion</th>
+                                <th class="w-20pt">Call Attempt Rate</th>
+                                <th class="w-20pt">Total Call Attempts</th>
+                            </tr>
+                            <tr *ngFor="let nbs of systemNbsChassisList index as i">
+                                <td>
+                                    <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(nbs.name,'NBS','','','','','',nbs.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>
+                                    {{i+1}}. {{nbs.name}}
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{nbs.callAttemptCounts}}" [bar_color]="call_counts(higherTableValues[0],nbs.callAttemptCounts, thresholdRes.thresholdcallAttemptsUsed)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{nbs.callCompletionCounts}}" [bar_color]="call_counts(higherTableValues[1],nbs.callCompletionCounts, thresholdRes.thresholdcallCompletionsUsed)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{nbs.callAttemptRate}}" [bar_color]="call_counts(higherTableValues[2],nbs.callAttemptRate, thresholdRes.thresholdcallAttemptRateUsed)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{nbs.totalCallAttempt}}" [bar_color]="call_counts(higherTableValues[3],nbs.totalCallAttempt, thresholdRes.thresholdTotalCallAttempts)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call Attempts Slot wise-->
+
+        <div *ngIf="systemGsxList">
+            <div *ngIf="selectedStatGroup[0] ==='Call Attempts Slot wise'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">GSX - Open Services Switch</span> 
+                </h4>
+
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-10pt">Slot</th>
+                                <th class="w-20pt">Peak Call Attempts</th>
+                                <th class="w-20pt">Call Completions</th>
+                                <th class="w-20pt">Call Attempts Rate</th>
+                                <th class="w-20pt">Total Call Attempts</th>
+                            </tr>
+                            <tbody *ngFor="let gsx of systemGsxList index as i">
+                                <tr>
+                                    <td colspan="5" class="bg_grey f_size_12">
+                                        <span class="bold">{{i+1}}. Device:</span> {{gsx.name}}-{{gsx.descr}}
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let kpi of gsx.kpiList" data-toggle="popover" data-toggle="tooltip"
+                                    title="{{kpi.cardInformation.description}}">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(gsx.name,'GSX',kpi.shelf,kpi.slot,'','','',gsx.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>        
+                                        {{kpi.shelf}} - {{kpi.slot}} -
+                                        {{kpi.cardInformation.name}}
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.peakCallAttempts/higherTableValues[3])*100}}" display_value="{{kpi.peakCallAttempts}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[3],kpi.peakCallAttempts, kpi.thresholdPeakCallAttempts)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.callCompletions/higherTableValues[1])*100}}" display_value="{{kpi.callCompletions}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[1],kpi.callCompletions, kpi.thresholdCallCompletion)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.callAttemptRate/higherTableValues[2])*100}}" display_value="{{kpi.callAttemptRate}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[2],kpi.callAttemptRate, kpi.thresholdCallsPerSecond)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.callAttempts/higherTableValues[0])*100}}" display_value="{{kpi.callAttempts}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[0],kpi.callAttempts, kpi.thresholdCallAttempts)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div *ngIf="systemNbsList">
+            <div *ngIf="selectedStatGroup[0] ==='Call Attempts Slot wise'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">NBS - Network Border Switch</span> 
+                </h4>
+
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-10pt">Slot</th>
+                                <th class="w-20pt">Peak Call Attempts</th>
+                                <th class="w-20pt">Call Completions</th>
+                                <th class="w-20pt">Call Attempts Rate</th>
+                                <th class="w-20pt">Total Call Attempts</th>
+                            </tr>
+                            <tbody *ngFor="let nbs of systemNbsList index as i">
+                                <tr>
+                                    <td colspan="5" class="bg_grey f_size_12">
+                                        <span class="bold">{{i+1}}. Device:</span> {{nbs.name}}-{{nbs.descr}}
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let kpi of nbs.kpiList" data-toggle="popover" data-toggle="tooltip"
+                                    title="{{kpi.cardInformation.description}}">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(nbs.name,'NBS',kpi.shelf,kpi.slot,'','','',nbs.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>
+                                        {{kpi.shelf}} - {{kpi.slot}} -
+                                        {{kpi.cardInformation.name}}</td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.peakCallAttempts/higherTableValues[3])*100}}" display_value="{{kpi.peakCallAttempts}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[3],kpi.peakCallAttempts, thresholdRes.thresholdPeakCallAttempts)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.callCompletions/higherTableValues[1])*100}}" display_value="{{kpi.callCompletions}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[1],kpi.callCompletions, thresholdRes.thresholdCallCompletion)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.callAttemptRate/higherTableValues[2])*100}}" display_value="{{kpi.callAttemptRate}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[2],kpi.callAttemptRate, thresholdRes.thresholdCallsPerSecond)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.callAttempts/higherTableValues[0])*100}}" display_value="{{kpi.callAttempts}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[0],kpi.callAttempts, thresholdRes.thresholdCallAttempts)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ethernet Stats Slot wise-->
+
+        <div *ngIf="systemGsxList">
+            <div *ngIf="selectedStatGroup[0] ==='Ethernet Stats Slot wise'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">GSX - Open Services Switch</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-40pt">Slot</th>
+                                <th class="w-30pt">Total Calls</th>
+                                <th class="w-30pt">Bandwidth Usage</th>
+                            </tr>
+                            <tbody *ngFor="let gsx of systemGsxList index as i">
+                                <tr>
+                                    <td colspan="3" class="bg_grey f_size_12">
+                                        <span class="bold">{{i+1}}. Device:</span> {{gsx.name}}-{{gsx.descr}}
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let kpi of gsx.kpiList">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(gsx.name,'GSX',kpi.shelf,kpi.slot,'','','',gsx.descr,'',false,kpi.nifPort)"><i class="fas fa-chart-bar"></i></button>        
+                                        {{kpi.shelf}} - {{kpi.slot}} -
+                                        {{kpi.nifPort}}
+                                    </td>
+                                    <td>
+                                        {{kpi.totalCalls}}
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.bandwidthUsage}}" [bar_color]="cpu_usage(kpi.bandwidthUsage, thresholdRes.thresholdCpu)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ethernet Stats Slot wise-->
+
+        <div *ngIf="systemNbsList">
+            <div *ngIf="selectedStatGroup[0] ==='Ethernet Stats Slot wise'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">NBS - Network Border Switch</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-40pt">Slot</th>
+                                <th class="w-30pt">Total Calls</th>
+                                <th class="w-30pt">Bandwidth Usage</th>
+                            </tr>
+                            <tbody *ngFor="let nbs of systemNbsList index as i">
+                                <tr>
+                                    <td colspan="3" class="bg_grey f_size_12">
+                                        <span class="bold">{{i+1}}. Device:</span> {{nbs.name}}-{{nbs.descr}}
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let kpi of nbs.kpiList">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(nbs.name,'GSX',kpi.shelf,kpi.slot,'','','',nbs.descr,'',false,kpi.nifPort)"><i class="fas fa-chart-bar"></i></button>        
+                                        {{kpi.shelf}} - {{kpi.slot}} -
+                                        {{kpi.nifPort}}</td>
+                                    <td>
+                                        {{kpi.totalCalls}}
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.bandwidthUsage}}" [bar_color]="cpu_usage(kpi.bandwidthUsage, thresholdRes.thresholdCpu)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Machine Congestion Stats-->
+
+        <div *ngIf="systemGsxList">
+            <div *ngIf="selectedStatGroup[0] ==='Machine Congestion Stats'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">GSX - Open Services Switch</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <thead>
+                                <tr>
+                                    <th class="w-10pt" rowspan="2" style="vertical-align:middle">Device
+                                    </th>
+                                    <th class="w-10pt" colspan="3" style="vertical-align:middle">Machine
+                                        Congestion Instances</th>
+                                    <th class="w-10pt" colspan="3">Total Congestion Time (in Seconds)</th>
+                                    <th class="w-10pt" rowspan="2" style="vertical-align:middle">Total
+                                        Call Arrivals</th>
+                                    <th class="w-10pt" rowspan="2" style="vertical-align:middle">Calls
+                                        Rejected due to Congestion</th>
+                                    <th class="w-10pt" rowspan="2" style="vertical-align:middle">Peak Call
+                                        Rate</th>
+                                </tr>
+                                <tr>
+                                    <th class="w-10pt">MC1 Count</th>
+                                    <th class="w-10pt">MC2 Count</th>
+                                    <th class="w-10pt">MC3 Count</th>
+                                    <th class="w-10pt">MC1 time</th>
+                                    <th class="w-10pt">MC2 time</th>
+                                    <th class="w-10pt">MC3 time</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngFor="let gsx of systemGsxList index as i">
+                                <tr *ngFor="let kpi of gsx.kpiList">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(gsx.name,'GSX','','','','','',gsx.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>                
+                                        {{gsx.name}}
+                                    </td>
+                                    <td> {{kpi.mc1Count}}</td>
+                                    <td> {{kpi.mc2Count}}</td>
+                                    <td> {{kpi.mc3Count}}</td>
+                                    <td> {{kpi.mc1Time}}</td>
+                                    <td> {{kpi.mc2Time}}</td>
+                                    <td> {{kpi.mc3Time}}</td>
+                                    <td> {{kpi.totalCallArrivals}}</td>
+                                    <td> {{kpi.callsRejectedDuetoCongestion}}</td>
+                                    <td> {{kpi.nbsgsxpeakCallRate}} </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Machine Congestion Stats-->
+
+        <div *ngIf="systemNbsList">
+            <div *ngIf="selectedStatGroup[0] ==='Machine Congestion Stats'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">NBS - Network Border Switch</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <thead>
+                                <tr>
+                                    <th class="w-10pt" rowspan="2" style="vertical-align:middle">Device
+                                    </th>
+                                    <th class="w-10pt" colspan="3" style="vertical-align:middle">Machine
+                                        Congestion Instances</th>
+                                    <th class="w-10pt" colspan="3">Total Congestion Time (in Seconds)</th>
+                                    <th class="w-10pt" rowspan="2" style="vertical-align:middle">Total
+                                        Call Arrivals</th>
+                                    <th class="w-10pt" rowspan="2" style="vertical-align:middle">Calls
+                                        Rejected due to Congestion</th>
+                                    <th class="w-10pt" rowspan="2" style="vertical-align:middle">Peak Call
+                                        Rate</th>
+                                </tr>
+                                <tr>
+                                    <th class="w-10pt">MC1 Count</th>
+                                    <th class="w-10pt">MC2 Count</th>
+                                    <th class="w-10pt">MC3 Count</th>
+                                    <th class="w-10pt">MC1 time</th>
+                                    <th class="w-10pt">MC2 time</th>
+                                    <th class="w-10pt">MC3 time</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngFor="let nbs of systemNbsList index as i">
+                                <tr *ngFor="let kpi of nbs.kpiList">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(nbs.name,'NBS','','','','','',nbs.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>                  
+                                        {{nbs.name}}
+                                    </td>
+                                    <td> {{kpi.mc1Count}}</td>
+                                    <td> {{kpi.mc2Count}}</td>
+                                    <td> {{kpi.mc3Count}}</td>
+                                    <td> {{kpi.mc1Time}}</td>
+                                    <td> {{kpi.mc2Time}}</td>
+                                    <td> {{kpi.mc3Time}}</td>
+                                    <td> {{kpi.totalCallArrivals}}</td>
+                                    <td> {{kpi.callsRejectedDuetoCongestion}}</td>
+                                    <td> {{kpi.nbsgsxpeakCallRate}} </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Machine Congestion Stats-->
+
+        <div *ngIf="systemSbcList">
+            <div *ngIf="selectedStatGroup[0] ==='Machine Congestion Stats'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">SBC - Session Border Controller</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <thead>
+                                <tr>
+                                    <th class="w-10pt" rowspan="2" style="vertical-align:middle">Device
+                                    </th>
+                                    <th class="w-10pt" colspan="3" style="vertical-align:middle">Machine
+                                        Congestion Instances</th>
+                                    <th class="w-10pt" colspan="3">Total Congestion Time (in Seconds)</th>
+                                    <th class="w-10pt" rowspan="2" style="vertical-align:middle">Total
+                                        Call Arrivals</th>
+                                    <th class="w-10pt" rowspan="2" style="vertical-align:middle">Calls
+                                        Rejected due to Congestion</th>
+                                    <th class="w-10pt" rowspan="2" style="vertical-align:middle">Peak Call
+                                        Rate</th>
+                                </tr>
+                                <tr>
+                                    <th class="w-10pt">MC1 Count</th>
+                                    <th class="w-10pt">MC2 Count</th>
+                                    <th class="w-10pt">MC3 Count</th>
+                                    <th class="w-10pt">MC1 time</th>
+                                    <th class="w-10pt">MC2 time</th>
+                                    <th class="w-10pt">MC3 time</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngFor="let sbc of systemSbcList index as i">
+                                <tr *ngFor="let kpi of sbc.kpiListSbc">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(sbc.name,'SBC','','','','','',sbc.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>               
+                                        {{sbc.name}}
+                                    </td>
+                                    <td> {{kpi.mc1Count}}</td>
+                                    <td> {{kpi.mc2Count}}</td>
+                                    <td> {{kpi.mc3Count}}</td>
+                                    <td> {{kpi.mc1Time}}</td>
+                                    <td> {{kpi.mc2Time}}</td>
+                                    <td> {{kpi.mc3Time}}</td>
+                                    <td> {{kpi.callArrivals}}</td>
+                                    <td> {{kpi.overloadRejects}}</td>
+                                    <td> {{kpi.sbcPeakCallRate}} </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- NBS Result-->
+        <div *ngIf="systemNbsList">
+            <!-- System Health Stats-->
+            <div *ngIf="selectedStatGroup[0] ==='System Health Stats'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">NBS - Network Border Switch</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-40pt">Slot</th>
+                                <th class="w-30pt">CPU Usage(%)</th>
+                                <th class="w-30pt">Memory Usage(%)</th>
+                            </tr>
+                            <tbody *ngFor="let nbs of systemNbsList index as i">
+                                <tr>
+                                    <td colspan="3" class="bg_grey f_size_12">
+                                        <span class="bold">{{i+1}}. Device:</span> {{nbs.name}}-{{nbs.descr}}
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let kpi of nbs.kpiList" data-toggle="popover" data-toggle="tooltip"
+                                    title="{{kpi.cardInformation.description}}">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(nbs.name,'NBS',kpi.shelf,kpi.slot,'','','',nbs.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>   
+                                        {{kpi.shelf}} - {{kpi.slot}} -     
+                                        {{kpi.cardInformation.name}}
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.cpuUsage}}" [bar_color]="cpu_usage(kpi.cpuUsage, thresholdRes.thresholdCpu)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.memoryUsage}}" [bar_color]="cpu_usage(kpi.memoryUsage, thresholdRes.thresholdMemory)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Call Count Stats-->
+            <div *ngIf="selectedStatGroup[0] ==='Call Count Stats'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">NBS - Network Border Switch</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-40pt">Slot</th>
+                                <th class="w-30pt">Calls per Second</th>
+                                <th class="w-30pt">Active Call Counts</th>
+                            </tr>
+                            <tbody *ngFor="let nbs of systemNbsList index as i">
+                                <tr>
+                                    <td colspan="3" class="bg_grey f_size_12">
+                                        <span class="bold">{{i+1}}. Device:</span> {{nbs.name}}-{{nbs.descr}}
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let kpi of nbs.kpiList" data-toggle="popover" data-toggle="tooltip"
+                                    title="{{kpi.cardInformation.description}}">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(nbs.name,'NBS',kpi.shelf,kpi.slot,'','','',nbs.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>                
+                                        {{kpi.shelf}} - {{kpi.slot}} -
+                                        {{kpi.cardInformation.name}}</td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.callsPerSecond/higherTableValues[0])*100}}" display_value="{{kpi.callsPerSecond}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[0],kpi.callsPerSecond, thresholdRes.thresholdCallsPerSecond)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.activeCallCounts/higherTableValues[1])*100}}" display_value="{{kpi.activeCallCounts}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[1],kpi.activeCallCounts, thresholdRes.thresholdActiveCallCounts)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Congestion Rejects and Dips-->
+            <div *ngIf="selectedStatGroup[0] ==='Congestion Rejects and Dips'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">NBS - Network Border Switch</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-20pt">Machine Congestion Rejects</th>
+                                <th class="w-20pt">PSX Congestion Rejects</th>
+                                <th class="w-20pt">PSX Dip Retries</th>
+                                <th class="w-20pt">PSX Dip Failures</th>
+                            </tr>
+                            <tbody *ngFor="let nbs of systemNbsList index as i">
+                                <tr>
+                                    <td colspan="4" class="bg_grey f_size_12">
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(nbs.name,'NBS','','','','','',nbs.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>        
+                                        <span class="bold">{{i+1}}. Device:</span> {{nbs.name}}-{{nbs.descr}}
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let kpi of nbs.kpiList">
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.machineCongestionRejects}}" [bar_color]="call_counts(higherTableValues[0],kpi.machineCongestionRejects, thresholdRes.thresholdMachineCongestion)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.psxCongestionRejects}}" [bar_color]="call_counts(higherTableValues[1],kpi.psxCongestionRejects, thresholdRes.thresholdPsxCongestionRejects)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.psxDipRetries}}" [bar_color]="call_counts(higherTableValues[2],kpi.psxDipRetries, thresholdRes.thresholdPsxDipRetries)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.psxDipFailures}}" [bar_color]="call_counts(higherTableValues[3],kpi.psxDipFailures, thresholdRes.thresholdPsxDipFailures)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- PSX Result-->
+        <div *ngIf="systemPsxList">
+            <!-- System Health Stats-->
+            <div *ngIf="selectedStatGroup[0] ==='System Health Stats'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">PSX - Policy Server</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-30pt">Name</th>
+                                <th class="w-30pt">Description</th>
+                                <th class="w-20pt">CPU Usage(%)</th>
+                                <th class="w-40pt">Memory Usage(%)</th>
+                            </tr>
+                            <tr *ngFor="let psx of systemPsxList index as i">
+                                <td>
+                                <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(psx.name,'PSX','','','','','',psx.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>                   
+                                {{i+1}}. {{psx.name}}</td>
+
+                                <td>{{psx.descr}}</td>
+
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{psx.cpuUsage}}" [bar_color]="cpu_usage(psx.cpuUsage, thresholdRes.thresholdCpu)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{psx.memoryUsage}}" [bar_color]="cpu_usage(psx.memoryUsage, thresholdRes.thresholdMemory)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- PSX Timeout and Dips-->
+            <div *ngIf="selectedStatGroup[0] ==='PSX Timeout and Dips'">
+                    <div class="row" id="spacing_bottom">
+                            <div class="col-sm-12" id="spacing_left">
+                                <h3 class="page-head-border mt-2 mb-0 pb-2 f_size_18">
+                                    <span class="pr-5 border-right-grey mr-3"> PSX Timeout and Dips </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                                    <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                            
+                                    <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                                </h3>                
+                            </div>            
+                        </div>
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">PSX - Policy Server</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-20pt">Name</th>
+                                <th class="w-20pt">Description</th>
+                                <th class="w-30pt">External Timeout</th>
+                                <th class="w-30pt">Internal Service Time</th>
+                            </tr>
+                            <tr *ngFor="let psx of systemPsxList index as i">
+                                <td>
+                                <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(psx.name,'PSX','','','','','',psx.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>                   
+                                {{i+1}}. {{psx.name}}</td>
+
+                                <td>{{psx.descr}}</td>
+
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{(psx.externalTimeout/higherTableValues[0])*100}}" display_value="{{psx.externalTimeout}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[0],psx.externalTimeout, thresholdRes.thresholdExternalTimeout)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{(psx.internalServiceTime/higherTableValues[1])*100}}" display_value="{{psx.internalServiceTime}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[1],psx.internalServiceTime, thresholdRes.thresholdInternalServiceTime)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--PSX-IN SIP Request Response-->
+
+        <div *ngIf="systemPsxDeviceList">
+            <div *ngIf="selectedStatGroup[0] ==='PSX-IN SIP Request Response'">
+                <div class="row" id="spacing_bottom">
+                        <div class="col-sm-12" id="spacing_left">
+                            <h3 class="page-head-border mt-2 mb-0 pb-2 f_size_18">
+                                <span class="pr-5 border-right-grey mr-3"> PSX-IN SIP Request Response </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                                <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                        
+                                <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                            </h3>                
+                        </div>            
+                    </div>
+                    <h4 class="py-2 my-0 page-head-border">
+                        <span class="pr-5 py-1 mr-3 bold">PSX-IN SIP Request Response</span> 
+                    </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-10pt">Name</th>
+                                <th class="w-10pt">Description</th>
+                                <th class="w-10pt">Total Requests</th>
+                                <th class="w-10pt">3xx:CNP Success</th>
+                                <th class="w-10pt">2xx:Failure</th>
+                                <th class="w-10pt">4xx:Client Error</th>
+                                <th class="w-10pt">5xx:Server Error</th>
+                                <th class="w-10pt">6xx:Global failure</th>
+                                <th class="w-10pt">Time Out Errors</th>
+                            </tr>
+                            <tr *ngFor="let psx of systemPsxDeviceList index as i">
+                                <td>
+                                <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(psx.name,'PSX','','','','','',psx.description,'',false,'')"><i class="fas fa-chart-bar"></i></button>                    
+                                {{i+1}}. {{psx.name}}</td>
+
+                                <td>{{psx.description}}</td>
+
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{(psx.totalRequest/higherTableValues[5])*100}}" display_value="{{psx.totalRequest}}" [show_display]="true"  [bar_color]="psx_in(higherTableValues[5])" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{(psx.redirection/higherTableValues[1])*100}}" display_value="{{psx.redirection}}" [show_display]="true"  [bar_color]="psx_in(higherTableValues[1])" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{(psx.success/higherTableValues[0])*100}}" display_value="{{psx.success}}" [show_display]="true"  [bar_color]="psx_red(higherTableValues[0])" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{(psx.clientError/higherTableValues[2])*100}}" display_value="{{psx.clientError}}" [show_display]="true"  [bar_color]="psx_red(higherTableValues[2])" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{(psx.serverError/higherTableValues[3])*100}}" display_value="{{psx.serverError}}" [show_display]="true"  [bar_color]="psx_red(higherTableValues[3])" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{(psx.globalFailure/higherTableValues[4])*100}}" display_value="{{psx.globalFailure}}" [show_display]="true"  [bar_color]="psx_red(higherTableValues[4])" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{(psx.timeOutError/higherTableValues[6])*100}}" display_value="{{psx.timeOutError}}" [show_display]="true" [bar_color]="psx_red(higherTableValues[6])" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PSX CPS Licences-->
+        <div *ngIf="psxcpsLicencesList">
+            <div *ngIf="selectedStatGroup[0] ==='PSX CPS Licenses'">
+                <div class="row" id="spacing_bottom">
+                        <div class="col-sm-12" id="spacing_left">
+                            <h3 class="page-head-border mt-2 mb-0 pb-2 f_size_18">
+                                <span class="pr-5 border-right-grey mr-3"> PSX CPS Licenses </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                                <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                        
+                                <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                            </h3>                
+                        </div>            
+                    </div>
+
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">PSX CPS Licence info for D+ Interface</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-15pt">Name</th>
+                                <th class="w-15pt">Max CPS License Limit</th>
+                                <th class="w-15pt">Total Calls accepted</th>
+                                <th class="w-15pt">Total Calls rejected</th>
+                                <th class="w-20pt">Calls accepted per sec</th>
+                                <th class="w-20pt">Calls rejected per sec</th>
+                            </tr>
+                            <tbody *ngFor="let psx of psxcpsLicencesList index as i">
+                                <tr>
+                                    <td>
+                                    <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(psx.name,'PSX','','','','','',psx.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>                    
+                                    {{i+1}}.{{psx.name}}</td>
+                                    <td>
+                                        {{psx.maxcpsLicencesLimit}}
+                                    </td>
+                                    <td>
+                                        {{psx.totalcallaccepted}}
+                                    </td>
+                                    <td>
+                                        {{psx.totalcallsrejected}}
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{psx.callsacceptedpersecond/10}}" 
+                                        display_value="{{psx.callsacceptedpersecond}}"
+                                        [show_display]="true"
+                                        [bar_color]="cpu_usage(psx.callsacceptedpersecond, psx.maxcpsLicencesLimit)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{psx.callsrejectedpersecond/10}}" 
+                                        display_value="{{psx.callsrejectedpersecond}}"
+                                        [show_display]="true" [bar_color]="cpu_usage(psx.callsrejectedpersecond, psx.maxcpsLicencesLimit)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <!-- EMS Result-->
+        <div *ngIf="systemEmsList">
+            <div *ngIf="selectedStatGroup[0] ==='System Health Stats'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">EMS - Element Management System</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-30pt">Name</th>
+                                <th class="w-30pt">Description</th>
+                                <th class="w-20pt">CPU Usage(%)</th>
+                                <th class="w-20pt">Memory Usage(%)</th>
+                            </tr>
+                            <tr *ngFor="let ems of systemEmsList index as i">
+                                <td>
+                                <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory('LOCALHOST','EMS','','','','','',ems.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>                   
+                                {{i+1}}. {{ems.name}}</td>
+
+                                <td>{{ems.descr}}</td>
+
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{ems.cpuUsage}}" [bar_color]="cpu_usage(ems.cpuUsage, thresholdRes.thresholdCpu)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                </td>
+                                <td class="pt-2">
+                                    <ratings-bar percentage="{{ems.memoryUsage}}" [bar_color]="cpu_usage(ems.memoryUsage, thresholdRes.thresholdMemory)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <!-- EMS Disc Result-->
+                <div class="row" id="spacing_bottom">
+                        <div class="col-sm-12" id="spacing_left">
+                            <h3 class="page-head-border mt-2 mb-0 pb-2 f_size_18">
+                                <span class="pr-5 border-right-grey mr-3"> Filesystem Usage </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                                <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                        
+                                <button class="btn-icon float-right" (click)="dwnldcsv('EMS','')" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                            </h3>                
+                        </div>            
+                    </div>
+
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">EMS - Element Management System</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-40pt">Path</th>
+                                <th class="w-60pt">Disk Usage</th>
+                            </tr>
+                            <tbody *ngFor="let ems1 of diskEmsList index as i">
+                                <tr>
+                                    <td colspan="2" class="bg_grey f_size_12">
+                                        <span class="bold">{{i+1}}. Device:</span> {{ems1.name}}-{{ems1.descr}}
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let kpi of ems1.kpiList">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory('LOCALHOST','EMS','','',kpi.path,'','',ems1.descr,false,'')"><i class="fas fa-chart-bar"></i></button>                
+                                        {{kpi.path}}</td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.diskUsage}}" [bar_color]="cpu_usage(kpi.diskUsage, thresholdRes.thresholdDisk)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- DSI Result-->
+        <div *ngIf="diskDsiList">
+            <div *ngIf="selectedStatGroup[0] ==='System Health Stats'">
+                <div class="row" id="spacing_bottom">
+                        <div class="col-sm-12" id="spacing_left">
+                            <h3 class="page-head-border mt-0 mb-0 pb-2 f_size_18">
+                                <span class="pr-5 border-right-grey mr-3"> Filesystem Usage </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                                <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                        
+                                <button class="btn-icon float-right" (click)="dwnldcsv('DSI','')" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                            </h3>                
+                        </div>            
+                    </div>
+
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">DSI - DataStream Integrator</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-40pt">Path</th>
+                                <th class="w-60pt">Disk Usage</th>
+                            </tr>
+                            <tbody *ngFor="let dsi of diskDsiList index as i">
+                                <tr>
+                                    <td colspan="2" class="bg_grey f_size_12">
+                                        <span class="bold">{{i+1}}. Device:</span> {{dsi.name}}-{{dsi.descr}}
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let kpi of dsi.kpiList">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(dsi.name,'DSI','','',kpi.path,'','',dsi.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>                
+                                        {{kpi.path}}</td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.diskUsage}}" [bar_color]="cpu_usage(kpi.diskUsage, thresholdRes.thresholdDisk)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SBC CPU Result-->
+        <div *ngIf="systemSbcCpuList">
+            <!-- System Health Stats-->
+            <div *ngIf="selectedStatGroup[0] ==='System Health Stats'">
+                <div class="row" id="spacing_bottom">
+                        <div class="col-sm-12" id="spacing_left">
+                            <h3 class="page-head-border mt-0 mb-0 pb-2 f_size_18">
+                                <span class="pr-5 border-right-grey mr-3"> SBC Cpu System Health </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                                <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                        
+                                <button class="btn-icon float-right" (click)="dwnldcsv('SBC','')" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                            </h3>                
+                        </div>            
+                    </div>
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">SBC - Session Border Controller</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-40pt">CPU Count</th>
+                                <th class="w-30pt">SBCa CPU Usage</th>
+                                <th class="w-30pt">SBCb CPU Usage</th>
+                            </tr>
+                            <tbody *ngFor="let sbccpu of systemSbcCpuList index as i">
+                                <tr>
+                                    <td colspan="3" class="bg_grey f_size_12">
+                                        <span class="bold">{{i+1}}. Device:</span> {{sbccpu.name}}-{{sbccpu.descr}}
+                                    </td>
+                                </tr>
+                                <tr >
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(sbccpu.name,'SBC','','','',0,'',sbccpu.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>                
+                                        Overall
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{sbccpu.sbc1aCpu}}" [bar_color]="cpu_usage(sbccpu.sbc1aCpu, thresholdRes.thresholdCpu)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{sbccpu.sbc1bCpu}}" [bar_color]="cpu_usage(sbccpu.sbc1bCpu, thresholdRes.thresholdCpu)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let kpi of sbccpu.kpiList">
+                                    <td>
+                                        <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(sbccpu.name,'SBC','','','',kpi.cpuCount,'',sbccpu.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>                
+                                        {{kpi.cpuCount}}</td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.cpuUsage1}}" [bar_color]="cpu_usage(kpi.cpuUsage1, thresholdRes.thresholdCpu)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.cpuUsage2}}" [bar_color]="cpu_usage(kpi.cpuUsage2, thresholdRes.thresholdCpu)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- SBC MEM Result-->
+                <div class="row" id="spacing_bottom">
+                        <div class="col-sm-12" id="spacing_left">
+                            <h3 class="page-head-border mt-0 mb-0 pb-2 f_size_18">
+                                <span class="pr-5 border-right-grey mr-3"> SBC Memory System Health </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                                <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                        
+                                <button class="btn-icon float-right" (click)="dwnldcsv('SBC','sbcmem')" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                            </h3>                
+                        </div>            
+                    </div>
+                    <h4 class="py-2 my-0 page-head-border">
+                        <span class="pr-5 py-1 mr-3 bold">SBC - Session Border Controller</span> 
+                    </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-40pt">CPU</th>
+                                <th class="w-30pt">Memory Usage(%)</th>
+                                <th class="w-30pt">Swap Memory Usage</th>
+                            </tr>
+                            <tbody *ngFor="let sbcmem of systemSbcMemList index as i">
+                                <tr>
+                                    <td colspan="3" class="bg_grey f_size_12">
+                                        <span class="bold">{{i+1}}. Device:</span> {{sbcmem.name}}-{{sbcmem.descr}}
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let kpi of sbcmem.kpiListSbc">
+                                    <td>
+                                    <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(sbcmem.name,'SBC','','','','',kpi.cpuName,sbcmem.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>                   
+                                    {{kpi.cpuCount}}. {{kpi.cpuName}}
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.memoryUsage}}" [bar_color]="cpu_usage(kpi.memoryUsage, thresholdRes.thresholdMemory)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.highSwapUsage}}" [bar_color]="cpu_usage(kpi.highSwapUsage, thresholdRes.thresholdMemory)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Call Count Stats-->
+        <div *ngIf="systemSbcList">
+            <div *ngIf="selectedStatGroup[0] ==='Call Count Stats'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">SBC - Session Border Controller</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-30pt">CPU</th>
+                                <th class="w-30pt">Calls per Second</th>
+                                <th class="w-30pt">Active Call Counts</th>
+                            </tr>
+                            <tbody *ngFor="let sbc of systemSbcList index as i">
+                                <tr>
+                                    <td colspan="3" class="bg_grey f_size_12">
+                                        <span class="bold">{{i+1}}. Device:</span> {{sbc.name}}-{{sbc.descr}}
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let kpi of sbc.kpiList">
+                                    <td>
+                                    <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(sbc.name,'SBC','','','','','',sbc.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>                    
+                                    {{sbc.name}}</td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.callsPerSecond/higherTableValues[0])*100}}" display_value="{{kpi.callsPerSecond}}" [show_display]="true"  [bar_color]="call_counts(higherTableValues[0],kpi.callsPerSecond, thresholdRes.thresholdCallsPerSecond)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{(kpi.activeCallCounts/higherTableValues[1])*100}}" display_value="{{kpi.activeCallCounts}}" [show_display]="true"  [bar_color]="call_counts(higherTableValues[1],kpi.activeCallCounts, thresholdRes.thresholdActiveCall)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Congestion Rejects and Dips-->
+        <div *ngIf="systemSbcList">
+            <div *ngIf="selectedStatGroup[0] ==='Congestion Rejects and Dips'">
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">SBC - Session Border Controller</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-40pt">PSX Congestion Rejects</th>
+                                <th class="w-40pt">PSX Dip Retries</th>
+                                <th class="w-40pt">PSX Dip Failures</th>
+                            </tr>
+                            <tbody *ngFor="let sbc of systemSbcList index as i">
+                                <tr>
+                                <td colspan="3" class="bg_grey f_size_12">
+                                    <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(sbc.name,'SBC','','','','','',sbc.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>               
+                                    <span class="bold">{{i+1}}. Device:</span> {{sbc.name}}-{{sbc.descr}}</td>
+                                </tr>
+                                <tr *ngFor="let kpi of sbc.kpiList">
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.psxCongestionRejects}}" [bar_color]="call_counts(higherTableValues[0],kpi.psxCongestionRejects, thresholdRes.thresholdPsxCongestionRejects)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.psxDipRetries}}" [bar_color]="call_counts(higherTableValues[0],kpi.psxDipRetries, thresholdRes.thresholdPsxDipRetries)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.psxDipFailures}}" [bar_color]="call_counts(higherTableValues[0],kpi.psxDipFailures, thresholdRes.thresholdPsxDipFailures)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Call Attempts per SBC-->
+        <div *ngIf="systemSbcChassisList">
+            <div *ngIf="selectedStatGroup[0] ==='Call Attempts Per SBC'">
+                <div class="row" id="spacing_bottom">
+                        <div class="col-sm-12" id="spacing_left">
+                            <h3 class="page-head-border mt-2 mb-0 pb-2 f_size_18">
+                                <span class="pr-5 border-right-grey mr-3"> Call Attempts Per SBC </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                                <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                        
+                                <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                            </h3>                
+                        </div>            
+                    </div>
+                    <h4 class="py-2 my-0 page-head-border">
+                        <span class="pr-5 py-1 mr-3 bold">SBC - Session Border Controller</span> 
+                    </h4>
+
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-10pt">Device</th>
+                                <th class="w-20pt">Call Completion</th>
+                                <th class="w-20pt">Call Attempt Rate</th>
+                                <th class="w-20pt">Total Call Attempts</th>
+                                <th class="w-20pt">Busy Hour Call Attempts</th>
+                            </tr>
+                            <tbody *ngFor="let sbc of systemSbcChassisList index as i">
+                                <tr *ngFor="let kpi of sbc.simpleKpiList">
+                                    <td>
+                                    <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(sbc.name,'SBC','','','','','',sbc.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>                   
+                                    {{i+1}}.{{sbc.name}}</td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.callCompletionCounts}}" [bar_color]="call_counts(higherTableValues[0],kpi.callCompletionCounts, thresholdRes.thresholdcallCompletionsUsed)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.callAttemptCounts}}" [bar_color]="call_counts(higherTableValues[1],kpi.callAttemptCounts, thresholdRes.thresholdSbcCallAttemptsRate)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.totalCallAttempt}}" [bar_color]="call_counts(higherTableValues[1],kpi.totalCallAttempt, thresholdRes.thresholdTotalCallAttempts)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.busyHourCallAttempt}}" [bar_color]="call_counts(higherTableValues[1],kpi.busyHourCallAttempt, thresholdRes.thresholdTotalCallAttempts)" [show_max]="false" [show_percent]="false"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ethernet Packet Port Status-->
+        <div *ngIf="ethernetDeviceModelList">
+            <div *ngIf="selectedStatGroup[0] ==='Ethernet Packet Port Status'">
+            <div class="row" id="spacing_bottom">
+                    <div class="col-sm-12" id="spacing_left">
+                        <h3 class="page-head-border mt-0 mb-0 pb-2 f_size_18">
+                            <span class="pr-5 border-right-grey mr-3"> EthernetPort Usage </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                            <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                    
+                            <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                        </h3>                
+                    </div>            
+                </div>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-10pt">Codec Name</th>
+                                <th class="w-20pt">SBC1a-Port0</th>
+                                <th class="w-20pt">SBC1a-Port1</th>
+                                <th class="w-20pt">SBC1b-Port0</th>
+                                <th class="w-20pt">SBC1b-Port1</th>
+                            </tr>
+                            <tbody *ngFor="let sbc of ethernetDeviceModelList index as i">
+                                <tr>
+                                    <td colspan="5" class="bg_grey f_size_12">
+                                        <span class="bold">{{i+1}}. Device:</span> {{sbc.name}}-{{sbc.descr}}
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let kpi of sbc.ethernetDeviceKpiModelList">
+                                    <td>
+                                    <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(sbc.name,'SBC','','','','','',sbc.descr,kpi.cName,false,'')"><i class="fas fa-chart-bar"></i></button>                    
+                                    {{kpi.cName}}
+                                    </td>
+                                    <td>
+                                        {{kpi.codecValue1}}
+                                    </td>
+                                    <td>
+                                        {{kpi.codecValue2}}
+                                    </td>
+                                    <td>
+                                        {{kpi.codecValue3}}
+                                    </td>
+                                    <td>
+                                        {{kpi.codecValue4}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SBC License Info-->
+        <div *ngIf="systemSbcLicenseList">
+            <div *ngIf="selectedStatGroup[0] ==='SBC License Info'">
+                <div class="row" id="spacing_bottom">
+                        <div class="col-sm-12" id="spacing_left">
+                            <h3 class="page-head-border mt-2 mb-0 pb-2 f_size_18">
+                                <span class="pr-5 border-right-grey mr-3"> SBC License Info </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ date1 }}</span>
+                                <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ date2 }}</span>
+                        
+                                <button class="btn-icon float-right" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                            </h3>                
+                        </div>            
+                    </div>
+                <h4 class="py-2 my-0 page-head-border">
+                    <span class="pr-5 py-1 mr-3 bold">SBC - Session Border Controller</span> 
+                </h4>
+                <div class="row mx-0">
+                    <div class="col-sm-12 px-0">
+                        <table class="table mb-1">
+                            <tr>
+                                <th class="w-20pt">Device</th>
+                                <th class="w-30pt">Max License Limit</th>
+                                <th class="w-30pt">Max Active Calls</th>
+                                <th class="w-30pt">Peak Utilization</th>
+                            </tr>
+                            <tbody *ngFor="let sbc of systemSbcLicenseList index as i">
+                                <tr *ngFor="let kpi of sbc.simpleKpiList">
+                                    <td>
+                                    <button class="btn-icon mr-2" data-toggle="popover" data-toggle="tooltip"  title="History" (click)="showPopUpHistory(sbc.name,'SBC','','','','','',sbc.descr,'',false,'')"><i class="fas fa-chart-bar"></i></button>                   
+                                    {{i+1}}.{{sbc.name}}</td>
+                                    <td>
+                                        {{kpi.maxLicenseLimit}}
+                                    </td>
+                                    <td>
+                                        {{kpi.maxActiveCalls}}
+                                    </td>
+                                    <td class="pt-2">
+                                        <ratings-bar percentage="{{kpi.peakCallRate}}" [bar_color]="cpu_usage(kpi.peakCallRate, thresholdRes.peakSbcLicenceUtilization)" [show_max]="false" [show_percent]="true"></ratings-bar>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Kpi notes-->
+        <div class="row" id="left-padding" *ngIf="selectedStatGroup[0]=='System Health Stats'">
+            <div class="col-sm-12">
+                <form (ngSubmit)="save('kpiSysHeaStat')">
+                    <button class="btn-icon mx-auto float-right" (click)="onClickKpi()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                    <button class="btn-icon mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                    <table class="table table-bordered table-sm">
+                        <tr *ngIf="show_edit">
+                            <td class="p-2"> {{kpiSysHeaStat}} </td>
+                        </tr>
+                        <tr *ngIf="!show_edit">
+                        <td>
+                                <textarea rows="10" class="w-100" id="kpiSysHeaStat">
+                                    {{kpiSysHeaStat}} 
+                                </textarea>
+                        </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <div class="row" id="left-padding" *ngIf="selectedStatGroup[0]=='Call Count Stats'">
+                <div class="col-sm-12">
+                    <form (ngSubmit)="save('kpiCalCnt')">
+                        <button class="btn-icon mx-auto float-right" (click)="onClickKpi()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                        <button class="btn-icon mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                        <table class="table table-bordered table-sm">
+                            <tr *ngIf="show_edit">
+                                <td class="p-2"> {{kpiCalCnt}} </td>
+                            </tr>
+                            <tr *ngIf="!show_edit">
+                            <td>
+                                    <textarea rows="10" class="w-100" id="kpiCalCnt">
+                                        {{kpiCalCnt}} 
+                                    </textarea>
+                            </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row" id="left-padding" *ngIf="selectedStatGroup[0]=='PSX Timeout and Dips'">
+                <div class="col-sm-12">
+                    <form (ngSubmit)="save('kpiPsxTd')">
+                        <button class="btn-icon mx-auto float-right" (click)="onClickKpi()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                        <button class="btn-icon mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                        <table class="table table-bordered table-sm">
+                            <tr *ngIf="show_edit">
+                                    <td class="p-2"> {{kpiPsxTd}} </td>
+                            </tr>
+                            <tr *ngIf="!show_edit">
+                                <td>
+                                    <textarea rows="10" class="w-100" id="kpiPsxTd">
+                                        {{kpiPsxTd}} 
+                                    </textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row" id="left-padding" *ngIf="selectedStatGroup[0]=='Congestion Rejects and Dips'">
+                <div class="col-sm-12">
+                    <form (ngSubmit)="save('kpiCongRejDips')">
+                        <button class="btn-icon mx-auto float-right" (click)="onClickKpi()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                        <button class="btn-icon mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                        <table class="table table-bordered table-sm">
+                            <tr *ngIf="show_edit">
+                                    <td class="p-2"> {{kpiCongRejDips}} </td>
+                            </tr>
+                            <tr *ngIf="!show_edit">
+                                <td>
+                                    <textarea rows="10" class="w-100" id="kpiCongRejDips">
+                                        {{kpiCongRejDips}} 
+                                    </textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row" id="left-padding" *ngIf="selectedStatGroup[0]=='DSP Card Usage'">
+                <div class="col-sm-12">
+                    <form (ngSubmit)="save('kpiDspCard')">
+                        <button class="btn-icon mx-auto float-right" (click)="onClickKpi()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                        <button class="btn-icon mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                        <table class="table table-bordered table-sm">
+                            <tr *ngIf="show_edit">
+                                    <td class="p-2"> {{kpiDspCard}} </td>
+                            </tr>
+                            <tr *ngIf="!show_edit">
+                                <td>
+                                    <textarea rows="10" class="w-100" id="kpiDspCard">
+                                        {{kpiDspCard}} 
+                                    </textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row" id="left-padding" *ngIf="selectedStatGroup[0]=='PSX-IN SIP Request Response'">
+                <div class="col-sm-12">
+                    <form (ngSubmit)="save('kpiPsxIn')">
+                        <button class="btn-icon mx-auto float-right" (click)="onClickKpi()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                        <button class="btn-icon mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                        <table class="table table-bordered table-sm">
+                            <tr *ngIf="show_edit">
+                                    <td class="p-2"> {{kpiPsxIn}} </td>
+                            </tr>
+                            <tr *ngIf="!show_edit">
+                                <td>
+                                    <textarea rows="10" class="w-100" id="kpiPsxIn">
+                                        {{kpiPsxIn}} 
+                                    </textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row" id="left-padding" *ngIf="selectedStatGroup[0]=='Call Attempts Chassis wise'">
+            <div class="col-sm-12">
+                <form (ngSubmit)="save('kpiCaAttChaWise')">
+                    <button class="btn-icon mx-auto float-right" (click)="onClickKpi()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                    <button class="btn-icon mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                    <table class="table table-bordered table-sm">
+                        <tr *ngIf="show_edit">
+                                <td class="p-2"> {{kpiCaAttChaWise}} </td>
+                        </tr>
+                        <tr *ngIf="!show_edit">
+                            <td>
+                                <textarea rows="10" class="w-100" id="kpiCaAttChaWise">
+                                    {{kpiCaAttChaWise}} 
+                                </textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <div class="row" id="left-padding" *ngIf="selectedStatGroup[0]=='Call Attempts Slot wise'">
+            <div class="col-sm-12">
+                <form (ngSubmit)="save('kpiCaAttSlWise')">
+                    <button class="btn-icon mx-auto float-right" (click)="onClickKpi()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                    <button class="btn-icon mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                    <table class="table table-bordered table-sm">
+                        <tr *ngIf="show_edit">
+                                <td class="p-2"> {{kpiCaAttSlWise}} </td>
+                        </tr>
+                        <tr *ngIf="!show_edit">
+                            <td>
+                                <textarea rows="10" class="w-100" id="kpiCaAttSlWise">
+                                    {{kpiCaAttSlWise}} 
+                                </textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <div class="row" id="left-padding" *ngIf="selectedStatGroup[0]=='Call Attempts Per SBC'">
+            <div class="col-sm-12">
+                <form (ngSubmit)="save('kpiCaAttPeSbc')">
+                    <button class="btn-icon mx-auto float-right" (click)="onClickKpi()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                    <button class="btn-icon mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                    <table class="table table-bordered table-sm">
+                        <tr *ngIf="show_edit">
+                                <td class="p-2"> {{kpiCaAttPeSbc}} </td>
+                        </tr>
+                        <tr *ngIf="!show_edit">
+                            <td>
+                                <textarea rows="10" class="w-100" id="kpiCaAttPeSbc">
+                                    {{kpiCaAttPeSbc}} 
+                                </textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <div class="row" id="left-padding" *ngIf="selectedStatGroup[0]=='Ethernet Packet Port Status'">
+            <div class="col-sm-12">
+                <form (ngSubmit)="save('kpiEtPackPort')">
+                    <button class="btn-icon mx-auto float-right" (click)="onClickKpi()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                    <button class="btn-icon mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                    <table class="table table-bordered table-sm">
+                        <tr *ngIf="show_edit">
+                                <td class="p-2"> {{kpiEtPackPort}} </td>
+                        </tr>
+                        <tr *ngIf="!show_edit">
+                            <td>
+                                <textarea rows="10" class="w-100" id="kpiEtPackPort">
+                                    {{kpiEtPackPort}} 
+                                </textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <div class="row" id="left-padding" *ngIf="selectedStatGroup[0]=='SBC License Info'">
+            <div class="col-sm-12">
+                <form (ngSubmit)="save('kpiSbcLicInfo')">
+                    <button class="btn-icon mx-auto float-right" (click)="onClickKpi()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                    <button class="btn-icon mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                    <table class="table table-bordered table-sm">
+                        <tr *ngIf="show_edit">
+                                <td class="p-2"> {{kpiSbcLicInfo}} </td>
+                        </tr>
+                        <tr *ngIf="!show_edit">
+                            <td>
+                                <textarea rows="10" class="w-100" id="kpiSbcLicInfo">
+                                    {{kpiSbcLicInfo}} 
+                                </textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="row" id="left-padding" *ngIf="selectedStatGroup[0]=='PSX CPS Licenses'">
+            <div class="col-sm-12">
+                <form (ngSubmit)="save('kpiPsxCpsLic')">
+                    <button class="btn-icon mx-auto float-right" (click)="onClickKpi()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                    <button class="btn-icon mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                    <table class="table table-bordered table-sm">
+                        <tr *ngIf="show_edit">
+                                <td class="p-2"> {{kpiPsxCpsLic}} </td>
+                        </tr>
+                        <tr *ngIf="!show_edit">
+                            <td>
+                                <textarea rows="10" class="w-100" id="kpiPsxCpsLic">
+                                    {{kpiPsxCpsLic}} 
+                                </textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+        <div class="row" id="left-padding" *ngIf="selectedStatGroup[0]=='Ethernet Stats Slot wise'">
+                <div class="col-sm-12">
+                    <form (ngSubmit)="save('kpiEtStatSlWise')">
+                        <button class="btn-icon mx-auto float-right" (click)="onClickKpi()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                        <button class="btn-icon mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                        <table class="table table-bordered table-sm">
+                            <tr *ngIf="show_edit">
+                                    <td class="p-2"> {{kpiEtStatSlWise}} </td>
+                            </tr>
+                            <tr *ngIf="!show_edit">
+                                <td>
+                                    <textarea rows="10" class="w-100" id="kpiEtStatSlWise">
+                                        {{kpiEtStatSlWise}} 
+                                    </textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+
+        <div class="row" id="left-padding" *ngIf="selectedStatGroup[0]=='Machine Congestion Stats'">
+            <div class="col-sm-12">
+                <form (ngSubmit)="save('kpiMcConStats')">
+                    <button class="btn-icon mx-auto float-right" (click)="onClickKpi()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                    <button class="btn-icon mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                    <table class="table table-bordered table-sm">
+                        <tr *ngIf="show_edit">
+                            <td class="p-2"> {{kpiMcConStats}} </td>
+                        </tr>
+                        <tr *ngIf="!show_edit">
+                        <td>
+                                <textarea rows="10" class="w-100" id="kpiMcConStats">
+                                    {{kpiMcConStats}} 
+                                </textarea>
+                        </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+

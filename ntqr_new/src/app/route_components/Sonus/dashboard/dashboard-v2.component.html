@@ -1,0 +1,196 @@
+<breadcrumb #parent>  
+    <ol class="breadcrumb">
+      <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+        <div class="crumb my-0">
+            <a href="javascript:void()">Sonus</a> / {{ route.displayName }}
+        </div>
+      </ng-template>
+    </ol>
+</breadcrumb>
+
+<div class="border-grey px-4 py-2 mx-4">    
+    <h3 class="page-head-border mt-2 mb-1 pb-2 f_size_18">
+        <span class="pr-5 border-right-grey mr-3"> System Usage </span><sup class="tiny color-grey mr-2 ">From</sup> <span class="normal">{{ from_date }}</span>
+        <sup class="tiny color-grey mr-2 ml-4">To</sup> <span class="normal">{{ to_date }}</span>
+
+        <button class="btn-icon mt-2 float-right" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+    </h3>
+
+    <h4 class="pt-1 pb-2 mb-0 page-head-border pb-1 normal">
+        <span class="pr-5 py-1 mr-3 bold">PSX - Policy Server</span>        
+    </h4>
+
+    <table class="table mx-auto mb-0" cellpadding="0" cellspacing="0">
+        <thead>
+            <th>Device</th>
+            <th>Installed CPS Capacity</th>
+            <th>CPS Utilization(%)</th>
+            <th>CPU Usage(%)</th>
+            <th>Memory Usage(%)</th>
+            <th>PSX Timeout Errors</th>
+        </thead>
+        <tbody>
+            <tr *ngFor="let psx of dataPsx;">
+                <td>{{ psx.name }}</td>
+                <td>{{ psx.maxcpsLicencesLimit }}</td>
+                <td> 
+                    <ratings-bar current_value="{{ psx.callsacceptedpersecond }}" max_value="{{ psx.callsacceptedpersecond }}" percentage="{{ psx.callsacceptedpersecond }}"  min_value="80" [bar_color]="cps_utilisation(psx.callsacceptedpersecond)" [show_percent]="true" [show_max]="false"></ratings-bar>
+                </td>
+                <td>
+                    <ratings-bar current_value="{{ psx.cpuUsage }}" max_value="{{ psx.cpuUsage }}" percentage="{{ psx.cpuUsage }}" min_value="80" [show_percent]="true" [show_max]="false" [bar_color]="cpu_usage(psx.cpuUsage)"></ratings-bar>
+                </td>
+                <td>
+                    <ratings-bar current_value="{{ psx.memoryUsage }}" max_value="{{ psx.memoryUsage }}" percentage="{{ psx.memoryUsage }}" min_value="80" [show_percent]="true" [show_max]="false" [bar_color]="memory_usage(psx.memoryUsage)"></ratings-bar>
+                </td>
+                <td>
+                    <div *ngIf="psx_errors()">
+                        <ratings-bar percentage="{{(psx.externalTimeout/data.higherTableValues[6])*100}}" display_value="{{psx.externalTimeout}}" [show_display]="true" [show_max]="false" [bar_color]="red"></ratings-bar>
+                    </div>
+
+                    <div *ngIf="!psx_errors()">
+                        {{psx.externalTimeout}}
+                    </div>
+                    
+                    
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4 class="pt-3 pb-2 mb-0 page-head-border pb-1 normal">
+        <span class="pr-5 py-1 mr-3 bold">SBC - Session Border Controller</span>        
+    </h4>
+
+    <table class="table mx-auto mb-0" cellpadding="0" cellspacing="0">
+        <thead>
+            <th>Device</th>
+            <th>CPU Usage(%) avg of all 40 CPU</th>
+            <th>Downlink Utilization(%)</th>
+            <th>Ip Session Usage(%)</th>
+            <th>DSP Usage(%)</th>
+            <th>CPS Attempts</th>
+        </thead>
+        <tbody>
+            <tr *ngFor="let sbc of dataSbc;">
+                <td>{{ sbc.name }}</td>
+                <td>
+                    <ratings-bar percentage="{{ sbc.avgCpu }}"  min_value="80" [show_percent]="true" [show_max]="false" [bar_color]="cpu_usage(sbc.avgCpu)"></ratings-bar>
+                </td>
+                <td>
+                    <ratings-bar percentage="{{ sbc.downlinkUtilization }}"  min_value="80" [show_percent]="true" [show_max]="false" [bar_color]="cps_utilisation(sbc.downlinkUtilization)"></ratings-bar>
+                </td>
+                <td>
+                    <ratings-bar percentage="{{ sbc.ipSessionUsage }}" min_value="80" [show_percent]="true" [show_max]="false" [bar_color]="session_usage(sbc.ipSessionUsage)"></ratings-bar>
+                </td>
+                <td>
+                    <ratings-bar percentage="{{ sbc.dspUsage }}" min_value="80" [show_percent]="true" [show_max]="false" [bar_color]="dsp_usage(sbc.dspUsage)"></ratings-bar>
+                </td>
+                <td>
+                    {{ sbc.cpsAttempts }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4 class="pt-3 pb-2 mb-0 page-head-border pb-1 normal">
+        <span class="pr-5 py-1 mr-3 bold">NBS & GSX</span>        
+    </h4>
+    
+    <table class="table mx-auto mb-0" cellpadding="0" cellspacing="0">
+        <thead>
+            <th>Gateway</th>
+            <th>MNS-CPU Util</th>
+            <th>MNS-Memory Util</th>
+            <th>PNS-CPU Util</th>
+            <th>PNS-Memory Util</th>
+            <th>CNS-CPU Util</th>
+            <th>DSP Util</th>
+        </thead>
+        <tbody>
+            <tr *ngFor="let gsx of dataGsx;">
+                <td>{{ gsx.name }}</td>
+                <td>
+                    <ratings-bar percentage="{{ gsx.kpiList[0].mnsCpuUtil }}"  min_value="80" [show_percent]="true" [show_max]="false" [bar_color]="cpu_usage(gsx.kpiList[0].mnsCpuUtil)"></ratings-bar>
+                </td>
+                <td>
+                    <ratings-bar percentage="{{ gsx.kpiList[0].mnsMemoryUtil }}"  min_value="80" [show_percent]="true" [show_max]="false" [bar_color]="memory_usage(gsx.kpiList[0].mnsMemoryUtil)"></ratings-bar>
+                </td>
+                <td>
+                    <ratings-bar percentage="{{ gsx.kpiList[0].pnsCpuUtil }}" min_value="80" [show_percent]="true" [show_max]="false" [bar_color]="cpu_usage(gsx.kpiList[0].pnsCpuUtil)"></ratings-bar>
+                </td>
+                <td>
+                    <ratings-bar percentage="{{ gsx.kpiList[0].pnsMemoryUtil }}" min_value="80" [show_percent]="true" [show_max]="false" [bar_color]="memory_usage(gsx.kpiList[0].pnsMemoryUtil)"></ratings-bar>
+                </td>
+                <td>
+                    <ratings-bar percentage="{{ gsx.kpiList[0].cnsCpuUtil }}" min_value="80" [show_percent]="true" [show_max]="false" [bar_color]="cpu_usage(gsx.kpiList[0].cnsCpuUtil)"></ratings-bar>
+                </td>
+                <td>
+                    <ratings-bar percentage="{{ gsx.kpiList[0].dspUtil }}" min_value="80" [show_percent]="true" [show_max]="false" [bar_color]="cps_utilisation(gsx.kpiList[0].dspUtil)"></ratings-bar>
+                </td>                    
+            </tr>
+        </tbody>
+    </table>
+
+    <h4 class="pt-3 mb-0 pb-2 page-head-border pb-1 normal">
+        <span class="pr-5 py-1 mr-3 bold">Trunk Group</span>        
+    </h4>
+        
+    <table class="table mx-auto mb-0" cellpadding="0" cellspacing="0">
+        <thead>
+            <th>Service</th>
+            <th>Trunk Group(SBC)</th>
+            <th>Trunk Group(GSX/NBS)</th>
+            <th>Total CAC(SBC)</th>
+            <th>Total CAC(GSX/NBS)</th>
+            <th>Peak CAC(SBC)</th>
+            <th>Peak CAC(GSX/NBS)</th>
+        </thead>
+        <tbody>
+            <tr *ngFor="let trunk of dataTrunk;">
+                <td>{{ trunk.name }}</td>
+                <td>
+                    {{ trunk.trunkGroupSbc + trunk.percent }}
+                </td>
+                <td>
+                    {{ trunk.trunkGroupGsxNbs + trunk.percent }}
+                </td>
+                <td>
+                    {{ trunk.totalCacSbc + trunk.percent }}
+                </td>
+                <td>
+                    {{ trunk.totalCacGsxNbs + trunk.percent }}
+                </td>
+                <td>
+                    {{ trunk.peakCacSbc + trunk.percent }} 
+                </td>
+                <td>
+                    {{ trunk.peakCacGsxNbs + trunk.percent }}
+                </td>                    
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="row" id="left-padding">
+        <div class="col-sm-12">
+            <form (ngSubmit)="save('note_content')">
+                <button class="btn-icon mt-3 mx-auto float-right" (click)="edit_note()" id="edit" *ngIf="show_edit && userPermission"><i class="fas fa-pen"></i></button>        
+                <button class="btn-icon mt-3 mx-auto float-right"  id="edit" type="submit" *ngIf="!show_edit"><i class="fas fa-save"></i></button>        
+                <table class="table table-bordered table-sm">
+                    <tr *ngIf="show_edit">
+                            <td class="p-2"> {{note_content}} </td>
+                    </tr>
+                    <tr *ngIf="!show_edit">
+                        <td>
+                            <textarea rows="10" class="w-100" id="note_content">
+                                {{note_content}} 
+                            </textarea>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+    
+</div>
+<div class="py-2"></div>

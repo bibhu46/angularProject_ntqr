@@ -1,0 +1,83 @@
+<div *ngIf="show_sbc == false">
+    <div class="row mx-0" *ngIf="tooltip_desc === ''">
+        <div class="col-sm-7 pl-0 pr-0" [ngClass]="{'green': status_green, 'red': status_red, 'blue' : status_blue}">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" [ngStyle]="style_generated"></div>
+            </div>
+        </div>
+        <div class="col-sm-5 small pl-2 pr-0">
+                <span *ngIf="show_current_value && !show_display"> {{ current_value }} </span>
+                <span *ngIf="show_display"> {{ display_value }} </span> 
+                <span *ngIf="!show_current_value && !show_display"> {{ percentage }} </span> 
+                <span *ngIf="show_percent">%</span> 
+                <span *ngIf="show_max">({{ max_value }})</span>
+        </div>
+    </div>
+
+    <div class="row mx-0" *ngIf="tooltip_desc !== ''" placement="top" ngbTooltip="{{ tooltip_desc }}">
+        <div class="col-sm-7 pl-0 pr-0" [ngClass]="{'green': status_green, 'red': status_red}">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" [ngStyle]="style_generated"></div>
+            </div>
+        </div>
+        <div class="col-sm-5 small pl-2 pr-0">
+                <span *ngIf="show_current_value && !show_display"> {{ current_value }} </span> 
+                <span *ngIf="show_display"> {{ display_value }} </span> 
+                <span *ngIf="!show_current_value && !show_display"> {{ percentage }} </span> 
+                <span *ngIf="show_percent">%</span> 
+                <span *ngIf="show_max">({{ max_value }})</span> 
+        </div>
+    </div>
+</div>
+
+<div *ngIf="show_sbc">
+    <div class="row mx-0" *ngIf="tooltip_desc === ''">   
+        <ng-container *ngIf="sbc_bar">            
+            <div class="col-sm-7 pl-0 pr-0" [ngClass]="{'green': status_green, 'red': status_red, 'blue' : status_blue}">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" [ngStyle]="style_generated"></div>
+                </div>
+            </div>
+            <div class="col-sm-5 small pl-2 pr-0">
+                    <span *ngIf="show_current_value && !show_display"> {{ current_value }} </span>
+                    <span *ngIf="show_display"> {{ display_value }} </span> 
+                     <span *ngIf="!show_current_value && !show_display"> {{ percentage }} </span> 
+                     <span *ngIf="show_percent">%</span> 
+                     <span *ngIf="show_max">({{ max_value }})</span>
+            </div>            
+        </ng-container>
+        <ng-container *ngIf="!sbc_bar">
+            <div class="row mx-0">
+                <div class="col-sm-12 text-center small">
+                    {{ sbc_text }}
+                </div>
+            </div>   
+        </ng-container>
+    </div>
+
+    <div class="row mx-0" *ngIf="tooltip_desc !== ''" placement="top" ngbTooltip="{{ tooltip_desc }}">
+        <ng-container *ngIf="sbc_bar">            
+            <div class="col-sm-7 pl-0 pr-0" [ngClass]="{'green': status_green, 'red': status_red, 'blue' : status_blue}">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" [ngStyle]="style_generated"></div>
+                </div>
+            </div>
+            <div class="col-sm-5 small pl-2 pr-0">
+                    <span *ngIf="show_current_value && !show_display"> {{ current_value }} </span> 
+                    <span *ngIf="show_display"> {{ display_value }} </span> 
+                    <span *ngIf="!show_current_value && !show_display"> {{ percentage }} </span>
+                     <span *ngIf="show_percent">%</span> 
+                     <span *ngIf="show_max">({{ max_value }})</span>
+            </div>            
+        </ng-container>
+
+        <ng-container *ngIf="!sbc_bar">
+            <div class="row mx-0">
+                <div class="col-sm-12 text-center small">
+                    {{ sbc_text }}
+                </div>
+            </div>   
+        </ng-container>
+    </div>
+</div>
+

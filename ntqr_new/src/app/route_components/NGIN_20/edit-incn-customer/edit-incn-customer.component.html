@@ -1,0 +1,24 @@
+
+<div class="filter_box mx-3 py-2 px-3">
+    <form class="form_box py-0 customer_form" name="customer_form" [formGroup]="customer_form"
+        (ngSubmit)="customer_submit_form()">
+        <h3 class="f_size_18 color-black mt-2 mb-3">INCN Edit Customer</h3>
+
+        <div class="row mx-0 mb-1">
+            <div class="col-sm-1 pl-0">Name</div>
+            <div class="col-sm-5">
+                <input type="text" class="form-text" formControlName="customer_name" required="required"
+                    [(ngModel)]="name" />
+
+            </div>
+        </div>
+
+
+        <div class="row mx-0 mb-1 mt-4">
+            <div class="col-sm-12 pl-0">
+                <button class="btn btn-grey mr-2" type="button" (click)="onCancel()">Cancel</button>
+                <button type="submit" id="padded" class="btn btn-red">Save</button>
+            </div>
+        </div>
+    </form>
+</div>

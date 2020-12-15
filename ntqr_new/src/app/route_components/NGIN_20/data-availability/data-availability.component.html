@@ -1,0 +1,158 @@
+<breadcrumb #parent>
+    <ol class="breadcrumb">
+        <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+            <div class="crumb my-2 px-3">
+                <a href="#">NGIN 20</a> / {{ route.displayName }}
+            </div>
+        </ng-template>
+    </ol>
+</breadcrumb>
+<!-- // -->
+<div class="row mx-0">
+    <div class="col-sm-12 px-4">
+        <div class="row mx-0 border-bottom-grey2 pb-2 mb-2">
+            <div class="col-sm-6 pt-2 pl-0"></div>
+
+            <div class="col-sm-6 pt-2 pr-0 text-right">
+                <button class="btn-icon mt-2 mr-2" (click)="acc.expandAll()">
+                    <i class="fas fa-plus"></i>
+                </button>
+
+                <button class="btn-icon mt-2" (click)="acc.collapseAll()">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="border-grey py-3 mb-3">
+            <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0">
+                <ngb-panel>
+                    <ng-template ngbPanelHeader let-opened="opened">
+                        <button ngbPanelToggle class="btn my-0 p-0 w-100 text-left">
+                            <i class="fas fa-chevron-right color-grey mx-2"></i>
+                            <i class="fas fa-chevron-down color-green mx-2"></i>Installed Numbers
+                        </button>
+                    </ng-template>
+                    <ng-template ngbPanelContent>
+                        <table class="table" cellpadding="0" cellspacing="0">
+                            <thead>
+                                <th class="content pl-3">Services</th>
+                                <th class="content">Description</th>
+                                <th class="content">Latest Performance Data</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let inl of installedNumbersList">
+                                    <td class="pl-3">{{inl.deviceName}}</td>
+                                    <td>{{inl.description}}</td>
+                                    <td>{{inl.timestampFormatted}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </ng-template>
+                </ngb-panel>
+
+                <ngb-panel>
+                    <ng-template ngbPanelHeader let-opened="collapsed">
+                        <button ngbPanelToggle class="btn my-0 p-0 w-100 text-left">
+                            <i class="fas fa-chevron-right color-grey mx-2"></i>
+                            <i class="fas fa-chevron-down color-green mx-2"></i>Object Capacity
+                        </button>
+                    </ng-template>
+                    <ng-template ngbPanelContent>
+                        <table class="table" cellpadding="0" cellspacing="0">
+                            <thead>
+                                <th class="content pl-3">Services</th>
+                                <th class="content">Description</th>
+                                <th class="content">Latest Performance Data</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let ocl of objectCapacityList">
+                                    <td class="pl-3">{{ocl.deviceName}}</td>
+                                    <td>{{ocl.description}}</td>
+                                    <td>{{ocl.timestampFormatted}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </ng-template>
+                </ngb-panel>
+
+                <ngb-panel>
+                    <ng-template ngbPanelHeader let-opened="collapsed">
+                        <button ngbPanelToggle class="btn my-0 p-0 w-100 text-left">
+                            <i class="fas fa-chevron-right color-grey mx-2"></i>
+                            <i class="fas fa-chevron-down color-green mx-2"></i>Call Attempts(ALU)
+                        </button>
+                    </ng-template>
+                    <ng-template ngbPanelContent>
+                        <table class="table" cellpadding="0" cellspacing="0">
+                            <thead>
+                                <th class="content pl-3">Services</th>
+                                <th class="content">Description</th>
+                                <th class="content">Latest Performance Data</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let cal of callAttemptsALUList">
+                                    <td class="pl-3">{{cal.deviceName}}</td>
+                                    <td>{{cal.description}}</td>
+                                    <td>{{cal.timestampFormatted}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </ng-template>
+                </ngb-panel>
+
+                <ngb-panel>
+                    <ng-template ngbPanelHeader let-opened="collapsed">
+                        <button ngbPanelToggle class="btn my-0 p-0 w-100 text-left">
+                            <i class="fas fa-chevron-right color-grey mx-2"></i>
+                            <i class="fas fa-chevron-down color-green mx-2"></i>System Statistics
+                        </button>
+                    </ng-template>
+
+                    <ng-template ngbPanelContent>
+                        <table class="table" cellpadding="0" cellspacing="0">
+                            <thead>
+                                <th class="content pl-3">Services</th>
+                                <th class="content">Description</th>
+                                <th class="content">Latest Performance Data</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let ssl of systemStatisticsList">
+                                    <td class="pl-3">{{ssl.deviceName}}</td>
+                                    <td>{{ssl.description}}</td>
+                                    <td>{{ssl.timestampFormatted}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </ng-template>
+                </ngb-panel>
+
+                <ngb-panel>
+                    <ng-template ngbPanelHeader let-opened="collapsed">
+                        <button ngbPanelToggle class="btn my-0 p-0 w-100 text-left">
+                            <i class="fas fa-chevron-right color-grey mx-2"></i>
+                            <i class="fas fa-chevron-down color-green mx-2"></i> MRF Statistics
+                        </button>
+                    </ng-template>
+                    <ng-template ngbPanelContent>
+                        <table class="table" cellpadding="0" cellspacing="0">
+                            <thead>
+                                <th class="content pl-3">Services</th>
+                                <th class="content">Description</th>
+                                <th class="content">Latest Performance Data</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let mrf of mrfStatisticsList">
+                                    <td class="pl-3">{{mrf.deviceName}}</td>
+                                    <td>{{mrf.description}}</td>
+                                    <td>{{mrf.timestampFormatted}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </ng-template>
+                </ngb-panel>
+
+            </ngb-accordion>
+        </div>
+    </div>
+
+</div>

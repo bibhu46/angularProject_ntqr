@@ -1,0 +1,27 @@
+<breadcrumb #parent>
+  <ol class="breadcrumb">
+      <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+          <div class="crumb my-2 px-3">
+              <a href="javascript:void()">Settings</a> / {{ route.displayName }}
+          </div>
+      </ng-template>
+  </ol>
+</breadcrumb>
+<div class="d-flex threshold-wrapper mx-3 py-2 px-3" id="wrapper">
+    
+    <div class="border-right threshold-container" id="sidebar-wrapper">
+      
+      <div class="list-group list-group-flush">
+        <button ngbDropdownItem routerLink='/options/sonusPerformanceThreshold' routerLinkActive="active" class="list-group-item ">Sonus Performance Threshold</button>
+        <button ngbDropdownItem routerLink='/options/nginPerformanceThreshold'routerLinkActive="active"  class="list-group-item ">Ngin(5.2) Threshold</button>
+        <button ngbDropdownItem routerLink='/options/sonusThreshold' routerLinkActive="active" class="list-group-item ">Card Information</button>
+      </div>
+    </div>
+    
+    <div id="page-content-wrapper" class="page-content-wrapper">
+        <router-outlet></router-outlet>
+        
+    </div>
+   
+  </div>
+ 

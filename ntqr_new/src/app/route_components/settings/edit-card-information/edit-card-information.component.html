@@ -1,0 +1,75 @@
+<breadcrumb #parent>
+    <ol class="breadcrumb">
+        <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+            <div class="crumb my-2 px-3">
+                <a href="/options/sonusThreshold"> Card Information / Edit </a> / {{ route.displayName }}
+            </div>
+        </ng-template>
+    </ol>
+</breadcrumb>
+<div class="filter_box mx-3 py-2 px-3">
+    <h3 class="f_size_18 color-black mt-2 mb-3">Device: {{deviceName}}</h3>
+    <form #card=ngForm class="form_box py-0 call_log_form" (ngSubmit)="Submit(card.value)">
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Shelf</div>
+        <div class="col-sm-4">
+            {{shelf}}
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Slot</div>
+        <div class="col-sm-4">
+           {{slot}}
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Name</div>
+        <div class="col-sm-4">
+            <input type="text" name='name' class="form_text" [disabled]="!userPermission" [(ngModel)]="name">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Call Per Second(Call Attempt Rate) Threshold</div>
+        <div class="col-sm-4">
+            <input type="text" name='callPerSecond' class="form_text" [disabled]="!userPermission" [(ngModel)]="callPerSecond">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Active Call Counts Threshold</div>
+        <div class="col-sm-4">
+            <input type="text" name='activeCallCounts' class="form_text" [disabled]="!userPermission" [(ngModel)]="activeCallCounts">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Call Attempts(Total) Threshold</div>
+        <div class="col-sm-4">
+            <input type="text" name='callAttempts' class="form_text" [disabled]="!userPermission" [(ngModel)]="callAttempts">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Call Attempts(Peak) Threshold</div>
+        <div class="col-sm-4">
+            <input type="text" name='peakCallAttempts' class="form_text" [disabled]="!userPermission" [(ngModel)]="peakCallAttempts">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Call Completion Threshold</div>
+        <div class="col-sm-4">
+            <input type="text" name='callCompletion' class="form_text" [disabled]="!userPermission" [(ngModel)]="callCompletion">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Description</div>
+        <div class="col-sm-4">
+            <input type="text" name='description' class="form_text" [disabled]="!userPermission" [(ngModel)]="description">
+        </div>
+    </div>
+
+    <div class="row mx-0 mb-1 mt-4">
+        <div class="col-sm-12 pl-0" *ngIf="userPermission">
+            <button class="btn btn-grey mr-2" (click)="cancel()">Cancel</button>
+            <button class="btn btn-red" type="submit">Update</button>
+        </div>
+    </div>
+    </form>
+</div>

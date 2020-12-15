@@ -1,0 +1,12 @@
+<!-- Error modal template -------------------------------------------------------------------- -->
+
+<ng-template #alertMessage let-modal class="hide_in_print">
+    <div class="modal-header">
+      <h4 class="modal-title" [innerHTML]="modal_obj['title']"></h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body" [innerHTML]="modal_obj['content']">      
+    </div>    
+</ng-template>

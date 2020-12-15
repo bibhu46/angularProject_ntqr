@@ -1,0 +1,11 @@
+.dashboard-wrapper {
+    padding: 3rem 2.5rem;
+}
+.text-area {
+    padding-top: 50px;
+}
+
+h4 {
+    color: #264e78;
+    font-weight: bold;
+}

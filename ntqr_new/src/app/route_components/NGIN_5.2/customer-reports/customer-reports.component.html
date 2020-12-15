@@ -1,0 +1,142 @@
+<breadcrumb #parent>
+    <ol class="breadcrumb">
+        <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+            <div class="crumb my-2 px-3">
+                <a href="#">NGIN 5.2</a> / {{ route.displayName }}
+            </div>
+        </ng-template>
+    </ol>
+</breadcrumb>
+
+<div class="filter_box mx-3 py-2 px-3">
+    <h3 class="f_size_18 color-black mt-2 mb-3">Customer Report Search</h3>
+    <form class="form_box py-0 call_log_form" name="filter_form" [formGroup]="filter_form"
+        (ngSubmit)="filter_form_search()">
+        <div class="row mx-0 mb-1">
+            <div class="col-sm-2 pl-0">Customers</div>
+            <div class="col-sm-4">
+                <ng-multiselect-dropdown [placeholder]="'Select Customer'" [data]="customer_list"
+                    formControlName="customer_name" [settings]="filterTypeSettings"
+                    (onSelect)="on_customer_select($event)" (onDeSelect)="on_customer_deselect($event)">
+                </ng-multiselect-dropdown>
+                <p class="color-red my-0" *ngIf="filter_form.controls.customer_name.errors !== null && show_errors">
+                    <span class="mr-3" *ngIf="filter_form.controls.customer_name.errors.required"> Customer selection is
+                        required </span>
+                </p>
+            </div>
+            <div class="col-sm-6" pl-0 *ngIf="userPermission">
+                <button class="btn btn-grey ml-2" type="button" (click)="open_edit_window()"> Add/Edit INCN Customer
+                </button>
+            </div>
+        </div>
+        <div class="row mx-0 mb-1">
+            <div class="col-sm-2 pl-0">Days of week</div>
+            <div class="col-sm-4">
+                <div class="days">
+                    <div *ngFor="let control of week_days.controls; let i = index;">
+                        <label class="custom_check mr-3 btn-style">
+                            <input type="checkbox" [formControl]="control" />
+                            <span class="checkmark">{{days_of_week[i]}}</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mx-0 mb-1">
+            <div class="col-sm-2 pl-0">Date Range</div>
+            <div class="col-sm-4">
+                <div class="row mx-0 mb-1">
+                    <div class="col-sm-">
+                        <input type="date" formControlName="from_date_range" class="form_text px-0" />
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="date" formControlName="to_date_range" class="form_text px-0" />
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="row mx-0 mb-1 mt-4">
+            <div class="col-sm-12 pl-0">
+                <button class="btn btn-red" type="submit">Run Report</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- <div class="hr mx-3"></div> -->
+<form class="mx-3">
+    <!-- <div class="row mx-0 border-bottom-grey2 pb-2 mb-2">
+        <div class="col-sm-4 pt-2 pl-0">
+            <strong>{{customerStatList.length}}</strong> Records
+        </div>
+         <div class="col-sm-4">
+        </div> 
+        <div class="col-sm-4 text-right pr-0">
+            <div class="input-group w-200px green d-inline-flex mr-2">
+                <mat-form-field>
+                    <mat-label>Filter</mat-label>
+                    <input matInput (keyup)="applyFilter($event)" class="green-search" placeholder="keyword" #input>
+                </mat-form-field>
+            </div>
+            <button class="btn-icon mt-2 mr-2"><i class="fas fa-filter"></i></button>
+            <button class="btn-icon mt-2"><i class="fas fa-file-pdf"></i></button>
+        </div>
+    </div> -->
+
+    <!-- report table -->
+    <div class="border-grey py-3 mt-2 mb-3" *ngIf="customerStatList">
+        <div class="table-sticky mt-4" >            
+            <table class="table customer-report-table">
+                <thead>
+                    <tr class="active">
+                        <th class="heading pl-5">Date</th>
+                        <th class="heading">Type</th>
+                        <th class="heading">Value</th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let object of customerStatList; let i=index">
+                    <tr>
+                        <td rowspan="4" class="content date-column pl-5">{{object.timestampFormatted}}</td>
+                        <td class="content">Sum OK</td>
+                        <td class="content">
+                            <ngin-ratingbar percentage="{{200 * object.widthObj.sumOkWidth}}" [show_max]="false"
+                                [show_current]="true" [current_value]="object.sumOk" bar_color="green">
+                            </ngin-ratingbar>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content">Sum Not Ok User</td>
+                        <td class="content">
+                            <ngin-ratingbar percentage="{{200 * object.widthObj.sumNOkUserWidth}}" [show_max]="false"
+                                [show_current]="true" [current_value]="object.sumNOkUser" bar_color="red">
+                            </ngin-ratingbar>
+                            <!-- <span>{{object.sumNOkUser}}</span> -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content">Sum Not Ok Data</td>
+                        <td class="content">
+                            <ngin-ratingbar percentage="{{200 * object.widthObj.sumNOkDataWidth}}" [show_max]="false"
+                                [show_current]="true" [current_value]="object.sumNOkData" bar_color="green">
+                            </ngin-ratingbar>
+                            <!-- <span>{{object.sumNOkData}}</span> -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content">Sum Not Ok Service</td>
+                        <td class="content">
+                            <ngin-ratingbar percentage="{{200 * object.widthObj.sumNOkServiceWidth}}" [show_max]="false"
+                                [show_current]="true" [current_value]="object.sumNOkService" bar_color="red">
+                            </ngin-ratingbar>
+                            <!-- <span>{{object.sumNOkService}}</span> -->
+                            <!-- <ratings-bar current_value="{{object.sumNOkService}}" max_value="{{object.sumNOkService}}" min_value="0"></ratings-bar> -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</form>

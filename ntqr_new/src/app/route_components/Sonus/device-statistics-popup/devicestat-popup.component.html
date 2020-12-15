@@ -1,0 +1,1362 @@
+<div class="py-2"></div>
+<div *ngIf="result !== {} && result.statGroup=='System Health Stats'">
+    <div class='container' *ngIf="result.deviceType=='GSX' || result.deviceType=='NBS'">
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{cardInfo.device.descr}}</p>
+            <p><b>Slot:</b> {{cardInfo.shelf}} - {{cardInfo.slot}} - {{cardInfo.name}}</p>
+            <p><b>Slot Description:</b> {{cardInfo.description}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class="pl-3" *ngIf="!hour">Date</th>
+                        <th class="pl-3" *ngIf="hour">Hour</th>
+                        <th>CPU Usage</th>
+                        <th>Memory Usage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.cpuUsage}}" [bar_color]="cpu_usage(kpi.cpuUsage, thresholdRes.thresholdCpu)"
+                                [show_max]="false" [show_percent]="true"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.memoryUsage}}" [show_max]="false" [bar_color]="cpu_usage(kpi.memoryUsage, thresholdRes.thresholdMemory)"
+                                [show_percent]="true"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class='container' *ngIf="result.deviceType=='PSX' || (result.deviceType=='EMS' && result.path=='')">
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class="pl-3" *ngIf="!hour">Date</th>
+                        <th class="pl-3" *ngIf="hour">Hour</th>
+                        <th>CPU Usage</th>
+                        <th>Memory Usage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.cpuUsage}}" [bar_color]="cpu_usage(kpi.cpuUsage, thresholdRes.thresholdCpu)"
+                                [show_max]="false" [show_percent]="true"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.memoryUsage}}" [show_max]="false" [bar_color]="cpu_usage(kpi.memoryUsage, thresholdRes.thresholdMemory)"
+                                [show_percent]="true"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class='container' *ngIf="result.deviceType=='DSI' || (result.deviceType=='EMS' && result.path!='')">
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p><b>Path:</b> {{result.path}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">Disk Usage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.diskUsage}}" [bar_color]="cpu_usage(kpi.diskUsage, thresholdRes.thresholdDisk)"
+                                [show_max]="false" [show_percent]="true"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class='container' *ngIf="sbcOverallKpiList && result.cpuCount==0 && result.deviceType=='SBC' && result.cpuName==''">
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p><b>CPU Count:</b> {{result.cpuCount}}</p>
+            <p><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.sbcOverallKpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3">Date</th>
+                        <th class="">SBCa CPU Usage</th>
+                        <th class="">SBCb CPU Usage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.sbcOverallKpiList">
+                        <td class="content pl-3">{{kpi.timestamp}}</td>
+                        <td class="content" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.codecValue1}}" [bar_color]="cpu_usage(kpi.codecValue1, thresholdRes.thresholdCpu)"
+                                [show_max]="false" [show_percent]="true"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.codecValue2}}" [bar_color]="cpu_usage(kpi.codecValue2, thresholdRes.thresholdCpu)"
+                                [show_max]="false" [show_percent]="true"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class='container' *ngIf="result.cpuCount!=0 && result.deviceType=='SBC' && result.cpuName==''">
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p><b>CPU Count:</b> {{result.cpuCount}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.sbcCpuUsageKpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">SBCa CPU Usage</th>
+                        <th class="">SBCb CPU Usage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.sbcCpuUsageKpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.cpuUsage1}}" [bar_color]="cpu_usage(kpi.cpuUsage1, thresholdRes.thresholdCpu)"
+                                [show_max]="false" [show_percent]="true"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.cpuUsage2}}" [bar_color]="cpu_usage(kpi.cpuUsage2, thresholdRes.thresholdCpu)"
+                                [show_max]="false" [show_percent]="true"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class='container' *ngIf="result.sbcMemoryUsagekpiList && result.cpuName!=''">
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p><b>CPU Cluster:</b> {{result.cpuName}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.sbcMemoryUsagekpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">Memory Usage(%)</th>
+                        <th class="">Swap Memory Usage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.sbcMemoryUsagekpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.memoryUsage}}" [bar_color]="cpu_usage(kpi.memoryUsage, thresholdRes.thresholdMemory)"
+                                [show_max]="false" [show_percent]="true"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.highSwapUsage}}" [bar_color]="cpu_usage(kpi.highSwapUsage, thresholdRes.thresholdMemory)"
+                                [show_max]="false" [show_percent]="true"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="result !== {} && result.statGroup=='Call Count Stats'">
+    <div class='container'>
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p *ngIf="result.deviceType!='SBC'"><b>Slot:</b> {{cardInfo.shelf}} - {{cardInfo.slot}} - {{cardInfo.name}}</p>
+            <p *ngIf="result.deviceType!='SBC'"><b>Slot Description:</b> {{cardInfo.description}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">Calls per Second</th>
+                        <th class="">Active Call Counts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content pl-3">
+                            <ratings-bar percentage="{{(kpi.callsPerSecond/higherTableValues[0])*100}}" display_value="{{kpi.callsPerSecond}}"
+                                [show_display]="true" [bar_color]="call_counts(higherTableValues[0],kpi.callsPerSecond, thresholdRes.thresholdCallsPerSecond)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.activeCallCounts/higherTableValues[1])*100}}" display_value="{{kpi.activeCallCounts}}"
+                                [show_display]="true" [show_max]="false" [bar_color]="call_counts(higherTableValues[1],kpi.activeCallCounts, thresholdRes.thresholdActiveCallCounts)"
+                                [show_percent]="false"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="result !== {} && result.statGroup=='PSX Timeout and Dips'">
+    <div class='container'>
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">External Timeout</th>
+                        <th class="">Internal Service Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.externalTimeout/higherTableValues[0])*100}}" display_value="{{kpi.externalTimeout}}"
+                                [show_display]="true" [bar_color]="call_counts(higherTableValues[0],kpi.externalTimeout, thresholdRes.thresholdExternalTimeout)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.internalServiceTime/higherTableValues[1])*100}}"
+                                display_value="{{kpi.internalServiceTime}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[1],kpi.internalServiceTime, thresholdRes.thresholdInternalServiceTime)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="result !== {} && result.statGroup=='Congestion Rejects and Dips'">
+    <div class='container' *ngIf="result.deviceType=='GSX' || result.deviceType=='NBS'">
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">Machine Congestion Rejects</th>
+                        <th class="">PSX Congestion Rejects</th>
+                        <th class="">PSX Dip Retries</th>
+                        <th class="">PSX Dip Failures</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.machineCongestionRejects/higherTableValues[0])*100}}"
+                                display_value="{{kpi.machineCongestionRejects}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[0],kpi.machineCongestionRejects, thresholdRes.thresholdMachineCongestion)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.psxCongestionRejects/higherTableValues[1])*100}}"
+                                display_value="{{kpi.psxCongestionRejects}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[1],kpi.psxCongestionRejects, thresholdRes.thresholdPsxCongestionRejects)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.psxDipRetries/kpi.psxDipRetries)*100}}" display_value="{{kpi.psxDipRetries}}"
+                                [show_display]="true" [show_max]="false" [bar_color]="call_counts(higherTableValues[2],kpi.psxDipRetries, thresholdRes.thresholdPsxDipRetries)"
+                                [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.psxDipFailures/higherTableValues[3])*100}}" display_value="{{kpi.psxDipFailures}}"
+                                [show_display]="true" [show_max]="false" [bar_color]="call_counts(higherTableValues[3],kpi.psxDipFailures, thresholdRes.thresholdPsxDipFailures)"
+                                [show_percent]="false"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="result !== {} && result.statGroup=='DSP Card Usage' && result.resourceReport">
+    <div class='container'>
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p><b>Codec Name:</b> {{result.codecName}}</p>
+
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" w-20pt pl-3" *ngIf="!hour">Date</th>
+                        <th class=" w-20pt pl-3" *ngIf="hour">Hour</th>
+                        <th class=" w-20pt">Total</th>
+                        <th class=" w-20pt">Utilization</th>
+                        <th class=" w-20pt">Allocation Failures</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.total/higherValuesDspList[3])*100}}" display_value="{{kpi.total}}"
+                                [show_display]="true" [bar_color]="'green'" [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.utilisation}}" [bar_color]="cpu_usage(kpi.utilisation, thresholdRes.thresholdUtilisation)"
+                                [show_max]="false" [show_percent]="true"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.allocationFailure}}" [bar_color]="cpu_usage(kpi.allocationFailure, thresholdRes.thresholdAllocationFailure)"
+                                [show_max]="false" [show_percent]="true"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="result !== {} && result.statGroup=='DSP Card Usage' && (!result.resourceReport) && result.resourcesbcdcuReport=='sbcdcuperformance'">
+    <div class='container'>
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p><b>Codec Name:</b> {{result.codecName}}</p>
+
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" w-20pt pl-3" *ngIf="!hour">Date</th>
+                        <th class=" w-20pt pl-3" *ngIf="hour">Hour</th>
+                        <th class=" w-20pt">Peak Used</th>
+                        <th class=" w-20pt">Average Used</th>
+                        <th class=" w-20pt">Average Available</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.peakUsed/higherValuesDspList[0])*100}}" display_value="{{kpi.peakUsed}}"
+                                [show_display]="true" [bar_color]="cpu_usage(kpi.peakUsed, thresholdRes.thresholdPeakUsed)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.averageUsed/higherValuesDspList[1])*100}}" display_value="{{kpi.averageUsed}}"
+                                [show_display]="true" [bar_color]="cpu_usage(kpi.averageUsed, thresholdRes.thresholdAverageUsed)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.averageAvailable/higherValuesDspList[2])*100}}"
+                                display_value="{{kpi.averageAvailable}}" [show_display]="true" [bar_color]="cpu_usage(kpi.averageAvailable, thresholdRes.thresholdAverageAvailable)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="result !== {} && result.statGroup=='DSP Card Usage' && result.resourcesbcdcuReport=='sbcdcustat'">
+    <div class='container'>
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p><b>Codec Name:</b> {{result.codecName}}</p>
+
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">Code Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">{{kpi.codecval}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="result !== {} && result.statGroup=='DSP Card Usage' && result.resourcesbcdcuReport=='sbcdcuslot'">
+    <div class='container'>
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p><b>Codec Name:</b> {{result.codecName}}</p>
+
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">Code Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">{{kpi.codecslotval}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="result !== {} && result.statGroup=='PSX-IN SIP Request Response'">
+    <div class='container'>
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">Total Requests</th>
+                        <th class="">3xx:CNP Success</th>
+                        <th class="">2xx:Failure</th>
+                        <th class="">4xx:Client Error</th>
+                        <th class="">5xx:Server Error</th>
+                        <th class="">6xx:Global failure</th>
+                        <th class="">Time Out Errors</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td>
+                            <ratings-bar percentage="{{(kpi.totalRequest/higherTableValues[5])*100}}" display_value="{{kpi.totalRequest}}"
+                                [show_display]="true" [bar_color]="psx_in(higherTableValues[5])" [show_max]="false"
+                                [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.redirection/higherTableValues[1])*100}}" display_value="{{kpi.redirection}}"
+                                [show_display]="true" [bar_color]="psx_in(higherTableValues[1])" [show_max]="false"
+                                [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.success/higherTableValues[0])*100}}" display_value="{{kpi.success}}"
+                                [show_display]="true" [bar_color]="psx_red(higherTableValues[0])" [show_max]="false"
+                                [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.clientError/higherTableValues[2])*100}}" display_value="{{kpi.clientError}}"
+                                [show_display]="true" [bar_color]="psx_red(higherTableValues[2])" [show_max]="false"
+                                [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.serverError/higherTableValues[3])*100}}" display_value="{{kpi.serverError}}"
+                                [show_display]="true" [bar_color]="psx_red(higherTableValues[3])" [show_max]="false"
+                                [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.globalFailure/higherTableValues[4])*100}}" display_value="{{kpi.globalFailure}}"
+                                [show_display]="true" [bar_color]="psx_red(higherTableValues[4])" [show_max]="false"
+                                [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.timeOutError/higherTableValues[6])*100}}" display_value="{{kpi.timeOutError}}"
+                                [show_display]="true" [bar_color]="psx_red(higherTableValues[6])" [show_max]="false"
+                                [show_percent]="false"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="result !== {} && result.statGroup=='Call Attempts Chassis wise'">
+    <div class='container'>
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">Busy Hour Call Attempts</th>
+                        <th class="">Call Completion</th>
+                        <th class="">Call Attempt Rate</th>
+                        <th class="">Total Call Attempts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.callAttemptCounts/higherTableValues[0])*100}}" display_value="{{kpi.callAttemptCounts}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[0],kpi.callAttemptCounts, thresholdRes.thresholdcallAttemptsUsed)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.callCompletionCounts/higherTableValues[1])*100}}" display_value="{{kpi.callCompletionCounts}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[1],kpi.callCompletionCounts, thresholdRes.thresholdcallCompletionsUsed)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.callAttemptRate/higherTableValues[2])*100}}" display_value="{{kpi.callAttemptRate}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[2],kpi.callAttemptRate, thresholdRes.thresholdcallAttemptRateUsed)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.totalCallAttempt/higherTableValues[3])*100}}" display_value="{{kpi.totalCallAttempt}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[3],kpi.totalCallAttempt, thresholdRes.thresholdTotalCallAttempts)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="result !== {} && result.statGroup=='Call Attempts Slot wise'">
+    <div class='container'>
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p><b>Slot:</b> {{cardInfo.shelf}} - {{cardInfo.slot}} - {{cardInfo.name}}</p>
+            <p><b>Slot Description:</b> {{cardInfo.description}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">Peak Call Attempts</th>
+                        <th class="">Call Completions</th>
+                        <th class="">Call Attempts Rate</th>
+                        <th class="">Total Call Attempts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.peakCallAttempts/higherTableValues[3])*100}}" display_value="{{kpi.peakCallAttempts}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[3],kpi.peakCallAttempts, kpi.thresholdPeakCallAttempts)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.callCompletions/higherTableValues[1])*100}}" display_value="{{kpi.callCompletions}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[1],kpi.callCompletions, kpi.thresholdCallCompletion)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.callAttemptRate/higherTableValues[2])*100}}" display_value="{{kpi.callAttemptRate}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[2],kpi.callAttemptRate, kpi.thresholdCallsPerSecond)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.callAttempts/higherTableValues[0])*100}}" display_value="{{kpi.callAttempts}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[0],kpi.callAttempts, kpi.thresholdCallAttempts)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+<div *ngIf="result !== {} && result.statGroup=='Call Attempts Per SBC'">
+    <div class='container'>
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">Call Completion</th>
+                        <th class="">Call Attempt Rate</th>
+                        <th class="">Total Call Attempts</th>
+                        <th class="">Busy Hour Call Attempts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.callCompletionCounts/higherTableValues[0])*100}}" display_value="{{kpi.callCompletionCounts}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[0],kpi.callCompletionCounts, thresholdRes.thresholdcallCompletionsUsed)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.callAttemptCounts/higherTableValues[1])*100}}" display_value="{{kpi.callAttemptCounts}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[1],kpi.callAttemptCounts, thresholdRes.thresholdSbcCallAttemptsRate)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.totalCallAttempt/higherTableValues[1])*100}}" display_value="{{kpi.totalCallAttempt}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[1],kpi.totalCallAttempt, thresholdRes.thresholdTotalCallAttempts)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{(kpi.busyHourCallAttempt/higherTableValues[1])*100}}" display_value="{{kpi.busyHourCallAttempt}}" [show_display]="true" [bar_color]="call_counts(higherTableValues[1],kpi.busyHourCallAttempt, thresholdRes.thresholdTotalCallAttempts)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="result !== {} && result.statGroup=='SBC License Info'">
+    <div class='container'>
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">Max License Limit</th>
+                        <th class="">Max Active Calls</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">{{kpi.maxLicenseLimit}}</td>
+                        <td class="content">{{kpi.maxActiveCalls}} </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="result !== {} && result.statGroup=='PSX CPS Licenses'">
+    <div class='container'>
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">Max CPS Licences</th>
+                        <th class="">Total Calls Accepted</th>
+                        <th class="">Total Calls Rejected</th>
+                        <th class="">Calls Accepted Per Second</th>
+                        <th class="">Calls Rejected Per Second</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">{{kpi.maxcpsLicencesLimit}}</td>
+                        <td class="content">{{kpi.totalcallaccepted}} </td>
+                        <td class="content">{{kpi.totalcallsrejected}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.callsacceptedpersecond}}" [bar_color]="cpu_usage(kpi.callsacceptedpersecond, kpi.maxcpsLicencesLimit)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.callsrejectedpersecond}}" [bar_color]="cpu_usage(kpi.callsrejectedpersecond, kpi.maxcpsLicencesLimit)"
+                                [show_max]="false" [show_percent]="false"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="result !== {} && result.statGroup=='Ethernet Stats Slot wise'">
+    <div class='container'>
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p><b>Slot:</b> {{result.shelf}} - {{result.slot}} - {{result.nifPort}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">Total Calls</th>
+                        <th class="">Bandwidth Usage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">{{kpi.totalCalls}}</td>
+                        <td class="content">
+                            <ratings-bar percentage="{{kpi.bandwidthUsage}}" [bar_color]="cpu_usage(kpi.bandwidthUsage, thresholdRes.thresholdCpu)"
+                                [show_max]="false" [show_percent]="true"></ratings-bar>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="result !== {} && result.statGroup=='Machine Congestion Stats'">
+    <div class='container' *ngIf="result.deviceType!='SBC'">
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class="pl-3" rowspan="2" style="vertical-align:middle" *ngIf="!hour">Date</th>
+                        <th class="pl-3" rowspan="2" style="vertical-align:middle" *ngIf="hour">Hour</th>
+                        <th class="" colspan="3" style="vertical-align:middle">Machine Congestion
+                            Instances</th>
+                        <th class="" colspan="3">Total Congestion Time (in Seconds)</th>
+                        <th class="" rowspan="2" style="vertical-align:middle">Total Call Arrivals</th>
+                        <th class="" rowspan="2" style="vertical-align:middle">Calls Rejected due
+                            to Congestion</th>
+                        <th class="" rowspan="2" style="vertical-align:middle">Peak Call Rate</th>
+                    </tr>
+                    <tr>
+                        <th class="">MC1 Count</th>
+                        <th class="">MC2 Count</th>
+                        <th class="">MC3 Count</th>
+                        <th class="">MC1 time</th>
+                        <th class="">MC2 time</th>
+                        <th class="">MC3 time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">{{kpi.mc1Count}}</td>
+                        <td class="content">{{kpi.mc2Count}} </td>
+                        <td class="content">{{kpi.mc3Count}}</td>
+                        <td class="content">{{kpi.mc1Time}}</td>
+                        <td class="content">{{kpi.mc2Time}} </td>
+                        <td class="content">{{kpi.mc3Time}}</td>
+                        <td class="content">{{kpi.totalCallArrivals}}</td>
+                        <td class="content">{{kpi.callsRejectedDuetoCongestion}} </td>
+                        <td class="content">{{kpi.nbsgsxpeakCallRate}} </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class='container' *ngIf="result.deviceType=='SBC'">
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiListSbc.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class="pl-3" rowspan="2" style="vertical-align:middle" *ngIf="!hour">Date</th>
+                        <th class="pl-3" rowspan="2" style="vertical-align:middle" *ngIf="hour">Hour</th>
+                        <th class="" colspan="3" style="vertical-align:middle">Machine Congestion
+                            Instances</th>
+                        <th class="" colspan="3">Total Congestion Time (in Seconds)</th>
+                        <th class="" rowspan="2" style="vertical-align:middle">Total Call Arrivals</th>
+                        <th class="" rowspan="2" style="vertical-align:middle">Calls Rejected due
+                            to Congestion</th>
+                        <th class="" rowspan="2" style="vertical-align:middle">Peak Call Rate</th>
+                    </tr>
+                    <tr>
+                        <th class="">MC1 Count</th>
+                        <th class="">MC2 Count</th>
+                        <th class="">MC3 Count</th>
+                        <th class="">MC1 time</th>
+                        <th class="">MC2 time</th>
+                        <th class="">MC3 time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiListSbc">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">{{kpi.mc1Count}}</td>
+                        <td class="content">{{kpi.mc2Count}} </td>
+                        <td class="content">{{kpi.mc3Count}}</td>
+                        <td class="content">{{kpi.mc1Time}}</td>
+                        <td class="content">{{kpi.mc2Time}} </td>
+                        <td class="content">{{kpi.mc3Time}}</td>
+                        <td class="content">{{kpi.callArrivals}}</td>
+                        <td class="content">{{kpi.overloadRejects}} </td>
+                        <td class="content">{{kpi.sbcPeakCallRate}} </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="result !== {} && result.statGroup=='Ethernet Packet Port Status'">
+    <div class='container'>
+        <div class="filter_box py-2 px-3 mt-10">
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="!hour">System Statistics Search - Daily History</h3>
+            <h3 class="f_size_18 color-black mt-2 mb-3" *ngIf="hour">System Statistics Search - Hourly History</h3>
+            <p><b>Device:</b> {{result.deviceName}} - {{result.descr}}</p>
+            <p><b>Codec Name:</b> {{result.codecName}}</p>
+            <p *ngIf="!hour"><b>Time Range:</b> {{result.fromDate}} to {{result.toDate}}</p>
+            <p *ngIf="hour"><b>Time Range:</b> {{result.day}}</p>
+        </div>
+        <form>
+            <div class="hr"></div>
+            <div class="row mx-0 border-bottom-grey2 pb-2">
+                <div class="col-sm-4 pl-0">
+                    <strong>{{result.kpiList.length}}</strong> Records
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-4 text-right pr-0">
+                    <button class="btn-icon" type="submit" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"
+                        title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="border-grey py-3 my-3">
+            <table class="table mt-2">
+                <thead>
+                    <tr class="active">
+                        <th class=" pl-3" *ngIf="!hour">Date</th>
+                        <th class=" pl-3" *ngIf="hour">Hour</th>
+                        <th class="">SBC1a-Port0</th>
+                        <th class="">SBC1a-Port1</th>
+                        <th class="">SBC1b-Port0</th>
+                        <th class="">SBC1b-Port1</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let kpi of result.kpiList">
+                        <td class="content pl-3" *ngIf="!hour">
+                            <a href="javascript:void(0)" id="date" (click)="getHourHistory(kpi.timestampDateFormatted)">{{kpi.timestamp}}</a>
+                        </td>
+                        <td class="content pl-3" *ngIf="hour">{{kpi.timestamp+":00 - "+kpi.timestamp+":59"}}</td>
+                        <td class="content">{{kpi.codecValue1}}</td>
+                        <td class="content">{{kpi.codecValue2}}</td>
+                        <td class="content">{{kpi.codecValue3}}</td>
+                        <td class="content">{{kpi.codecValue4}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+<button class="btn btn-red" type="button" *ngIf="hour" style="margin-left: 49px;margin-bottom: 5px;margin-top: 5px;"
+    (click)="onclickBack()">Back</button>

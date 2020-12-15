@@ -1,0 +1,68 @@
+<div class="filter_box mx-3 py-2 px-3 mt-10">
+    <h3 class="f_size_18 color-black mt-2 mb-3">Installed Numbers - History of the Month</h3>
+    <form #dates="ngForm" (ngSubmit)="onSubmit(dates.value)" class="form_box py-0 call_log_form">
+
+        <div class="row mx-0 mb-1">
+            <div class="col-sm-6 pl-0">
+                <h3>Country</h3>
+                <div class="row mx-0 mb-1">
+                    <div class="col-sm-3 pl-0">Service Type</div>
+                    <div class="col-sm-9">Number Portability({{desc}})</div>
+                </div>
+                <div class="row mx-0 mb-1">
+                    <div class="col-sm-3 pl-0">Country</div>
+                    <div class="col-sm-3">{{name}}</div>
+                </div>
+            </div>
+            <div class="col-sm-6">                
+                <ng-month-picker [(ngModel)]="sel_month" name="sel_month"></ng-month-picker>
+                <div class="row mx-0 mb-1 mt-4">
+                    <div class="col-sm-12 pl-0">
+                        <button type="submit" id="padded" class="btn btn-red">Run Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="hr mx-3"></div>
+<form class="mx-3 ">
+    <div class="row mx-0 border-bottom-grey2 pb-2">
+        <div class="col-sm-4 pl-0">
+            <strong>{{monthHistoryList.length}}</strong> Records
+        </div>
+        <div class="col-sm-4">
+        </div>
+        <div class="col-sm-4 text-right pr-0">
+            <div class="input-group w-200px green d-inline-flex mr-2">
+                <!-- <mat-form-field>
+                            <mat-label>Filter</mat-label>
+                            <input type="text"  class="green-search" placeholder="keyword" #input>
+                        </mat-form-field> -->
+            </div>
+            
+        </div>
+    </div>
+    <div class="border-grey py-3 mt-2 mb-3">    
+        <table class="table inst-num-table">
+            <thead>
+                <tr class="active">
+                    <th class="heading pl-3">Date</th>
+                    <th class="heading">Installed Numbers</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let monthHistory of monthHistoryList">
+                    <td class="content pl-3">{{monthHistory.date}}</td>
+                    <td class="content">
+                        <ratings-bar percentage="{{monthHistory.installedNumbers}}" [show_max]="false" 
+                            bar_color="green" *ngIf="monthHistory.installedNumbers > 0"></ratings-bar>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</form>

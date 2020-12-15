@@ -1,0 +1,187 @@
+<div class="row mx-0">
+    <div class="col-sm-6"><img src="../../../assets/images/ntqr-logo.jpg" class="mt-2"></div>
+    <div class="col-sm-6"></div>
+</div>
+
+<div class="row mx-0 mt-2">
+    <div class="col-sm-6">
+        <p class="normal color-black">Daily Busy Hour Report</p>
+    </div>
+
+    <div class="col-sm-6 pl-0 text-right">
+        
+    </div>
+</div>
+
+<div class="row mx-0 mt-2">
+    <div class="col-sm-3">
+        <p class="small color-grey my-0">Trunkgroup name</p>
+        <p class="normal color-black font-weight-bold my-0 ln_ht_10">{{ tg_name }}</p>
+    </div>
+
+    <div class="col-sm-5 pt-1">
+      <div class="row mx-0" *ngIf="this.date_to === ''">
+          <div class="col-sm-3">
+              <button class="btn-icon mt-2 mr-2" (click)="prev_date()"><i class="fas fa-arrow-circle-left"></i></button>
+          </div>
+          <div class="col-sm-6 text-center pt-1">
+              <p class="my-0 small font-weight-bold ln_ht_13">{{ date_from }} </p>
+              <p class="my-0 small ln_ht_13">00:00 to 23:59 </p>
+          </div>
+          <div class="col-sm-3 text-right">
+              <button class="btn-icon mt-2 mr-2" (click)="next_date()"><i class="fas fa-arrow-circle-right"></i></button>
+          </div>
+      </div>
+      
+      <div class="row mx-0" *ngIf="this.date_to !== ''">
+          <div class="col-sm-2">
+              <button class="btn-icon mt-2 mr-2" (click)="prev_date()"><i class="fas fa-arrow-circle-left"></i></button>
+          </div>
+          <div class="col-sm-4 text-center pt-1">
+              <p class="my-0 small font-weight-bold ln_ht_13">{{ date_from }} </p>
+              <p class="my-0 small ln_ht_13">00:00 to 23:59 </p>
+          </div>
+          <div class="col-sm-4 text-center pt-1">
+            <p class="my-0 small font-weight-bold ln_ht_13">{{ date_to }} </p>
+            <p class="my-0 small ln_ht_13">00:00 to 23:59 </p>
+        </div>
+          <div class="col-sm-2 text-right">
+              <button class="btn-icon mt-2 mr-2" (click)="next_date()"><i class="fas fa-arrow-circle-right"></i></button>
+          </div>
+      </div>
+      
+    </div>
+
+    <div class="col-sm-2">
+        <p class="small color-grey my-0">Gateway</p>
+        <p class="normal color-black font-weight-bold my-0 ln_ht_10"> {{ gateway_tg }}</p>
+    </div>
+
+    <div class="col-sm-2">
+        <p class="small color-grey my-0">Service Type</p>
+        <p class="normal color-black font-weight-bold my-0 ln_ht_10">{{ service_type_tg }}</p>
+    </div>
+</div>
+
+<div class="hr mx-3"></div>
+
+<form class="mx-3">
+    <div class="row mx-0 border-bottom-grey2 pb-2 mb-2">
+        <div class="col-sm-6 pt-2 pl-0">
+            
+        </div>
+        
+        <div class="col-sm-6 text-right pr-0">
+            <div class="input-group w-200px green d-inline-flex mr-2 green">                
+                <div class="input-group w-200px green d-inline-flex mr-2">
+                    <input type="text" class="form-control" placeholder="Keyword" [(ngModel)]="search_text" [ngModelOptions]="{standalone: true}">
+                    <button class="btn btn-outline-secondary" type="button" (click)="applyFilter($event)"><i class="fas fa-search"></i></button>
+                  </div>
+            </div>
+            <button class="btn-icon mt-2" (click)="downloadCsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+        </div>
+    </div>    
+    <div class="border-grey py-3 mb-3">
+      <div class="table-sticky">
+          <table mat-table [dataSource]="dataSource" matSort class="mat-table bordered w-100">
+      
+            <!-- Trunkgroup Column -->
+            <ng-container matColumnDef="timestampDateFormatted" *ngIf="date_to === ''" >
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="pl-5"> Hour </th>
+              <td mat-cell *matCellDef="let row" class="pl-5"> {{row.timestamp | hours}}</td>
+            </ng-container>
+
+            <!-- Trunkgroup Column -->
+            <ng-container matColumnDef="timestampDateFormatted" *ngIf="date_to !== ''" >
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="pl-5"> Day </th>
+              <td mat-cell *matCellDef="let row" class="pl-5"> <span class="underline color-green cursor" (click)="get_day_data(row.timestampDateFormatted)">{{row.timestamp }}</span></td>
+            </ng-container>
+        
+            <!-- gateway Column -->
+            <ng-container matColumnDef="circuitsAvailable">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Circuits Available (Total) </th>
+              <td mat-cell *matCellDef="let row"> <ratings-bar current_value="{{ row.circuitsAvailable}}" max_value="{{row.totalCircuits}}" min_value="30" [gateway]="gateway_tg" [show_max]="true" [row_object]="row"></ratings-bar> </td>
+            </ng-container>
+        
+            <!-- Trunkgroup Column -->
+            <ng-container matColumnDef="tgUtilisation">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Utilisation</th>
+              <td mat-cell *matCellDef="let row"> <ratings-bar current_value="{{ row.tgUtilisation}}" max_value="{{row.tgUtilisation}}" percentage="{{row.tgUtilisation}}" min_value="30" [show_max]="false" [show_percent]="true" [threshold_trunkgroup_utilisation]="threshold_tg_utilisation" [gateway]="gateway_tg" [row_object]="row"></ratings-bar> </td>
+            </ng-container>
+
+            <!-- Trunkgroup Column -->
+            <ng-container matColumnDef="busiestHour" *ngIf="this.date_to !== ''">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Busiest Hour (BST)</th>
+                <td mat-cell *matCellDef="let row"> {{row.busiestHour }} </td>
+            </ng-container>
+            
+      
+            <!-- service type  Column -->
+            <ng-container matColumnDef="tgInCallAtempts">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> In/Out Call Attempts </th>
+              <td mat-cell *matCellDef="let row">
+                <ng-container *ngIf="gateway_includes_sbc == false">
+                  <ratings-bar current_value="{{ row.tgInCallAtempts | nullToZero}}" max_value="{{ higher_in_bandwidth | nullToZero }}" min_value="30" [row_object]="row" [show_max]="false" [gateway]="gateway_tg" column_name=""></ratings-bar> 
+
+                  <ratings-bar current_value="{{ row.tgOutCallAtempts | nullToZero}}" max_value="{{higher_out_bandwidth | nullToZero}}" min_value="30" [row_object]="row" [show_max]="false" [gateway]="gateway_tg"></ratings-bar>
+                </ng-container>
+
+                <ng-container *ngIf="gateway_includes_sbc">
+                    <ratings-bar current_value="{{ row.tgInCallAtempts | nullToZero}}" max_value="{{higher_in_bandwidth | nullToZero}}" min_value="30" [row_object]="row" [show_max]="false" [gateway]="gateway_tg"></ratings-bar> 
+    
+                    <ratings-bar current_value="{{ row.tgOutCallAtempts | nullToZero}}" max_value="{{ higher_out_bandwidth | nullToZero}}" min_value="30" [row_object]="row" [show_max]="false" [gateway]="gateway_tg"></ratings-bar>
+                  </ng-container>
+
+              </td>
+            </ng-container>
+        
+            <!-- Circuits available Column -->
+            <ng-container matColumnDef="maxInCpsProcessed">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> In/Out CPS (Processed) </th>
+              <td mat-cell *matCellDef="let row">
+                  <ng-container *ngIf="gateway_includes_sbc == false">
+                    <ratings-bar current_value="{{ row.maxInCpsProcessed | nullToZero}}" max_value="{{row.maxInCpsProcessed | nullToZero}}" min_value="30" [row_object]="row" [show_max]="false" [gateway]="gateway_tg" ></ratings-bar> 
+
+                    <ratings-bar current_value="{{ row.maxOutCpsProcessed | nullToZero}}" max_value="{{row.maxOutCpsProcessed | nullToZero}}" min_value="30" [row_object]="row" [show_max]="false" [gateway]="gateway_tg"></ratings-bar>
+                  </ng-container>
+
+                  <ng-container *ngIf="gateway_includes_sbc">
+                      <ratings-bar current_value="{{ row.maxInCpsProcessedSbc | nullToZero}}" max_value="{{row.maxInCpsProcessedSbc | nullToZero}}" min_value="30" [row_object]="row" [show_max]="false" [gateway]="gateway_tg" column_name="InCpsProcessed" ></ratings-bar> 
+    
+                      <ratings-bar current_value="{{ row.maxOutCpsProcessedSbc | nullToZero}}" max_value="{{row.maxOutCpsProcessedSbc | nullToZero}}" min_value="30" [row_object]="row" [show_max]="false" [gateway]="gateway_tg" column_name="OutCpsProcessed"></ratings-bar>
+                    </ng-container>
+              </td>
+            </ng-container>
+      
+            <!-- utilisation available Column -->
+            <ng-container matColumnDef="maxInCpsAttempted">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> In / Out CPS Attempted </th>
+              <td mat-cell *matCellDef="let row">
+                  <ng-container *ngIf="gateway_includes_sbc == false">
+                    <ratings-bar current_value="{{row.maxInCpsAttempted | nullToZero}}" max_value="{{row.maxInCpsAttempted | nullToZero}}" min_value="50" [row_object]="row" [show_max]="false" [gateway]="gateway_tg"></ratings-bar>
+                    <ratings-bar current_value="{{row.maxOutCpsAttempted | nullToZero}}" max_value="{{row.maxOutCpsAttempted | nullToZero}}" min_value="50" [row_object]="row" [show_max]="false" [gateway]="gateway_tg"></ratings-bar>
+                  </ng-container>
+
+                  <ng-container *ngIf="gateway_includes_sbc">
+                      <ratings-bar current_value="{{row.maxInCpsAttemptedSbc | nullToZero}}" max_value="{{row.maxInCpsAttemptedSbc | nullToZero}}" min_value="50" [row_object]="row" [show_max]="false" [gateway]="gateway_tg" column_name="InCpsAttempted"></ratings-bar>
+                      <ratings-bar current_value="{{row.maxOutCpsAttemptedSbc | nullToZero}}" max_value="{{row.maxOutCpsAttemptedSbc | nullToZero}}" min_value="50" [row_object]="row" [show_max]="false" [gateway]="gateway_tg" column_name="OutCpsAttempted"></ratings-bar>
+                    </ng-container>
+                </td>
+            </ng-container>
+        
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        
+            <!-- Row shown when there is no matching data. -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" colspan="4">No data matching the filter value "{{input.value}}"</td>
+            </tr>
+          </table>
+        
+          <mat-paginator [pageSizeOptions]="[5, 10, 25, 30, 50, 75, 100]" [pageSize]="30"></mat-paginator>
+      </div>
+      <p class="text-left"><button class="btn btn-red" type="button" *ngIf="show_back_btn" (click)="back_to_busy_hour()">Back</button></p>
+    </div>
+
+</form> 
+

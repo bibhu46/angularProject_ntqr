@@ -1,0 +1,3359 @@
+<div class="filter_box mx-3 py-2 px-3">
+	<h3 class="f_size_18 color-black mt-2 mb-3">Device Statistics Search</h3>
+
+	<form class="form_box py-0 call_log_form" #userForm="ngForm" (ngSubmit)="onSubmit(userForm.value)">
+		<div class="row mx-0 mb-1">
+			<div class="col-sm-2 pl-0" id="Search">Statistics Group</div>
+			<div class="col-sm-4">
+				<ng-multiselect-dropdown [placeholder]="'Select Type'" [data]="statGroup" name="statGrp"
+					[(ngModel)]="statGrp" [settings]="filterTypeSettings" (onSelect)="onChange($event)"
+					(onDeSelect)="on_statistics_deselect($event)" ngModel>
+				</ng-multiselect-dropdown>
+			</div>
+
+			<div class="col-sm-2">Date Range</div>
+			<div class="col-sm-4 px-0">
+				<input type="date" name='fromDate' [(ngModel)]='fromDate' class="form_text w-150px mr-3 float-left"
+					placeholder="from">
+				<input type="date" name='toDate' [(ngModel)]='toDate' class="form_text w-150px float-left"
+					placeholder="to">
+			</div>
+		</div>
+
+		<div class="row mx-0 pt-2">
+			<div class="col-sm-2 pl-0">Device Types</div>
+			<div class="col-sm-6">
+				<label class="custom_check mr-3 btn-style" *ngFor="let v of selDevType; let i = index;">
+					<input type="checkbox" [checked]="true" value="{{v.value}}" (change)="device_type_change($event)"
+						name="'dev_type' + i" [(ngModel)]="filter_form_value.dev_types[i]">
+					<span class="checkmark">{{v.value}}</span>
+				</label>
+			</div>
+		</div>
+
+		<div class="row mx-0 pt-0">
+			<div class="col-sm-2 pl-0">Devices</div>
+			<div class="col-sm-4">
+				<ng-multiselect-dropdown [placeholder]="'Select Devices'" [data]="selDev" name="selDevTp"
+					[(ngModel)]="selDevTp" [settings]="devicesSettings" (onSelect)="on_devices_select($event)"
+					(onDeSelect)="on_devices_deselect($event)" ngModel>
+				</ng-multiselect-dropdown>
+			</div>
+		</div>
+
+		<div class="row mx-0 pt-2" *ngIf="show_slot">
+			<div class="col-sm-2 pl-0">Slot</div>
+			<div class="col-sm-4">
+				<ng-multiselect-dropdown [placeholder]="'Select Slot'" [settings]="slotSettings" [data]="slot"
+					name="slotSel" [(ngModel)]="slotSel" (onSelect)="on_slot_select($event)"
+					(onDeSelect)="on_slot_deselect($event)" ngModel>
+				</ng-multiselect-dropdown>
+			</div>
+		</div>
+
+		<div class="row mx-0 mb-1 mt-4">
+			<div class="col-sm-12 pl-0">
+				<button class="btn btn-grey mr-2" type="button" (click)="filter_form_reset()">Reset</button>
+				<button class="btn btn-red" type="submit">Run Report</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+<div class="hr mx-3"></div>
+
+
+<div class="panel panel-default " id="panel">
+
+	<!-- GSX Result-->
+	<div class="container card" style="margin-right: 12%;width: 74%;" *ngIf="resultCheck">
+		<!-- System Health Stats-->
+		<div class="" id="Result" *ngIf="resultCheck">Results</div>
+		<div *ngIf="!sbcCon && statGrp[0] === 'System Health Stats'">
+			<div class="row" id="spacing_bottom">
+				<div class="col-sm-4" id="spacing_left">
+					<h5>
+						<b>System Usage</b>
+					</h5>
+				</div>
+				<div class="col-sm-5" id="spacing_top">
+					<h6>From {{date1}} to {{date2}}</h6>
+				</div>
+
+				<div class="col-sm-3" id="coloring">
+					<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()">
+						<svg width="1em"
+							height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+							xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd"
+								d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+						</svg> Download CSV File</button>
+				</div>
+			</div>
+		</div>
+
+		<div *ngIf="statGrp[0] ==='Call Count Stats'">
+			<div class="row" id="spacing_bottom">
+				<div class="col-sm-4" id="spacing_left">
+					<h5>
+						<b>Call Count Stats</b>
+					</h5>
+				</div>
+				<div class="col-sm-5" id="spacing_top">
+					<h6>From {{date1}} to {{date2}}</h6>
+				</div>
+
+				<div class="col-sm-3" id="coloring">
+					<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+							height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+							xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd"
+								d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+						</svg> Download CSV File</button>
+				</div>
+			</div>
+		</div>
+
+		<div *ngIf="statGrp[0] === 'Congestion Rejects and Dips'">
+			<div class="row" id="spacing_bottom">
+				<div class="col-sm-4" id="spacing_left">
+					<h5>
+						<b>Congestion Rejects and Dips</b>
+					</h5>
+				</div>
+				<div class="col-sm-5" id="spacing_top">
+					<h6>From {{date1}} to {{date2}}</h6>
+				</div>
+
+				<div class="col-sm-3" id="coloring">
+					<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+							height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+							xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd"
+								d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+						</svg> Download CSV File</button>
+				</div>
+			</div>
+		</div>
+
+		<div *ngIf="statGrp[0] === 'Call Attempts Chassis wise'">
+			<div class="row" id="spacing_bottom">
+				<div class="col-sm-4" id="spacing_left">
+					<h5>
+						<b>Call Attempts Chassis wise</b>
+					</h5>
+				</div>
+				<div class="col-sm-5" id="spacing_top">
+					<h6>From {{date1}} to {{date2}}</h6>
+				</div>
+
+				<div class="col-sm-3" id="coloring">
+					<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+							height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+							xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd"
+								d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+						</svg> Download CSV File</button>
+				</div>
+			</div>
+		</div>
+
+		<div *ngIf="statGrp[0] === 'Call Attempts Slot wise'">
+			<div class="row" id="spacing_bottom">
+				<div class="col-sm-4" id="spacing_left">
+					<h5>
+						<b>Call Attempts Slot wise</b>
+					</h5>
+				</div>
+				<div class="col-sm-5" id="spacing_top">
+					<h6>From {{date1}} to {{date2}}</h6>
+				</div>
+
+				<div class="col-sm-3" id="coloring">
+					<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+							height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+							xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd"
+								d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+						</svg> Download CSV File</button>
+				</div>
+			</div>
+		</div>
+
+		<div *ngIf="statGrp[0] === 'Ethernet Stats Slot wise'">
+			<div class="row" id="spacing_bottom">
+				<div class="col-sm-4" id="spacing_left">
+					<h5>
+						<b>Ethernet Stats Slot wise</b>
+					</h5>
+				</div>
+				<div class="col-sm-5" id="spacing_top">
+					<h6>From {{date1}} to {{date2}}</h6>
+				</div>
+
+				<div class="col-sm-3" id="coloring">
+					<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+							height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+							xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd"
+								d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+						</svg> Download CSV File</button>
+				</div>
+			</div>
+		</div>
+
+		<div *ngIf="statGrp[0] === 'Machine Congestion Stats'">
+			<div class="row" id="spacing_bottom">
+				<div class="col-sm-4" id="spacing_left">
+					<h5>
+						<b>Machine Congestion Stats</b>
+					</h5>
+				</div>
+				<div class="col-sm-5" id="spacing_top">
+					<h6>From {{date1}} to {{date2}}</h6>
+				</div>
+
+				<div class="col-sm-3" id="coloring">
+					<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+							height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+							xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd"
+								d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+						</svg> Download CSV File</button>
+				</div>
+			</div>
+		</div>
+
+		<div *ngIf="systemGsxList">
+			<div *ngIf="statGrp[0] ==='System Health Stats'">
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>GSX - Open Services Switch</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-4" id="center">Slot</th>
+								<th class="col-sm-4" id="center">CPU Usage(%)</th>
+								<th class="col-sm-4" id="center">Memory Usage(%)</th>
+							</tr>
+							<tbody *ngFor="let gsx of systemGsxList index as i">
+								<tr id="noBorder">
+									<td colspan="3">{{i+1}}.Device:{{gsx.name}}-{{gsx.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of gsx.kpiList" data-toggle="popover" data-toggle="tooltip"
+									title="{{kpi.cardInformation.description}}">
+									<td><a
+											(click)="showPopUpHistory(gsx.name,'GSX',kpi.shelf,kpi.slot,'','','',gsx.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.shelf}} - {{kpi.slot}} -
+										{{kpi.cardInformation.name}}</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.cpuUsage}}%"
+												*ngIf="thresholdRes.thresholdCpu==null || thresholdRes.thresholdCpu>kpi.cpuUsage">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.cpuUsage}}%"
+												*ngIf="kpi.cpuUsage>=thresholdRes.thresholdCpu"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.cpuUsage}}% </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.memoryUsage}}%"
+												*ngIf="thresholdRes.thresholdMemory==null || thresholdRes.thresholdMemory>kpi.memoryUsage">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.memoryUsage}}%"
+												*ngIf="kpi.memoryUsage>=thresholdRes.thresholdMemory"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.memoryUsage}}% </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<!-- Call Count Stats-->
+			<div *ngIf="systemGsxList">
+				<div *ngIf="statGrp[0] ==='Call Count Stats'">
+
+					<div class="row" id="TimeRange">
+						<div class="container center" id="loader" style="padding-left:370px;display: none">
+							<div class="spinner-grow text-muted"></div>
+							<div class="spinner-grow text-primary"></div>
+							<div class="spinner-grow text-success"></div>
+							<div class="spinner-grow text-info"></div>
+							<div class="spinner-grow text-warning"></div>
+							<div class="spinner-grow text-danger"></div>
+							<div class="spinner-grow text-secondary"></div>
+							<div class="spinner-grow text-dark"></div>
+							<div class="spinner-grow text-light"></div>
+						</div>
+						<div class="col-sm-5" id="spacing">
+							<h6><b>GSX - Open Services Switch</b></h6>
+						</div>
+					</div>
+
+
+					<div class="row" id="left-padding">
+						<div class="col-sm-12">
+							<table class="table table-bordered table-sm">
+								<tr id="height_size" style="height: 5px;">
+									<th class="col-sm-4" id="center">Slot</th>
+									<th class="col-sm-4" id="center">Calls per Second</th>
+									<th class="col-sm-4" id="center">Active Call Counts</th>
+								</tr>
+								<tbody *ngFor="let gsx of systemGsxList index as i">
+									<tr id="noBorder">
+										<td colspan="3">{{i+1}}.Device:{{gsx.name}}-{{gsx.descr}}</td>
+									</tr>
+									<tr *ngFor="let kpi of gsx.kpiList" data-toggle="popover" data-toggle="tooltip"
+										title="{{kpi.cardInformation.description}}">
+										<td><a
+												(click)="showPopUpHistory(gsx.name,'GSX',kpi.shelf,kpi.slot,'','','',gsx.descr,'',false,'')"><img
+													src="../assets/chart_bar.png" /></a> {{kpi.shelf}} - {{kpi.slot}} -
+											{{kpi.cardInformation.name}}</td>
+										<td>
+											<div class="progress">
+												<div class="progress-bar bg-success"
+													style="width:{{kpi.callsPerSecond}}%"
+													*ngIf="higherTableValues[0]>0 && thresholdRes.thresholdCallsPerSecond==null || thresholdRes.thresholdCallsPerSecond>kpi.callsPerSecond">
+												</div>
+												<div class="progress-bar bg-danger"
+													style="width:{{kpi.callsPerSecond}}%"
+													*ngIf="higherTableValues[0]>0 && kpi.callsPerSecond>=thresholdRes.thresholdCallsPerSecond">
+												</div>
+												<span style='padding: 7px;'> &nbsp; {{kpi.callsPerSecond}} </span>
+											</div>
+										</td>
+										<td>
+											<div class="progress">
+												<div class="progress-bar bg-success"
+													style="width:{{kpi.activeCallCounts}}%"
+													*ngIf="higherTableValues[1]>0 && kpi.thresholdActiveCallCounts==null || kpi.thresholdActiveCallCounts>kpi.activeCallCounts">
+												</div>
+												<div class="progress-bar bg-danger"
+													style="width:{{kpi.activeCallCounts}}%"
+													*ngIf="higherTableValues[1]>0 && kpi.activeCallCounts>=kpi.thresholdActiveCallCounts">
+												</div>
+												<span style='padding: 7px;'> &nbsp; {{kpi.activeCallCounts}} </span>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Congestion Rejects and Dips-->
+			<div *ngIf="statGrp[0] ==='Congestion Rejects and Dips'">
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>GSX - Open Services Switch</b></h6>
+					</div>
+				</div>
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Machine Congestion Rejects</th>
+								<th class="col-sm-3" id="center">PSX Congestion Rejects</th>
+								<th class="col-sm-3" id="center">PSX Dip Retries</th>
+								<th class="col-sm-3" id="center">PSX Dip Failures</th>
+							</tr>
+							<tbody *ngFor="let gsx of systemGsxList index as i">
+								<tr id="noBorder">
+									<td colspan="4"><a
+											(click)="showPopUpHistory(gsx.name,'GSX','','','','','',gsx.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a>
+										{{i+1}}.Device:{{gsx.name}}-{{gsx.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of gsx.kpiList">
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success"
+												style="width:{{kpi.machineCongestionRejects}}%"
+												*ngIf="higherTableValues[0]>0 && thresholdRes.thresholdMachineCongestion==null || thresholdRes.thresholdMachineCongestion>kpi.machineCongestionRejects">
+											</div>
+											<div class="progress-bar bg-danger"
+												style="width:{{kpi.machineCongestionRejects}}%"
+												*ngIf="higherTableValues[0]>0 && kpi.machineCongestionRejects>=thresholdRes.thresholdMachineCongestion">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.machineCongestionRejects}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success"
+												style="width:{{kpi.psxCongestionRejects}}%"
+												*ngIf="higherTableValues[1]>0 && thresholdRes.thresholdPsxCongestionRejects==null || thresholdRes.thresholdPsxCongestionRejects>kpi.psxCongestionRejects">
+											</div>
+											<div class="progress-bar bg-danger"
+												style="width:{{kpi.psxCongestionRejects}}%"
+												*ngIf="higherTableValues[1]>0 && kpi.psxCongestionRejects>=thresholdRes.thresholdPsxCongestionRejects">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.psxCongestionRejects}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.psxDipRetries}}%"
+												*ngIf="higherTableValues[2]>0 && thresholdRes.thresholdPsxDipRetries==null || thresholdRes.thresholdPsxDipRetries>kpi.psxDipRetries">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.psxDipRetries}}%"
+												*ngIf="higherTableValues[2]>0 && kpi.psxDipRetries>=thresholdRes.thresholdPsxDipRetries">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.psxDipRetries}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.psxDipFailures}}%"
+												*ngIf="higherTableValues[3]>0 && thresholdRes.thresholdPsxDipFailures==null || thresholdRes.thresholdPsxDipFailures>kpi.psxDipFailures">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.psxDipFailures}}%"
+												*ngIf="higherTableValues[3]>0 && kpi.psxDipFailures>=thresholdRes.thresholdPsxDipFailures">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.psxDipFailures}} </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- DSP Card Usage-->
+		<div *ngIf="dspDeviceModelCardResourceList || dspDeviceModelsbcdcuCardResourceList">
+			<div *ngIf="statGrp[0] ==='DSP Card Usage'">
+				<div class="row" id="spacing_bottom">
+					<div class="col-sm-4" id="spacing_left">
+						<h5>
+							<b>Resource Utillization Report</b>
+						</h5>
+					</div>
+					<div class="col-sm-5" id="spacing_top">
+						<h6>From {{date1}} to {{date2}}</h6>
+					</div>
+
+					<div class="col-sm-3" id="coloring">
+						<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+								height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+								xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd"
+									d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+							</svg> Download CSV File</button>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange" *ngIf="gsxCheck">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>GSX - Open Services Switch</b></h6>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange" *ngIf="nbsCheck">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>NBS - Network Border Switch</b></h6>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange" *ngIf="sbcCheck">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>SBC - Session Border Controller</b></h6>
+					</div>
+				</div>
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12" *ngIf="sbcCheck">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Codec Name</th>
+								<th class="col-sm-3" id="center">Total</th>
+								<th class="col-sm-3" id="center">Utilization</th>
+								<th class="col-sm-3" id="center">Allocation Failures</th>
+							</tr>
+							<tbody *ngFor="let dsp of dspDeviceModelsbcdcuCardResourceList index as i">
+								<tr id="noBorder">
+									<td colspan="4"> {{i+1}}.Device:{{dsp.name}}-{{dsp.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of dsp.dspDeviceKpiModelList">
+									<td><a
+											(click)="showPopUpHistory(dsp.name,'GSX','','','','','',dsp.descr,kpi.codecName,true,'')"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.codecName}}
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.total}}%"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.total}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.utilisation}}%"
+												*ngIf="thresholdRes.thresholdUtilisation==null || thresholdRes.thresholdUtilisation>kpi.utilisation">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.utilisation}}%"
+												*ngIf="kpi.utilisation>=thresholdRes.thresholdUtilisation"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.utilisation}}% </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success"
+												style="width:{{kpi.allocationFailures}}%"
+												*ngIf="thresholdRes.thresholdAllocationFailure==null || thresholdRes.thresholdAllocationFailure>kpi.allocationFailures">
+											</div>
+											<div class="progress-bar bg-danger"
+												style="width:{{kpi.allocationFailures}}%"
+												*ngIf="kpi.allocationFailures>=thresholdRes.thresholdAllocationFailure">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.allocationFailures}}% </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-sm-12" *ngIf="!sbcCheck">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Codec Name</th>
+								<th class="col-sm-3" id="center">Total</th>
+								<th class="col-sm-3" id="center">Utilization</th>
+								<th class="col-sm-3" id="center">Allocation Failures</th>
+							</tr>
+							<tbody *ngFor="let dsp of dspDeviceModelCardResourceList index as i">
+								<tr id="noBorder">
+									<td colspan="4"> {{i+1}}.Device:{{dsp.name}}-{{dsp.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of dsp.dspDeviceKpiModelList">
+									<td><a
+											(click)="showPopUpHistory(dsp.name,'GSX','','','','','',dsp.descr,kpi.codecName,true,'')"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.codecName}}
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.total}}%"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.total}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.utilisation}}%"
+												*ngIf="thresholdRes.thresholdUtilisation==null || thresholdRes.thresholdUtilisation>kpi.utilisation">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.utilisation}}%"
+												*ngIf="kpi.utilisation>=thresholdRes.thresholdUtilisation"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.utilisation}}% </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success"
+												style="width:{{kpi.allocationFailures}}%"
+												*ngIf="thresholdRes.thresholdAllocationFailure==null || thresholdRes.thresholdAllocationFailure>kpi.allocationFailures">
+											</div>
+											<div class="progress-bar bg-danger"
+												style="width:{{kpi.allocationFailures}}%"
+												*ngIf="kpi.allocationFailures>=thresholdRes.thresholdAllocationFailure">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.allocationFailures}}% </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="row" id="left-padding">
+						<div class="col-sm-12">
+							<table class="table table-bordered table-sm" style="width: 590px;">
+								<tr id="height_size" style="height: 5px;">
+									Notes:<br>
+									Total: Total number of a resource <br>
+									Utilization: Percentage Utilization of a resource <br>
+									Allocation Failure: Percentage of a resource allocation failure
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<div class="row" id="spacing_bottom">
+					<div class="col-sm-4" id="spacing_left">
+						<h5>
+							<b>Performance Statistics Report</b>
+						</h5>
+					</div>
+					<div class="col-sm-5" id="spacing_top">
+						<h6>From {{date1}} to {{date2}}</h6>
+					</div>
+
+					<div class="col-sm-3" id="coloring">
+						<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+								height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+								xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd"
+									d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+							</svg> Download CSV File</button>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange" *ngIf="gsxCheck">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>GSX - Open Services Switch</b></h6>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange" *ngIf="nbsCheck">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>NBS - Network Border Switch</b></h6>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange" *ngIf="sbcCheck">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>SBC - Session Border Controller</b></h6>
+					</div>
+				</div>
+				<div class="row" id="left-padding" *ngIf="sbcCheck">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Codec Name</th>
+								<th class="col-sm-3" id="center">Peak Used</th>
+								<th class="col-sm-3" id="center">Average Used</th>
+								<th class="col-sm-3" id="center">Average Available</th>
+							</tr>
+							<tbody *ngFor="let dsp of dspDeviceModelsbcdcuPerformanceList index as i">
+								<tr id="noBorder">
+									<td colspan="4"> {{i+1}}.Device:{{dsp.name}}-{{dsp.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of dsp.dspDeviceKpiModelList">
+									<td><a
+											(click)="showPopUpHistory(dsp.name,'GSX','','','','','',dsp.descr,kpi.codecName,false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.codecName}}
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.peakUsed}}%"
+												*ngIf="thresholdRes.thresholdPeakUsed==null || thresholdRes.thresholdPeakUsed>kpi.peakUsed">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.peakUsed}}%"
+												*ngIf="kpi.peakUsed>=thresholdRes.thresholdPeakUsed"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.peakUsed}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.averageUsed}}%"
+												*ngIf="thresholdRes.thresholdAverageUsed==null || thresholdRes.thresholdAverageUsed>kpi.averageUsed">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.averageUsed}}%"
+												*ngIf="kpi.averageUsed>=thresholdRes.thresholdAverageUsed"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.averageUsed}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.averageAvailable}}%"
+												*ngIf="thresholdRes.thresholdAverageAvailable==null || thresholdRes.thresholdAverageAvailable>kpi.averageAvailable">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.averageAvailable}}%"
+												*ngIf="kpi.averageAvailable>=thresholdRes.thresholdAverageAvailable">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.averageAvailable}} </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="row" id="left-padding" *ngIf="gsxCheck || nbsCheck">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Codec Name</th>
+								<th class="col-sm-3" id="center">Peak Used</th>
+								<th class="col-sm-3" id="center">Average Used</th>
+								<th class="col-sm-3" id="center">Average Available</th>
+							</tr>
+							<tbody *ngFor="let dsp of dspDeviceModelPerformanceList index as i">
+								<tr id="noBorder">
+									<td colspan="4"> {{i+1}}.Device:{{dsp.name}}-{{dsp.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of dsp.dspDeviceKpiModelList">
+									<td><a
+											(click)="showPopUpHistory(dsp.name,'GSX','','','','','',dsp.descr,kpi.codecName,false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.codecName}}
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.peakUsed}}%"
+												*ngIf="thresholdRes.thresholdPeakUsed==null || thresholdRes.thresholdPeakUsed>kpi.peakUsed">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.peakUsed}}%"
+												*ngIf="kpi.peakUsed>=thresholdRes.thresholdPeakUsed"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.peakUsed}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.averageUsed}}%"
+												*ngIf="thresholdRes.thresholdAverageUsed==null || thresholdRes.thresholdAverageUsed>kpi.averageUsed">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.averageUsed}}%"
+												*ngIf="kpi.averageUsed>=thresholdRes.thresholdAverageUsed"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.averageUsed}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.averageAvailable}}%"
+												*ngIf="thresholdRes.thresholdAverageAvailable==null || thresholdRes.thresholdAverageAvailable>kpi.averageAvailable">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.averageAvailable}}%"
+												*ngIf="kpi.averageAvailable>=thresholdRes.thresholdAverageAvailable">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.averageAvailable}} </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm" style="width: 590px;">
+							<tr id="height_size" style="height: 5px;">
+								Notes: <br>
+								Peak Used: Peak usage of a DSP pad <br>
+								Average Used: Average usage of a DSP pad <br>
+								Average Avaliable: Average availablility of a DSP pad
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div *ngIf="sbcCheck">
+					<div class="row" id="spacing_bottom">
+						<div class="col-sm-4" id="spacing_left">
+							<h5>
+								<b>DSP Call Interval Stat Report</b>
+							</h5>
+						</div>
+						<div class="col-sm-5" id="spacing_top">
+							<h6>From {{date1}} to {{date2}}</h6>
+						</div>
+
+						<div class="col-sm-3" id="coloring">
+							<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+									height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill"
+									fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+									<path fill-rule="evenodd"
+										d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+								</svg> Download CSV File</button>
+						</div>
+					</div>
+
+					<div class="row" id="TimeRange">
+						<div class="container center" id="loader" style="padding-left:370px;display: none">
+							<div class="spinner-grow text-muted"></div>
+							<div class="spinner-grow text-primary"></div>
+							<div class="spinner-grow text-success"></div>
+							<div class="spinner-grow text-info"></div>
+							<div class="spinner-grow text-warning"></div>
+							<div class="spinner-grow text-danger"></div>
+							<div class="spinner-grow text-secondary"></div>
+							<div class="spinner-grow text-dark"></div>
+							<div class="spinner-grow text-light"></div>
+						</div>
+						<div class="col-sm-5" id="spacing">
+							<h6><b>SBC - Session Border Controller</b></h6>
+						</div>
+					</div>
+					<div class="row" id="left-padding">
+						<div class="col-sm-12">
+							<table class="table table-bordered table-sm">
+								<tr id="height_size" style="height: 5px;">
+									<th class="col-sm-6" id="center">Codec Name</th>
+									<th class="col-sm-6" id="center">Code Value</th>
+								</tr>
+								<tbody *ngFor="let dsp of dspDeviceModelCardStatList index as i">
+									<tr id="noBorder">
+										<td colspan="2"> {{i+1}}.Device:{{dsp.name}}-{{dsp.descr}}</td>
+									</tr>
+									<tr *ngFor="let kpi of dsp.dspDeviceKpiModelList">
+										<td>
+											<a
+												(click)="showPopUpHistory(dsp.name,'SBC','','','','','',dsp.descr,kpi.codecName,false,'sbcdcustat')"><img
+													src="../assets/chart_bar.png" /></a> {{kpi.codecName}}
+										</td>
+										<td>
+											{{kpi.codecval}}
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+
+					<div class="row" id="spacing_bottom">
+						<div class="col-sm-4" id="spacing_left">
+							<h5>
+								<b>SBC Display Card Usage Slot Report</b>
+							</h5>
+						</div>
+						<div class="col-sm-5" id="spacing_top">
+							<h6>From {{date1}} to {{date2}}</h6>
+						</div>
+
+						<div class="col-sm-3" id="coloring">
+							<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+									height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill"
+									fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+									<path fill-rule="evenodd"
+										d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+								</svg> Download CSV File</button>
+						</div>
+					</div>
+
+					<div class="row" id="TimeRange" *ngIf="gsxCheck">
+						<div class="container center" id="loader" style="padding-left:370px;display: none">
+							<div class="spinner-grow text-muted"></div>
+							<div class="spinner-grow text-primary"></div>
+							<div class="spinner-grow text-success"></div>
+							<div class="spinner-grow text-info"></div>
+							<div class="spinner-grow text-warning"></div>
+							<div class="spinner-grow text-danger"></div>
+							<div class="spinner-grow text-secondary"></div>
+							<div class="spinner-grow text-dark"></div>
+							<div class="spinner-grow text-light"></div>
+						</div>
+						<div class="col-sm-5" id="spacing">
+							<h6><b>GSX - Open Services Switch</b></h6>
+						</div>
+					</div>
+					<div class="row" id="TimeRange" *ngIf="nbsCheck">
+						<div class="container center" id="loader" style="padding-left:370px;display: none">
+							<div class="spinner-grow text-muted"></div>
+							<div class="spinner-grow text-primary"></div>
+							<div class="spinner-grow text-success"></div>
+							<div class="spinner-grow text-info"></div>
+							<div class="spinner-grow text-warning"></div>
+							<div class="spinner-grow text-danger"></div>
+							<div class="spinner-grow text-secondary"></div>
+							<div class="spinner-grow text-dark"></div>
+							<div class="spinner-grow text-light"></div>
+						</div>
+						<div class="col-sm-5" id="spacing">
+							<h6><b>NBS - Network Border Switch</b></h6>
+						</div>
+					</div>
+					<div class="row" id="TimeRange" *ngIf="sbcCheck">
+						<div class="container center" id="loader" style="padding-left:370px;display: none">
+							<div class="spinner-grow text-muted"></div>
+							<div class="spinner-grow text-primary"></div>
+							<div class="spinner-grow text-success"></div>
+							<div class="spinner-grow text-info"></div>
+							<div class="spinner-grow text-warning"></div>
+							<div class="spinner-grow text-danger"></div>
+							<div class="spinner-grow text-secondary"></div>
+							<div class="spinner-grow text-dark"></div>
+							<div class="spinner-grow text-light"></div>
+						</div>
+						<div class="col-sm-5" id="spacing">
+							<h6><b>SBC - Session Border Controller</b></h6>
+						</div>
+					</div>
+					<div class="row" id="left-padding">
+						<div class="col-sm-12">
+							<table class="table table-bordered table-sm">
+								<tr id="height_size" style="height: 5px;">
+									<th class="col-sm-6" id="center">Codec Name</th>
+									<th class="col-sm-6" id="center">Code Value</th>
+								</tr>
+								<tbody *ngFor="let dsp of dspDeviceModelCardsbcslotList index as i">
+									<tr id="noBorder">
+										<td colspan="2"> {{i+1}}.Device:{{dsp.name}}-{{dsp.descr}}</td>
+									</tr>
+									<tr *ngFor="let kpi of dsp.dspDeviceKpiModelList">
+										<td>
+											<img src="../assets/chart_bar.png" /> {{kpi.codecName}}
+										</td>
+										<td>
+											{{kpi.codecval}}
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div *ngIf="systemGsxChassisList">
+			<!-- Call Attempts Chassis wise-->
+			<div *ngIf="statGrp[0] ==='Call Attempts Chassis wise'">
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>GSX - Open Services Switch</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Device</th>
+								<th class="col-sm-3" id="center">Busy Hour Call Attempts</th>
+								<th class="col-sm-3" id="center">Call Completion</th>
+								<th class="col-sm-3" id="center">Call Attempt Rate</th>
+								<th class="col-sm-3" id="center">Total Call Attempts</th>
+							</tr>
+							<tr *ngFor="let gsx of systemGsxChassisList index as i">
+								<td><a (click)="showPopUpHistory(gsx.name,'GSX','','','','','',gsx.descr,'',false,'')"><img
+											src="../assets/chart_bar.png" /></a> {{i+1}}. {{gsx.name}}</td>
+
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{gsx.callAttemptCounts}}%"
+											*ngIf="higherTableValues[0]>0 && thresholdRes.thresholdcallAttemptsUsed==null || thresholdRes.thresholdcallAttemptsUsed>gsx.callAttemptCounts">
+										</div>
+										<div class="progress-bar bg-danger" style="width:{{gsx.callAttemptCounts}}%"
+											*ngIf="higherTableValues[0]>0 && gsx.callAttemptCounts>=thresholdRes.thresholdcallAttemptsUsed">
+										</div>
+										<span style='padding: 7px;'> &nbsp; {{gsx.callAttemptCounts}} </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{gsx.callCompletionCounts}}%"
+											*ngIf="higherTableValues[1]>0 && thresholdRes.thresholdcallCompletionsUsed==null || thresholdRes.thresholdcallCompletionsUsed>gsx.callCompletionCounts">
+										</div>
+										<div class="progress-bar bg-danger" style="width:{{gsx.callCompletionCounts}}%"
+											*ngIf="higherTableValues[1]>0 && gsx.callCompletionCounts>=thresholdRes.thresholdcallCompletionsUsed">
+										</div>
+										<span style='padding: 7px;'> &nbsp; {{gsx.callCompletionCounts}} </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{gsx.callAttemptRate}}%"
+											*ngIf="higherTableValues[2]>0 && thresholdRes.thresholdcallAttemptRateUsed==null || thresholdRes.thresholdcallAttemptRateUsed>gsx.callAttemptRate">
+										</div>
+										<div class="progress-bar bg-danger" style="width:{{gsx.callAttemptRate}}%"
+											*ngIf="higherTableValues[2]>0 && gsx.callAttemptRate>=thresholdRes.thresholdcallAttemptRateUsed">
+										</div>
+										<span style='padding: 7px;'> &nbsp; {{gsx.callAttemptRate}}.0 </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{gsx.totalCallAttempt}}%"
+											*ngIf="higherTableValues[3]>0 && thresholdRes.thresholdTotalCallAttempts==null || thresholdRes.thresholdTotalCallAttempts>gsx.totalCallAttempt">
+										</div>
+										<div class="progress-bar bg-danger" style="width:{{gsx.totalCallAttempt}}%"
+											*ngIf="higherTableValues[3]>0 && gsx.totalCallAttempt>=thresholdRes.thresholdTotalCallAttempts">
+										</div>
+										<span style='padding: 7px;'> &nbsp; {{gsx.totalCallAttempt}} </span>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div *ngIf="systemNbsChassisList">
+			<div *ngIf="statGrp[0] ==='Call Attempts Chassis wise'">
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>NBS - Network Border Switch</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Device</th>
+								<th class="col-sm-3" id="center">Busy Hour Call Attempts</th>
+								<th class="col-sm-3" id="center">Call Completion</th>
+								<th class="col-sm-3" id="center">Call Attempt Rate</th>
+								<th class="col-sm-3" id="center">Total Call Attempts</th>
+							</tr>
+							<tr *ngFor="let nbs of systemNbsChassisList index as i">
+								<td><a (click)="showPopUpHistory(nbs.name,'NBS','','','','','',nbs.descr,'',false,'')"><img
+											src="../assets/chart_bar.png" /></a> {{i+1}}. {{nbs.name}}</td>
+
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{nbs.callAttemptCounts}}%"
+											*ngIf="higherTableValues[0]>0 && thresholdRes.thresholdcallAttemptsUsed==null || thresholdRes.thresholdcallAttemptsUsed>nbs.callAttemptCounts">
+										</div>
+										<div class="progress-bar bg-danger" style="width:{{nbs.callAttemptCounts}}%"
+											*ngIf="higherTableValues[0]>0 && nbs.callAttemptCounts>=thresholdRes.thresholdcallAttemptsUsed">
+										</div>
+										<span style='padding: 7px;'> &nbsp; {{nbs.callAttemptCounts}} </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{nbs.callCompletionCounts}}%"
+											*ngIf="higherTableValues[1]>0 && thresholdRes.thresholdcallCompletionsUsed==null || thresholdRes.thresholdcallCompletionsUsed>nbs.callCompletionCounts">
+										</div>
+										<div class="progress-bar bg-danger" style="width:{{nbs.callCompletionCounts}}%"
+											*ngIf="higherTableValues[1]>0 && nbs.callCompletionCounts>=thresholdRes.thresholdcallCompletionsUsed">
+										</div>
+										<span style='padding: 7px;'> &nbsp; {{nbs.callCompletionCounts}} </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{nbs.callAttemptRate}}%"
+											*ngIf="higherTableValues[2]>0 && thresholdRes.thresholdcallAttemptRateUsed==null || thresholdRes.thresholdcallAttemptRateUsed>nbs.callAttemptRate">
+										</div>
+										<div class="progress-bar bg-danger" style="width:{{nbs.callAttemptRate}}%"
+											*ngIf="higherTableValues[2]>0 && nbs.callAttemptRate>=thresholdRes.thresholdcallAttemptRateUsed">
+										</div>
+										<span style='padding: 7px;'> &nbsp; {{nbs.callAttemptRate}}.0 </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{nbs.totalCallAttempt}}%"
+											*ngIf="higherTableValues[3]>0 && thresholdRes.thresholdTotalCallAttempts==null || thresholdRes.thresholdTotalCallAttempts>nbs.totalCallAttempt">
+										</div>
+										<div class="progress-bar bg-danger" style="width:{{nbs.totalCallAttempt}}%"
+											*ngIf="higherTableValues[3]>0 && nbs.totalCallAttempt>=thresholdRes.thresholdTotalCallAttempts">
+										</div>
+										<span style='padding: 7px;'> &nbsp; {{nbs.totalCallAttempt}} </span>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- Call Attempts Slot wise-->
+
+		<div *ngIf="systemGsxList">
+			<div *ngIf="statGrp[0] ==='Call Attempts Slot wise'">
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>GSX - Open Services Switch</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Slot</th>
+								<th class="col-sm-3" id="center">Peak Call Attempts</th>
+								<th class="col-sm-3" id="center">Call Completions</th>
+								<th class="col-sm-3" id="center">Call Attempts Rate</th>
+								<th class="col-sm-3" id="center">Total Call Attempts</th>
+							</tr>
+							<tbody *ngFor="let gsx of systemGsxList index as i">
+								<tr id="noBorder">
+									<td colspan="5">{{i+1}}.Device:{{gsx.name}}-{{gsx.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of gsx.kpiList" data-toggle="popover" data-toggle="tooltip"
+									title="{{kpi.cardInformation.description}}">
+									<td><a
+											(click)="showPopUpHistory(gsx.name,'GSX',kpi.shelf,kpi.slot,'','','',gsx.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.shelf}} - {{kpi.slot}} -
+										{{kpi.cardInformation.name}}</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.peakCallAttempts}}%"
+												*ngIf="higherTableValues[3]>0 && kpi.thresholdPeakCallAttempts==null || kpi.thresholdPeakCallAttempts>kpi.peakCallAttempts">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.peakCallAttempts}}%"
+												*ngIf="higherTableValues[3]>0 && kpi.peakCallAttempts>=kpi.thresholdPeakCallAttempts">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.peakCallAttempts}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.callCompletions}}%"
+												*ngIf="higherTableValues[1]>0 && kpi.thresholdCallCompletion==null || kpi.thresholdCallCompletion>kpi.callCompletions">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.callCompletions}}%"
+												*ngIf="higherTableValues[1]>0 && kpi.callCompletions>=kpi.thresholdCallCompletion">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.callCompletions}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.callAttemptRate}}%"
+												*ngIf="higherTableValues[2]>0 && kpi.thresholdCallsPerSecond==null || kpi.thresholdCallsPerSecond>kpi.callAttemptRate">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.callAttemptRate}}%"
+												*ngIf="higherTableValues[2]>0 && kpi.callAttemptRate>=kpi.thresholdCallsPerSecond">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.callAttemptRate}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.callAttempts}}%"
+												*ngIf="higherTableValues[0]>0 && kpi.thresholdCallAttempts==null || kpi.thresholdCallAttempts>kpi.callAttempts">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.callAttempts}}%"
+												*ngIf="higherTableValues[0]>0 && kpi.callAttempts>=kpi.thresholdCallAttempts">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.callAttempts}} </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+		<div *ngIf="systemNbsList">
+			<div *ngIf="statGrp[0] ==='Call Attempts Slot wise'">
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>NBS - Network Border Switch</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Slot</th>
+								<th class="col-sm-3" id="center">Peak Call Attempts</th>
+								<th class="col-sm-3" id="center">Call Completions</th>
+								<th class="col-sm-3" id="center">Call Attempts Rate</th>
+								<th class="col-sm-3" id="center">Total Call Attempts</th>
+							</tr>
+							<tbody *ngFor="let nbs of systemNbsList index as i">
+								<tr id="noBorder">
+									<td colspan="5">{{i+1}}.Device:{{nbs.name}}-{{nbs.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of nbs.kpiList" data-toggle="popover" data-toggle="tooltip"
+									title="{{kpi.cardInformation.description}}">
+									<td><a
+											(click)="showPopUpHistory(nbs.name,'NBS',kpi.shelf,kpi.slot,'','','',nbs.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.shelf}} - {{kpi.slot}} -
+										{{kpi.cardInformation.name}}</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.peakCallAttempts}}%"
+												*ngIf="higherTableValues[3]>0 && kpi.thresholdPeakCallAttempts==null || kpi.thresholdPeakCallAttempts>kpi.peakCallAttempts">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.peakCallAttempts}}%"
+												*ngIf="higherTableValues[3]>0 && kpi.peakCallAttempts>=kpi.thresholdPeakCallAttempts">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.peakCallAttempts}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.callCompletions}}%"
+												*ngIf="higherTableValues[1]>0 && kpi.thresholdCallCompletion==null || kpi.thresholdCallCompletion>kpi.callCompletions">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.callCompletions}}%"
+												*ngIf="higherTableValues[1]>0 && kpi.callCompletions>=kpi.thresholdCallCompletion">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.callCompletions}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.callAttemptRate}}%"
+												*ngIf="higherTableValues[2]>0 && kpi.thresholdCallsPerSecond==null || kpi.thresholdCallsPerSecond>kpi.callAttemptRate">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.callAttemptRate}}%"
+												*ngIf="higherTableValues[2]>0 && kpi.callAttemptRate>=kpi.thresholdCallsPerSecond">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.callAttemptRate}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.callAttempts}}%"
+												*ngIf="higherTableValues[0]>0 && kpi.thresholdCallAttempts==null || kpi.thresholdCallAttempts>kpi.callAttempts">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.callAttempts}}%"
+												*ngIf="higherTableValues[0]>0 && kpi.callAttempts>=kpi.thresholdCallAttempts">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.callAttempts}} </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Ethernet Stats Slot wise-->
+
+		<div *ngIf="systemGsxList">
+			<div *ngIf="statGrp[0] ==='Ethernet Stats Slot wise'">
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>GSX - Open Services Switch</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-4" id="center">Slot</th>
+								<th class="col-sm-4" id="center">Total Calls</th>
+								<th class="col-sm-4" id="center">Bandwidth Usage</th>
+							</tr>
+							<tbody *ngFor="let gsx of systemGsxList index as i">
+								<tr id="noBorder">
+									<td colspan="5">{{i+1}}.Device:{{gsx.name}}-{{gsx.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of gsx.kpiList">
+									<td><a
+											(click)="showPopUpHistory(gsx.name,'GSX',kpi.shelf,kpi.slot,'','','',gsx.descr,'',false,kpi.nifPort)"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.shelf}} - {{kpi.slot}} -
+										{{kpi.nifPort}}</td>
+									<td>
+										{{kpi.totalCalls}}
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.bandwidthUsage}}%"
+												*ngIf="thresholdRes.thresholdCpu==null || thresholdRes.thresholdCpu>kpi.bandwidthUsage">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.bandwidthUsage}}%"
+												*ngIf="kpi.bandwidthUsage>=thresholdRes.thresholdCpu"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.bandwidthUsage}}% </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Ethernet Stats Slot wise-->
+
+		<div *ngIf="systemNbsList">
+			<div *ngIf="statGrp[0] ==='Ethernet Stats Slot wise'">
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>NBS - Network Border Switch</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-4" id="center">Slot</th>
+								<th class="col-sm-4" id="center">Total Calls</th>
+								<th class="col-sm-4" id="center">Bandwidth Usage</th>
+							</tr>
+							<tbody *ngFor="let nbs of systemNbsList index as i">
+								<tr id="noBorder">
+									<td colspan="5">{{i+1}}.Device:{{nbs.name}}-{{nbs.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of nbs.kpiList">
+									<td><a
+											(click)="showPopUpHistory(nbs.name,'GSX',kpi.shelf,kpi.slot,'','','',nbs.descr,'',false,kpi.nifPort)"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.shelf}} - {{kpi.slot}} -
+										{{kpi.nifPort}}</td>
+									<td>
+										{{kpi.totalCalls}}
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.bandwidthUsage}}%"
+												*ngIf="thresholdRes.thresholdCpu==null || thresholdRes.thresholdCpu>kpi.bandwidthUsage">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.bandwidthUsage}}%"
+												*ngIf="kpi.bandwidthUsage>=thresholdRes.thresholdCpu"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.bandwidthUsage}}% </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Machine Congestion Stats-->
+
+		<div *ngIf="systemGsxList">
+			<div *ngIf="statGrp[0] ==='Machine Congestion Stats'">
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>GSX - Open Services Switch</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<thead>
+								<tr id="height_size" style="height: 5px;">
+									<th class="col-sm-1" id="center" rowspan="2" style="vertical-align:middle">Device
+									</th>
+									<th class="col-sm-1" id="center" colspan="3" style="vertical-align:middle">Machine
+										Congestion Instances</th>
+									<th class="col-sm-1" id="center" colspan="3">Total Congestion Time (in Seconds)</th>
+									<th class="col-sm-1" id="center" rowspan="2" style="vertical-align:middle">Total
+										Call Arrivals</th>
+									<th class="col-sm-1" id="center" rowspan="2" style="vertical-align:middle">Calls
+										Rejected due to Congestion</th>
+									<th class="col-sm-1" id="center" rowspan="2" style="vertical-align:middle">Peak Call
+										Rate</th>
+								</tr>
+								<tr>
+									<th class="col-sm-1" id="center">MC1 Count</th>
+									<th class="col-sm-1" id="center">MC2 Count</th>
+									<th class="col-sm-1" id="center">MC3 Count</th>
+									<th class="col-sm-1" id="center">MC1 time</th>
+									<th class="col-sm-1" id="center">MC2 time</th>
+									<th class="col-sm-1" id="center">MC3 time</th>
+								</tr>
+							</thead>
+							<tbody *ngFor="let gsx of systemGsxList index as i">
+								<tr *ngFor="let kpi of gsx.kpiList">
+									<td><a
+											(click)="showPopUpHistory(gsx.name,'GSX','','','','','',gsx.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{gsx.name}}</td>
+									<td> {{kpi.mc1Count}}</td>
+									<td> {{kpi.mc2Count}}</td>
+									<td> {{kpi.mc3Count}}</td>
+									<td> {{kpi.mc1Time}}</td>
+									<td> {{kpi.mc2Time}}</td>
+									<td> {{kpi.mc3Time}}</td>
+									<td> {{kpi.totalCallArrivals}}</td>
+									<td> {{kpi.callsRejectedDuetoCongestion}}</td>
+									<td> {{kpi.nbsgsxpeakCallRate}} </td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Machine Congestion Stats-->
+
+		<div *ngIf="systemNbsList">
+			<div *ngIf="statGrp[0] ==='Machine Congestion Stats'">
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>NBS - Network Border Switch</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-1" id="center">Device</th>
+								<th class="col-sm-1" id="center">MC1 Count</th>
+								<th class="col-sm-1" id="center">MC2 Count</th>
+								<th class="col-sm-1" id="center">MC3 Count</th>
+								<th class="col-sm-1" id="center">MC1 time</th>
+								<th class="col-sm-1" id="center">MC2 time</th>
+								<th class="col-sm-1" id="center">MC3 time</th>
+								<th class="col-sm-1" id="center">Total Call Arrivals</th>
+								<th class="col-sm-1" id="center">Calls Rejected due to Congestion</th>
+								<th class="col-sm-1" id="center">Peak Call Rate</th>
+							</tr>
+							<tbody *ngFor="let nbs of systemNbsList index as i">
+								<tr *ngFor="let kpi of nbs.kpiList">
+									<td><a
+											(click)="showPopUpHistory(nbs.name,'NBS','','','','','',nbs.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{nbs.name}}</td>
+									<td> {{kpi.mc1Count}}</td>
+									<td> {{kpi.mc2Count}}</td>
+									<td> {{kpi.mc3Count}}</td>
+									<td> {{kpi.mc1Time}}</td>
+									<td> {{kpi.mc2Time}}</td>
+									<td> {{kpi.mc3Time}}</td>
+									<td> {{kpi.totalCallArrivals}}</td>
+									<td> {{kpi.callsRejectedDuetoCongestion}}</td>
+									<td> {{kpi.nbsgsxpeakCallRate}} </td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- Machine Congestion Stats-->
+
+		<div *ngIf="systemSbcList">
+			<div *ngIf="statGrp[0] ==='Machine Congestion Stats'">
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>SBC - Session Border Controller</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-1" id="center">Device</th>
+								<th class="col-sm-1" id="center">MC1 Count</th>
+								<th class="col-sm-1" id="center">MC2 Count</th>
+								<th class="col-sm-1" id="center">MC3 Count</th>
+								<th class="col-sm-1" id="center">MC1 time</th>
+								<th class="col-sm-1" id="center">MC2 time</th>
+								<th class="col-sm-1" id="center">MC3 time</th>
+								<th class="col-sm-1" id="center">Total Call Arrivals</th>
+								<th class="col-sm-1" id="center">Calls Rejected due to Congestion</th>
+								<th class="col-sm-1" id="center">Peak Call Rate</th>
+							</tr>
+							<tbody *ngFor="let sbc of systemSbcList index as i">
+								<tr *ngFor="let kpi of sbc.kpiListSbc">
+									<td><a
+											(click)="showPopUpHistory(sbc.name,'SBC','','','','','',sbc.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{sbc.name}}</td>
+									<td> {{kpi.mc1Count}}</td>
+									<td> {{kpi.mc2Count}}</td>
+									<td> {{kpi.mc3Count}}</td>
+									<td> {{kpi.mc1Time}}</td>
+									<td> {{kpi.mc2Time}}</td>
+									<td> {{kpi.mc3Time}}</td>
+									<td> {{kpi.callArrivals}}</td>
+									<td> {{kpi.overloadRejects}}</td>
+									<td> {{kpi.sbcPeakCallRate}} </td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- NBS Result-->
+		<div *ngIf="systemNbsList">
+			<!-- System Health Stats-->
+			<div *ngIf="statGrp[0] ==='System Health Stats'">
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>NBS - Network Border Switch</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-4" id="center">Slot</th>
+								<th class="col-sm-4" id="center">CPU Usage(%)</th>
+								<th class="col-sm-4" id="center">Memory Usage(%)</th>
+							</tr>
+							<tbody *ngFor="let nbs of systemNbsList index as i">
+								<tr id="noBorder">
+									<td colspan="3">{{i+1}}.Device:{{nbs.name}}-{{nbs.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of nbs.kpiList" data-toggle="popover" data-toggle="tooltip"
+									title="{{kpi.cardInformation.description}}">
+									<td><a
+											(click)="showPopUpHistory(nbs.name,'NBS',kpi.shelf,kpi.slot,'','','',nbs.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.shelf}} - {{kpi.slot}} -
+										{{kpi.cardInformation.name}}</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.cpuUsage}}%"
+												*ngIf="thresholdRes.thresholdCpu==null || thresholdRes.thresholdCpu>kpi.cpuUsage">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.cpuUsage}}%"
+												*ngIf="kpi.cpuUsage>=thresholdRes.thresholdCpu"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.cpuUsage}}% </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.memoryUsage}}%"
+												*ngIf="thresholdRes.thresholdMemory==null || thresholdRes.thresholdMemory>kpi.memoryUsage">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.memoryUsage}}%"
+												*ngIf="kpi.memoryUsage>=thresholdRes.thresholdMemory"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.memoryUsage}}% </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<!-- Call Count Stats-->
+			<div *ngIf="statGrp[0] ==='Call Count Stats'">
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>NBS - Network Border Switch</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-4" id="center">Slot</th>
+								<th class="col-sm-4" id="center">Calls per Second</th>
+								<th class="col-sm-4" id="center">Active Call Counts</th>
+							</tr>
+							<tbody *ngFor="let nbs of systemNbsList index as i">
+								<tr id="noBorder">
+									<td colspan="3">{{i+1}}.Device:{{nbs.name}}-{{nbs.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of nbs.kpiList" data-toggle="popover" data-toggle="tooltip"
+									title="{{kpi.cardInformation.description}}">
+									<td><a
+											(click)="showPopUpHistory(nbs.name,'NBS',kpi.shelf,kpi.slot,'','','',nbs.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.shelf}} - {{kpi.slot}} -
+										{{kpi.cardInformation.name}}</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.callsPerSecond}}%"
+												*ngIf="higherTableValues[0]>0 && thresholdRes.thresholdCallsPerSecond==null || thresholdRes.thresholdCallsPerSecond>kpi.callsPerSecond">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.callsPerSecond}}%"
+												*ngIf="higherTableValues[0]>0 && kpi.callsPerSecond>=thresholdRes.thresholdCallsPerSecond">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.callsPerSecond}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.activeCallCounts}}%"
+												*ngIf="higherTableValues[1]>0 && thresholdRes.thresholdActiveCallCounts==null || thresholdRes.thresholdActiveCallCounts>kpi.activeCallCounts">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.activeCallCounts}}%"
+												*ngIf="higherTableValues[1]>0 && kpi.activeCallCounts>=thresholdRes.thresholdActiveCallCounts">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.activeCallCounts}} </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<!-- Congestion Rejects and Dips-->
+			<div *ngIf="statGrp[0] ==='Congestion Rejects and Dips'">
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>NBS - Network Border Switch</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Machine Congestion Rejects</th>
+								<th class="col-sm-3" id="center">PSX Congestion Rejects</th>
+								<th class="col-sm-3" id="center">PSX Dip Retries</th>
+								<th class="col-sm-3" id="center">PSX Dip Failures</th>
+							</tr>
+							<tbody *ngFor="let nbs of systemNbsList index as i">
+								<tr id="noBorder">
+									<td colspan="4"><a
+											(click)="showPopUpHistory(nbs.name,'NBS','','','','','',nbs.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a>
+										{{i+1}}.Device:{{nbs.name}}-{{nbs.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of nbs.kpiList">
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success"
+												style="width:{{kpi.machineCongestionRejects}}%"
+												*ngIf="higherTableValues[0]>0 && thresholdRes.thresholdMachineCongestion==null || thresholdRes.thresholdMachineCongestion>kpi.machineCongestionRejects">
+											</div>
+											<div class="progress-bar bg-danger"
+												style="width:{{kpi.machineCongestionRejects}}%"
+												*ngIf="higherTableValues[0]>0 && kpi.machineCongestionRejects>=thresholdRes.thresholdMachineCongestion">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.machineCongestionRejects}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success"
+												style="width:{{kpi.psxCongestionRejects}}%"
+												*ngIf="higherTableValues[1]>0 && thresholdRes.thresholdPsxCongestionRejects==null || thresholdRes.thresholdPsxCongestionRejects>kpi.psxCongestionRejects">
+											</div>
+											<div class="progress-bar bg-danger"
+												style="width:{{kpi.psxCongestionRejects}}%"
+												*ngIf="higherTableValues[1]>0 && kpi.psxCongestionRejects>=thresholdRes.thresholdPsxCongestionRejects">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.psxCongestionRejects}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.psxDipRetries}}%"
+												*ngIf="higherTableValues[2]>0 && thresholdRes.thresholdPsxDipRetries==null || thresholdRes.thresholdPsxDipRetries>kpi.psxDipRetries">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.psxDipRetries}}%"
+												*ngIf="higherTableValues[2]>0 && kpi.psxDipRetries>=thresholdRes.thresholdPsxDipRetries">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.psxDipRetries}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.psxDipFailures}}%"
+												*ngIf="higherTableValues[3]>0 && thresholdRes.thresholdPsxDipFailures==null || thresholdRes.thresholdPsxDipFailures>kpi.psxDipFailures">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.psxDipFailures}}%"
+												*ngIf="higherTableValues[3]>0 && kpi.psxDipFailures>=thresholdRes.thresholdPsxDipFailures">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.psxDipFailures}} </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- PSX Result-->
+		<div *ngIf="systemPsxList">
+			<!-- System Health Stats-->
+			<div *ngIf="statGrp[0] ==='System Health Stats'">
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>PSX - Policy Server</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Name</th>
+								<th class="col-sm-3" id="center">Description</th>
+								<th class="col-sm-3" id="center">CPU Usage(%)</th>
+								<th class="col-sm-3" id="center">Memory Usage(%)</th>
+							</tr>
+							<tr *ngFor="let psx of systemPsxList index as i">
+								<td><a (click)="showPopUpHistory(psx.name,'PSX','','','','','',psx.descr,'',false,'')"><img
+											src="../assets/chart_bar.png" /></a> {{i+1}}. {{psx.name}}</td>
+
+								<td>{{psx.descr}}</td>
+
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{psx.cpuUsage}}%"
+											*ngIf="thresholdRes.thresholdCpu==null || thresholdRes.thresholdCpu>psx.cpuUsage">
+										</div>
+										<div class="progress-bar bg-danger" style="width:{{psx.cpuUsage}}%"
+											*ngIf="psx.cpuUsage>=thresholdRes.thresholdCpu"></div>
+										<span style='padding: 7px;'> &nbsp; {{psx.cpuUsage}}% </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{psx.memoryUsage}}%"
+											*ngIf="thresholdRes.thresholdMemory==null || thresholdRes.thresholdMemory>psx.memoryUsage">
+										</div>
+										<div class="progress-bar bg-danger" style="width:{{psx.memoryUsage}}%"
+											*ngIf="psx.memoryUsage>=thresholdRes.thresholdMemory"></div>
+										<span style='padding: 7px;'> &nbsp; {{psx.memoryUsage}}% </span>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+			<!-- PSX Timeout and Dips-->
+			<div *ngIf="statGrp[0] ==='PSX Timeout and Dips'">
+				<div class="row" id="spacing_bottom">
+					<div class="col-sm-4" id="spacing_left">
+						<h5>
+							<b>PSX Timeout and Dips</b>
+						</h5>
+					</div>
+					<div class="col-sm-5" id="spacing_top">
+						<h6>From {{date1}} to {{date2}}</h6>
+					</div>
+
+					<div class="col-sm-3" id="coloring">
+						<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+								height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+								xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd"
+									d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+							</svg> Download CSV File</button>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>PSX - Policy Server</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Name</th>
+								<th class="col-sm-3" id="center">Description</th>
+								<th class="col-sm-3" id="center">External Timeout</th>
+								<th class="col-sm-3" id="center">Internal Service Time</th>
+							</tr>
+							<tr *ngFor="let psx of systemPsxList index as i">
+								<td><a (click)="showPopUpHistory(psx.name,'PSX','','','','','',psx.descr,'',false,'')"><img
+											src="../assets/chart_bar.png" /></a> {{i+1}}. {{psx.name}}</td>
+
+								<td>{{psx.descr}}</td>
+
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{psx.externalTimeout}}%"
+											*ngIf="higherTableValues[0]>0 && thresholdRes.thresholdExternalTimeout==null || thresholdRes.thresholdExternalTimeout>psx.externalTimeout">
+										</div>
+										<div class="progress-bar bg-danger" style="width:{{psx.externalTimeout}}%"
+											*ngIf="higherTableValues[0]>0 && psx.externalTimeout>=thresholdRes.thresholdExternalTimeout">
+										</div>
+										<span style='padding: 7px;'> &nbsp; {{psx.externalTimeout}} </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{psx.internalServiceTime}}%"
+											*ngIf="higherTableValues[1]>0 && thresholdRes.thresholdInternalServiceTime==null || thresholdRes.thresholdInternalServiceTime>psx.internalServiceTime">
+										</div>
+										<div class="progress-bar bg-danger" style="width:{{psx.internalServiceTime}}%"
+											*ngIf="higherTableValues[1]>0 && psx.internalServiceTime>=thresholdRes.thresholdInternalServiceTime">
+										</div>
+										<span style='padding: 7px;'> &nbsp; {{psx.internalServiceTime}} </span>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--PSX-IN SIP Request Response-->
+
+		<div *ngIf="systemPsxDeviceList">
+			<div *ngIf="statGrp[0] ==='PSX-IN SIP Request Response'">
+				<div class="row" id="spacing_bottom">
+					<div class="col-sm-4" id="spacing_left">
+						<h5>
+							<b>PSX-IN SIP Request Response</b>
+						</h5>
+					</div>
+					<div class="col-sm-5" id="spacing_top">
+						<h6>From {{date1}} to {{date2}}</h6>
+					</div>
+
+					<div class="col-sm-3" id="coloring">
+						<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+								height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+								xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd"
+									d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+							</svg> Download CSV File</button>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>PSX-In SIP Request Response</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-1" id="center">Name</th>
+								<th class="col-sm-1" id="center">Description</th>
+								<th class="col-sm-1" id="center">Total Requests</th>
+								<th class="col-sm-1" id="center">3xx:CNP Success</th>
+								<th class="col-sm-1" id="center">2xx:Failure</th>
+								<th class="col-sm-1" id="center">4xx:Client Error</th>
+								<th class="col-sm-1" id="center">5xx:Server Error</th>
+								<th class="col-sm-1" id="center">6xx:Global failure</th>
+								<th class="col-sm-1" id="center">Time Out Errors</th>
+							</tr>
+							<tr *ngFor="let psx of systemPsxDeviceList index as i">
+								<td><a
+										(click)="showPopUpHistory(psx.name,'PSX','','','','','',psx.description,'',false,'')"><img
+											src="../assets/chart_bar.png" /></a> {{i+1}}. {{psx.name}}</td>
+
+								<td>{{psx.description}}</td>
+
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{psx.totalRequest}}%"
+											*ngIf="higherTableValues[5]>0"></div>
+										<span style='padding: 7px;'> {{psx.totalRequest}} </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{psx.redirection}}%"
+											*ngIf="higherTableValues[1]>0"></div>
+										<span style='padding: 7px;'> {{psx.redirection}} </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-danger" style="width:{{psx.success}}%"
+											*ngIf="higherTableValues[0]>0"></div>
+										<span style='padding: 7px;'> {{psx.success}} </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-danger" style="width:{{psx.clientError}}%"
+											*ngIf="higherTableValues[2]>0"></div>
+										<span style='padding: 7px;'> {{psx.clientError}} </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-danger" style="width:{{psx.serverError}}%"
+											*ngIf="higherTableValues[3]>0"></div>
+										<span style='padding: 7px;'> &nbsp; {{psx.serverError}} </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-danger" style="width:{{psx.globalFailure}}%"
+											*ngIf="higherTableValues[4]>0"></div>
+										<span style='padding: 7px;'> &nbsp; {{psx.globalFailure}} </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-danger" style="width:{{psx.timeOutError}}%"
+											*ngIf="higherTableValues[6]>0"></div>
+										<span style='padding: 7px;'> &nbsp; {{psx.timeOutError}} </span>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- PSX CPS Licences-->
+		<div *ngIf="psxcpsLicencesList">
+			<div *ngIf="statGrp[0] ==='PSX CPS Licenses'">
+				<div class="row" id="spacing_bottom">
+					<div class="col-sm-4" id="spacing_left">
+						<h5>
+							<b>PSX CPS Licenses</b>
+						</h5>
+					</div>
+					<div class="col-sm-5" id="spacing_top">
+						<h6>From {{date1}} to {{date2}}</h6>
+					</div>
+
+					<div class="col-sm-3" id="coloring">
+						<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+								height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+								xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd"
+									d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+							</svg> Download CSV File</button>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>PSX CPS Licence info for D+ Interface</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Name</th>
+								<th class="col-sm-3" id="center">Max CPS License Limit</th>
+								<th class="col-sm-3" id="center">Total Calls accepted</th>
+								<th class="col-sm-3" id="center">Total Calls rejected</th>
+								<th class="col-sm-3" id="center">Calls accepted per sec</th>
+								<th class="col-sm-3" id="center">Calls rejected per sec</th>
+							</tr>
+							<tbody *ngFor="let psx of psxcpsLicencesList index as i">
+								<tr>
+									<td><a
+											(click)="showPopUpHistory(psx.name,'PSX','','','','','',psx.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{i+1}}.{{psx.name}}</td>
+									<td>
+										{{psx.maxcpsLicencesLimit}}
+									</td>
+									<td>
+										{{psx.totalcallaccepted}}
+									</td>
+									<td>
+										{{psx.totalcallsrejected}}
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success"
+												style="width:{{psx.callsacceptedpersecond}}%"
+												*ngIf="psx.maxcpsLicencesLimit==null || psx.maxcpsLicencesLimit>psx.callsacceptedpersecond">
+											</div>
+											<div class="progress-bar bg-danger"
+												style="width:{{psx.callsacceptedpersecond}}%"
+												*ngIf="psx.callsacceptedpersecond>=psx.maxcpsLicencesLimit"></div>
+											<span style='padding: 7px;'> &nbsp; {{psx.callsacceptedpersecond}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success"
+												style="width:{{psx.callsrejectedpersecond}}%"
+												*ngIf="psx.maxcpsLicencesLimit==null || psx.maxcpsLicencesLimit>psx.callsrejectedpersecond">
+											</div>
+											<div class="progress-bar bg-danger"
+												style="width:{{psx.callsrejectedpersecond}}%"
+												*ngIf="psx.callsrejectedpersecond>=psx.maxcpsLicencesLimit"></div>
+											<span style='padding: 7px;'> &nbsp; {{psx.callsrejectedpersecond}} </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+
+		<!-- EMS Result-->
+		<div *ngIf="systemEmsList">
+			<div *ngIf="statGrp[0] ==='System Health Stats'">
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>EMS - Element Management System</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Name</th>
+								<th class="col-sm-3" id="center">Description</th>
+								<th class="col-sm-3" id="center">CPU Usage(%)</th>
+								<th class="col-sm-3" id="center">Memory Usage(%)</th>
+							</tr>
+							<tr *ngFor="let ems of systemEmsList index as i">
+								<td><a
+										(click)="showPopUpHistory('LOCALHOST','EMS','','','','','',ems.descr,'',false,'')"><img
+											src="../assets/chart_bar.png" /></a> {{i+1}}. {{ems.name}}</td>
+
+								<td>{{ems.descr}}</td>
+
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{ems.cpuUsage}}%"
+											*ngIf="thresholdRes.thresholdCpu==null || thresholdRes.thresholdCpu>ems.cpuUsage">
+										</div>
+										<div class="progress-bar bg-danger" style="width:{{ems.cpuUsage}}%"
+											*ngIf="ems.cpuUsage>=thresholdRes.thresholdCpu"></div>
+										<span style='padding: 7px;'> &nbsp; {{ems.cpuUsage}}% </span>
+									</div>
+								</td>
+								<td>
+									<div class="progress">
+										<div class="progress-bar bg-success" style="width:{{ems.memoryUsage}}%"
+											*ngIf="thresholdRes.thresholdMemory==null || thresholdRes.thresholdMemory>ems.memoryUsage">
+										</div>
+										<div class="progress-bar bg-danger" style="width:{{ems.memoryUsage}}%"
+											*ngIf="ems.memoryUsage>=thresholdRes.thresholdMemory"></div>
+										<span style='padding: 7px;'> &nbsp; {{ems.memoryUsage}}% </span>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<!-- EMS Disc Result-->
+				<div class="row" id="spacing_bottom">
+					<div class="col-sm-4" id="spacing_left">
+						<h5>
+							<b>Filesystem Usage</b>
+						</h5>
+					</div>
+					<div class="col-sm-5" id="spacing_top">
+						<h6>From {{date1}} to {{date2}}</h6>
+					</div>
+
+					<div class="col-sm-3" id="coloring">
+						<button class="btn btn-primary" type="submit" (click)="dwnldcsv('EMS','')"><svg width="1em"
+								height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+								xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd"
+									d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+							</svg> Download CSV File</button>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>EMS - Element Management System</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-4" id="center">Path</th>
+								<th class="col-sm-6" id="center">Disk Usage</th>
+							</tr>
+							<tbody *ngFor="let ems1 of diskEmsList index as i">
+								<tr id="noBorder">
+									<td colspan="3">{{i+1}}.Device:{{ems1.name}}-{{ems1.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of ems1.kpiList">
+									<td><a
+											(click)="showPopUpHistory('LOCALHOST','EMS','','',kpi.path,'','',ems1.descr,false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.path}}</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.diskUsage}}%"
+												*ngIf="thresholdRes.thresholdDisk==null || thresholdRes.thresholdDisk>kpi.diskUsage">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.diskUsage}}%"
+												*ngIf="kpi.diskUsage>=thresholdRes.thresholdDisk"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.diskUsage}}% </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- DSI Result-->
+		<div *ngIf="diskDsiList">
+			<div *ngIf="statGrp[0] ==='System Health Stats'">
+				<div class="row" id="spacing_bottom">
+					<div class="col-sm-4" id="spacing_left">
+						<h5>
+							<b>Filesystem Usage</b>
+						</h5>
+					</div>
+					<div class="col-sm-5" id="spacing_top">
+						<h6>From {{date1}} to {{date2}}</h6>
+					</div>
+
+					<div class="col-sm-3" id="coloring">
+						<button class="btn btn-primary" type="submit" (click)="dwnldcsv('DSI','')"><svg width="1em"
+								height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+								xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd"
+									d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+							</svg> Download CSV File</button>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>DSI - DataStream Integrator</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-4" id="center">Path</th>
+								<th class="col-sm-6" id="center">Disk Usage</th>
+							</tr>
+							<tbody *ngFor="let dsi of diskDsiList index as i">
+								<tr id="noBorder">
+									<td colspan="3">{{i+1}}.Device:{{dsi.name}}-{{dsi.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of dsi.kpiList">
+									<td><a
+											(click)="showPopUpHistory(dsi.name,'DSI','','',kpi.path,'','',dsi.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.path}}</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.diskUsage}}%"
+												*ngIf="thresholdRes.thresholdDisk==null || thresholdRes.thresholdDisk>kpi.diskUsage">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.diskUsage}}%"
+												*ngIf="kpi.diskUsage>=thresholdRes.thresholdDisk"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.diskUsage}}% </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- SBC CPU Result-->
+		<div *ngIf="systemSbcCpuList">
+			<!-- System Health Stats-->
+			<div *ngIf="statGrp[0] ==='System Health Stats'">
+				<div class="row" id="spacing_bottom">
+					<div class="col-sm-4" id="spacing_left">
+						<h5>
+							<b>SBC Cpu System Health</b>
+						</h5>
+					</div>
+					<div class="col-sm-5" id="spacing_top">
+						<h6>From {{date1}} to {{date2}}</h6>
+					</div>
+
+					<div class="col-sm-3" id="coloring">
+						<button class="btn btn-primary" type="submit" (click)="dwnldcsv('SBC','')"><svg width="1em"
+								height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+								xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd"
+									d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+							</svg> Download CSV File</button>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>SBC - Session Border Controller</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-4" id="center">CPU Count</th>
+								<th class="col-sm-4" id="center">SBCa CPU Usage</th>
+								<th class="col-sm-4" id="center">SBCb CPU Usage</th>
+							</tr>
+							<tbody *ngFor="let sbccpu of systemSbcCpuList index as i">
+								<tr id="noBorder">
+									<td colspan="3">{{i+1}}.Device:{{sbccpu.name}}-{{sbccpu.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of sbccpu.kpiList">
+									<td><a
+											(click)="showPopUpHistory(sbccpu.name,'SBC','','','',kpi.cpuCount,'',sbccpu.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.cpuCount}}</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.cpuUsage1}}%"
+												*ngIf="thresholdRes.thresholdCpu==null || thresholdRes.thresholdCpu>kpi.cpuUsage1">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.cpuUsage1}}%"
+												*ngIf="kpi.cpuUsage1>=thresholdRes.thresholdCpu"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.cpuUsage1}}% </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.cpuUsage2}}%"
+												*ngIf="thresholdRes.thresholdCpu==null || thresholdRes.thresholdCpu>kpi.cpuUsage2">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.cpuUsage2}}%"
+												*ngIf="kpi.cpuUsage2>=thresholdRes.thresholdCpu"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.cpuUsage2}}% </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<!-- SBC MEM Result-->
+				<div class="row" id="spacing_bottom">
+					<div class="col-sm-4" id="spacing_left">
+						<h5>
+							<b>SBC Memory System Health</b>
+						</h5>
+					</div>
+					<div class="col-sm-5" id="spacing_top">
+						<h6>From {{date1}} to {{date2}}</h6>
+					</div>
+
+					<div class="col-sm-3" id="coloring">
+						<button class="btn btn-primary" type="submit" (click)="dwnldcsv('SBC','sbcmem')"><svg
+								width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill"
+								fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd"
+									d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+							</svg> Download CSV File</button>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>SBC - Session Border Controller</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-4" id="center">CPU</th>
+								<th class="col-sm-4" id="center">Memory Usage(%)</th>
+								<th class="col-sm-4" id="center">Swap Memory Usage</th>
+							</tr>
+							<tbody *ngFor="let sbcmem of systemSbcMemList index as i">
+								<tr id="noBorder">
+									<td colspan="3">{{i+1}}.Device:{{sbcmem.name}}-{{sbcmem.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of sbcmem.kpiListSbc">
+									<td><a
+											(click)="showPopUpHistory(sbcmem.name,'SBC','','','','',kpi.cpuName,sbcmem.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.cpuCount}}. {{kpi.cpuName}}
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.memoryUsage}}%"
+												*ngIf="thresholdRes.thresholdMemory==null || thresholdRes.thresholdMemory>kpi.memoryUsage">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.memoryUsage}}%"
+												*ngIf="kpi.memoryUsage>=thresholdRes.thresholdMemory"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.memoryUsage}}% </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.highSwapUsage}}%"
+												*ngIf="thresholdRes.thresholdMemory==null || thresholdRes.thresholdMemory>kpi.highSwapUsage">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.highSwapUsage}}%"
+												*ngIf="kpi.highSwapUsage>=thresholdRes.thresholdMemory"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.highSwapUsage}}% </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Call Count Stats-->
+		<div *ngIf="systemSbcList">
+			<div *ngIf="statGrp[0] ==='Call Count Stats'">
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>SBC - Session Border Controller</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-4" id="center">CPU</th>
+								<th class="col-sm-4" id="center">Calls per Second</th>
+								<th class="col-sm-4" id="center">Active Call Counts</th>
+							</tr>
+							<tbody *ngFor="let sbc of systemSbcList index as i">
+								<tr id="noBorder">
+									<td colspan="3">{{i+1}}.Device:{{sbc.name}}-{{sbc.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of sbc.kpiList">
+									<td><a
+											(click)="showPopUpHistory(sbc.name,'SBC','','','','','',sbc.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{sbc.name}}</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.callsPerSecond}}%"
+												*ngIf="higherTableValues[0]>0 && thresholdRes.thresholdCallsPerSecond==null || thresholdRes.thresholdCallsPerSecond>kpi.callsPerSecond">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.callsPerSecond}}%"
+												*ngIf="higherTableValues[0]>0 && kpi.callsPerSecond>=thresholdRes.thresholdCallsPerSecond">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.callsPerSecond}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.activeCallCounts}}%"
+												*ngIf="higherTableValues[0]>0 && thresholdRes.thresholdActiveCall==null || thresholdRes.thresholdActiveCall>kpi.activeCallCounts">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.activeCallCounts}}%"
+												*ngIf="higherTableValues[0]>0 && kpi.activeCallCounts>=thresholdRes.thresholdActiveCall">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.activeCallCounts}} </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Congestion Rejects and Dips-->
+		<div *ngIf="systemSbcList">
+			<div *ngIf="statGrp[0] ==='Congestion Rejects and Dips'">
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>SBC - Session Border Controller</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-4" id="center">PSX Congestion Rejects</th>
+								<th class="col-sm-4" id="center">PSX Dip Retries</th>
+								<th class="col-sm-4" id="center">PSX Dip Failures</th>
+							</tr>
+							<tbody *ngFor="let sbc of systemSbcList index as i">
+								<tr id="noBorder">
+									<td colspan="3"><a
+											(click)="showPopUpHistory(sbc.name,'SBC','','','','','',sbc.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a>
+										{{i+1}}.Device:{{sbc.name}}-{{sbc.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of sbc.kpiList">
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success"
+												style="width:{{kpi.psxCongestionRejects}}%"
+												*ngIf="higherTableValues[0]>0 && thresholdRes.thresholdPsxCongestionRejects==null || thresholdRes.thresholdPsxCongestionRejects>kpi.psxCongestionRejects">
+											</div>
+											<div class="progress-bar bg-danger"
+												style="width:{{kpi.psxCongestionRejects}}%"
+												*ngIf="higherTableValues[0]>0 && kpi.psxCongestionRejects>=thresholdRes.thresholdPsxCongestionRejects">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.psxCongestionRejects}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.psxDipRetries}}%"
+												*ngIf="higherTableValues[0]>0 && thresholdRes.thresholdPsxDipRetries==null || thresholdRes.thresholdPsxDipRetries>kpi.psxDipRetries">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.psxDipRetries}}%"
+												*ngIf="higherTableValues[0]>0 && kpi.psxDipRetries>=thresholdRes.thresholdPsxDipRetries">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.psxDipRetries}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.psxDipFailures}}%"
+												*ngIf="higherTableValues[0]>0 && thresholdRes.thresholdPsxDipFailures==null || thresholdRes.thresholdPsxDipFailures>kpi.psxDipFailures">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.psxDipFailures}}%"
+												*ngIf="higherTableValues[0]>0 && kpi.psxDipFailures>=thresholdRes.thresholdPsxDipFailures">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.psxDipFailures}} </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- Call Attempts per SBC-->
+		<div *ngIf="systemSbcChassisList">
+			<div *ngIf="statGrp[0] ==='Call Attempts Per SBC'">
+				<div class="row" id="spacing_bottom">
+					<div class="col-sm-4" id="spacing_left">
+						<h5>
+							<b>Call Attempts Per SBC</b>
+						</h5>
+					</div>
+					<div class="col-sm-5" id="spacing_top">
+						<h6>From {{date1}} to {{date2}}</h6>
+					</div>
+
+					<div class="col-sm-3" id="coloring">
+						<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+								height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+								xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd"
+									d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+							</svg> Download CSV File</button>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>SBC - Session Border Controller</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Device</th>
+								<th class="col-sm-3" id="center">Call Completion</th>
+								<th class="col-sm-3" id="center">Call Attempt Rate</th>
+								<th class="col-sm-3" id="center">Total Call Attempts</th>
+								<th class="col-sm-3" id="center">Busy Hour Call Attempts</th>
+							</tr>
+							<tbody *ngFor="let sbc of systemSbcChassisList index as i">
+								<tr *ngFor="let kpi of sbc.simpleKpiList">
+									<td><a
+											(click)="showPopUpHistory(sbc.name,'SBC','','','','','',sbc.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{i+1}}.{{sbc.name}}</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success"
+												style="width:{{kpi.callCompletionCounts}}%"
+												*ngIf="higherTableValues[0]>0 && thresholdRes.thresholdcallCompletionsUsed==null || thresholdRes.thresholdcallCompletionsUsed>kpi.callCompletionCounts">
+											</div>
+											<div class="progress-bar bg-danger"
+												style="width:{{kpi.callCompletionCounts}}%"
+												*ngIf="higherTableValues[0]>0 && kpi.callCompletionCounts>=thresholdRes.thresholdcallCompletionsUsed">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.callCompletionCounts}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success"
+												style="width:{{kpi.callAttemptCounts}}%"
+												*ngIf="higherTableValues[1]>0 && thresholdRes.thresholdSbcCallAttemptsRate==null || thresholdRes.thresholdSbcCallAttemptsRate>kpi.callAttemptCounts">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.callAttemptCounts}}%"
+												*ngIf="higherTableValues[1]>0 && kpi.callAttemptCounts>=thresholdRes.thresholdSbcCallAttemptsRate">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.callAttemptCounts}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.totalCallAttempt}}%"
+												*ngIf="higherTableValues[1]>0 && thresholdRes.thresholdTotalCallAttempts==null || thresholdRes.thresholdTotalCallAttempts>kpi.totalCallAttempt">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.totalCallAttempt}}%"
+												*ngIf="higherTableValues[1]>0 && kpi.totalCallAttempt>=thresholdRes.thresholdTotalCallAttempts">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.totalCallAttempt}} </span>
+										</div>
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success"
+												style="width:{{kpi.busyHourCallAttempt}}%"
+												*ngIf="higherTableValues[1]>0 && thresholdRes.thresholdTotalCallAttempts==null || thresholdRes.thresholdTotalCallAttempts>kpi.busyHourCallAttempt">
+											</div>
+											<div class="progress-bar bg-danger"
+												style="width:{{kpi.busyHourCallAttempt}}%"
+												*ngIf="higherTableValues[1]>0 && kpi.busyHourCallAttempt>=thresholdRes.thresholdTotalCallAttempts">
+											</div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.busyHourCallAttempt}} </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Ethernet Packet Port Status-->
+		<div *ngIf="ethernetDeviceModelList">
+			<div *ngIf="statGrp[0] ==='Ethernet Packet Port Status'">
+				<div class="row" id="spacing_bottom">
+					<div class="col-sm-4" id="spacing_left">
+						<h5>
+							<b>EthernetPort Usage</b>
+						</h5>
+					</div>
+					<div class="col-sm-5" id="spacing_top">
+						<h6>From {{date1}} to {{date2}}</h6>
+					</div>
+
+					<div class="col-sm-3" id="coloring">
+						<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+								height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+								xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd"
+									d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+							</svg> Download CSV File</button>
+					</div>
+				</div>
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+				</div>
+				<br />
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Codec Name</th>
+								<th class="col-sm-3" id="center">SBC1a-Port0</th>
+								<th class="col-sm-3" id="center">SBC1a-Port1</th>
+								<th class="col-sm-3" id="center">SBC1b-Port0</th>
+								<th class="col-sm-3" id="center">SBC1b-Port1</th>
+							</tr>
+							<tbody *ngFor="let sbc of ethernetDeviceModelList index as i">
+								<tr id="noBorder">
+									<td colspan="5">{{i+1}}.Device:{{sbc.name}}-{{sbc.descr}}</td>
+								</tr>
+								<tr *ngFor="let kpi of sbc.ethernetDeviceKpiModelList">
+									<td>
+										<a
+											(click)="showPopUpHistory(sbc.name,'SBC','','','','','',sbc.descr,kpi.cName,false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{kpi.cName}}
+									</td>
+									<td>
+										{{kpi.codecValue1}}
+									</td>
+									<td>
+										{{kpi.codecValue2}}
+									</td>
+									<td>
+										{{kpi.codecValue3}}
+									</td>
+									<td>
+										{{kpi.codecValue4}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- SBC License Info-->
+		<div *ngIf="systemSbcLicenseList">
+			<div *ngIf="statGrp[0] ==='SBC License Info'">
+				<div class="row" id="spacing_bottom">
+					<div class="col-sm-4" id="spacing_left">
+						<h5>
+							<b>SBC License Info</b>
+						</h5>
+					</div>
+					<div class="col-sm-5" id="spacing_top">
+						<h6>From {{date1}} to {{date2}}</h6>
+					</div>
+
+					<div class="col-sm-3" id="coloring">
+						<button class="btn btn-primary" type="submit" (click)="onClickdwnldcsv()"><svg width="1em"
+								height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor"
+								xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd"
+									d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
+							</svg> Download CSV File</button>
+					</div>
+				</div>
+
+				<div class="row" id="TimeRange">
+					<div class="container center" id="loader" style="padding-left:370px;display: none">
+						<div class="spinner-grow text-muted"></div>
+						<div class="spinner-grow text-primary"></div>
+						<div class="spinner-grow text-success"></div>
+						<div class="spinner-grow text-info"></div>
+						<div class="spinner-grow text-warning"></div>
+						<div class="spinner-grow text-danger"></div>
+						<div class="spinner-grow text-secondary"></div>
+						<div class="spinner-grow text-dark"></div>
+						<div class="spinner-grow text-light"></div>
+					</div>
+					<div class="col-sm-5" id="spacing">
+						<h6><b>SBC - Session Border Controller</b></h6>
+					</div>
+				</div>
+
+
+				<div class="row" id="left-padding">
+					<div class="col-sm-12">
+						<table class="table table-bordered table-sm">
+							<tr id="height_size" style="height: 5px;">
+								<th class="col-sm-3" id="center">Device</th>
+								<th class="col-sm-3" id="center">Max License Limit</th>
+								<th class="col-sm-3" id="center">Max Active Calls</th>
+								<th class="col-sm-3" id="center">Peak Utilization</th>
+							</tr>
+							<tbody *ngFor="let sbc of systemSbcLicenseList index as i">
+								<tr *ngFor="let kpi of sbc.simpleKpiList">
+									<td><a
+											(click)="showPopUpHistory(sbc.name,'SBC','','','','','',sbc.descr,'',false,'')"><img
+												src="../assets/chart_bar.png" /></a> {{i+1}}.{{sbc.name}}</td>
+									<td>
+										{{kpi.maxLicenseLimit}}
+									</td>
+									<td>
+										{{kpi.maxActiveCalls}}
+									</td>
+									<td>
+										<div class="progress">
+											<div class="progress-bar bg-success" style="width:{{kpi.peakCallRate}}%"
+												*ngIf="thresholdRes.peakSbcLicenceUtilization==null || thresholdRes.peakSbcLicenceUtilization>kpi.peakCallRate">
+											</div>
+											<div class="progress-bar bg-danger" style="width:{{kpi.peakCallRate}}%"
+												*ngIf="kpi.peakCallRate>=thresholdRes.peakSbcLicenceUtilization"></div>
+											<span style='padding: 7px;'> &nbsp; {{kpi.peakCallRate}}% </span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--Kpi notes-->
+		<div class="row" id="left-padding" *ngIf="statGrp=='System Health Stats'">
+			<div class="col-sm-12">
+				<form (ngSubmit)="save('kpiSysHeaStat')">
+					<a style="padding-left: 914px;" id="edit" (click)=onClickKpi()> <img src="../assets/edit.gif"
+							style="border: 0px;width: 21px;"></a>
+					<div id="save" style="display: none;padding-left: 882px;">
+						<input type="submit" value="Save">
+					</div>
+					<table class="table table-bordered table-sm">
+						<tr id="height_size" style="height: 5px;" id="kpi1">
+							<br /> {{kpiSysHeaStat}} <br /><br />
+						</tr>
+						<tr id="height_size" style="height: 5px;display: none" id="kpi2">
+							<textarea rows="10" cols="130" id="kpiSysHeaStat">
+									{{kpiSysHeaStat}} 
+								</textarea>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+
+		<div class="row" id="left-padding" *ngIf="statGrp=='Call Count Stats'">
+			<div class="col-sm-12">
+				<form (ngSubmit)="save('kpiCalCnt')">
+					<a style="padding-left: 914px;" id="edit" (click)=onClickKpi()> <img src="../assets/edit.gif"
+							style="border: 0px;width: 21px;"></a>
+					<div id="save" style="display: none;padding-left: 882px;">
+						<input type="submit" value="Save">
+					</div>
+					<table class="table table-bordered table-sm">
+						<tr id="height_size" style="height: 5px;" id="kpi1">
+							<br /> {{kpiCalCnt}} <br /><br />
+						</tr>
+						<tr id="height_size" style="height: 5px;display: none" id="kpi2">
+							<textarea rows="10" cols="130" id="kpiCalCnt">
+									{{kpiCalCnt}} 
+								</textarea>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+
+		<div class="row" id="left-padding" *ngIf="statGrp=='PSX Timeout and Dips'">
+			<div class="col-sm-12">
+				<form (ngSubmit)="save('kpiPsxTd')">
+					<a style="padding-left: 914px;" id="edit" (click)=onClickKpi()> <img src="../assets/edit.gif"
+							style="border: 0px;width: 21px;"></a>
+					<div id="save" style="display: none;padding-left: 882px;">
+						<input type="submit" value="Save">
+					</div>
+					<table class="table table-bordered table-sm">
+						<tr id="height_size" style="height: 5px;" id="kpi1">
+							<br /> {{kpiPsxTd}} <br /><br />
+						</tr>
+						<tr id="height_size" style="height: 5px;display: none" id="kpi2">
+							<textarea rows="10" cols="130" id="kpiPsxTd">
+										{{kpiPsxTd}} 
+									</textarea>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+
+		<div class="row" id="left-padding" *ngIf="statGrp=='Congestion Rejects and Dips'">
+			<div class="col-sm-12">
+				<form (ngSubmit)="save('kpiCongRejDips')">
+					<a style="padding-left: 914px;" id="edit" (click)=onClickKpi()> <img src="../assets/edit.gif"
+							style="border: 0px;width: 21px;"></a>
+					<div id="save" style="display: none;padding-left: 882px;">
+						<input type="submit" value="Save">
+					</div>
+					<table class="table table-bordered table-sm">
+						<tr id="height_size" style="height: 5px;" id="kpi1">
+							<br /> {{kpiCongRejDips}} <br /><br />
+						</tr>
+						<tr id="height_size" style="height: 5px;display: none" id="kpi2">
+							<textarea rows="10" cols="130" id="kpiCongRejDips">
+											{{kpiCongRejDips}} 
+										</textarea>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+
+		<div class="row" id="left-padding" *ngIf="statGrp=='DSP Card Usage'">
+			<div class="col-sm-12">
+				<form (ngSubmit)="save('kpiDspCard')">
+					<a style="padding-left: 914px;" id="edit" (click)=onClickKpi()> <img src="../assets/edit.gif"
+							style="border: 0px;width: 21px;"></a>
+					<div id="save" style="display: none;padding-left: 882px;">
+						<input type="submit" value="Save">
+					</div>
+					<table class="table table-bordered table-sm">
+						<tr id="height_size" style="height: 5px;" id="kpi1">
+							<br /> {{kpiDspCard}} <br /><br />
+						</tr>
+						<tr id="height_size" style="height: 5px;display: none" id="kpi2">
+							<textarea rows="10" cols="130" id="kpiDspCard">
+												{{kpiDspCard}} 
+											</textarea>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+
+		<div class="row" id="left-padding" *ngIf="statGrp=='PSX-IN SIP Request Response'">
+			<div class="col-sm-12">
+				<form (ngSubmit)="save('kpiPsxIn')">
+					<a style="padding-left: 914px;" id="edit" (click)=onClickKpi()> <img src="../assets/edit.gif"
+							style="border: 0px;width: 21px;"></a>
+					<div id="save" style="display: none;padding-left: 882px;">
+						<input type="submit" value="Save">
+					</div>
+					<table class="table table-bordered table-sm">
+						<tr id="height_size" style="height: 5px;" id="kpi1">
+							<br /> {{kpiPsxIn}} <br /><br />
+						</tr>
+						<tr id="height_size" style="height: 5px;display: none" id="kpi2">
+							<textarea rows="10" cols="130" id="kpiPsxIn">
+													{{kpiPsxIn}} 
+												</textarea>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+
+		<div class="row" id="left-padding" *ngIf="statGrp=='Call Attempts Chassis wise'">
+			<div class="col-sm-12">
+				<form (ngSubmit)="save('kpiCaAttChaWise')">
+					<a style="padding-left: 914px;" id="edit" (click)=onClickKpi()> <img src="../assets/edit.gif"
+							style="border: 0px;width: 21px;"></a>
+					<div id="save" style="display: none;padding-left: 882px;">
+						<input type="submit" value="Save">
+					</div>
+					<table class="table table-bordered table-sm">
+						<tr id="height_size" style="height: 5px;" id="kpi1">
+							<br /> {{kpiCaAttChaWise}} <br /><br />
+						</tr>
+						<tr id="height_size" style="height: 5px;display: none" id="kpi2">
+							<textarea rows="10" cols="130" id="kpiCaAttChaWise">
+													{{kpiCaAttChaWise}} 
+												</textarea>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+
+		<div class="row" id="left-padding" *ngIf="statGrp=='Call Attempts Slot wise'">
+			<div class="col-sm-12">
+				<form (ngSubmit)="save('kpiCaAttSlWise')">
+					<a style="padding-left: 914px;" id="edit" (click)=onClickKpi()> <img src="../assets/edit.gif"
+							style="border: 0px;width: 21px;"></a>
+					<div id="save" style="display: none;padding-left: 882px;">
+						<input type="submit" value="Save">
+					</div>
+					<table class="table table-bordered table-sm">
+						<tr id="height_size" style="height: 5px;" id="kpi1">
+							<br /> {{kpiCaAttSlWise}} <br /><br />
+						</tr>
+						<tr id="height_size" style="height: 5px;display: none" id="kpi2">
+							<textarea rows="10" cols="130" id="kpiCaAttSlWise">
+														{{kpiCaAttSlWise}} 
+													</textarea>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+
+		<div class="row" id="left-padding" *ngIf="statGrp=='Call Attempts Per SBC'">
+			<div class="col-sm-12">
+				<form (ngSubmit)="save('kpiCaAttPeSbc')">
+					<a style="padding-left: 914px;" id="edit" (click)=onClickKpi()> <img src="../assets/edit.gif"
+							style="border: 0px;width: 21px;"></a>
+					<div id="save" style="display: none;padding-left: 882px;">
+						<input type="submit" value="Save">
+					</div>
+					<table class="table table-bordered table-sm">
+						<tr id="height_size" style="height: 5px;" id="kpi1">
+							<br /> {{kpiCaAttPeSbc}} <br /><br />
+						</tr>
+						<tr id="height_size" style="height: 5px;display: none" id="kpi2">
+							<textarea rows="10" cols="130" id="kpiCaAttPeSbc">
+															{{kpiCaAttPeSbc}} 
+														</textarea>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+
+		<div class="row" id="left-padding" *ngIf="statGrp=='Ethernet Packet Port Status'">
+			<div class="col-sm-12">
+				<form (ngSubmit)="save('kpiEtPackPort')">
+					<a style="padding-left: 914px;" id="edit" (click)=onClickKpi()> <img src="../assets/edit.gif"
+							style="border: 0px;width: 21px;"></a>
+					<div id="save" style="display: none;padding-left: 882px;">
+						<input type="submit" value="Save">
+					</div>
+					<table class="table table-bordered table-sm">
+						<tr id="height_size" style="height: 5px;" id="kpi1">
+							<br /> {{kpiEtPackPort}} <br /><br />
+						</tr>
+						<tr id="height_size" style="height: 5px;display: none" id="kpi2">
+							<textarea rows="10" cols="130" id="kpiEtPackPort">
+																{{kpiEtPackPort}} 
+															</textarea>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+
+		<div class="row" id="left-padding" *ngIf="statGrp=='SBC License Info'">
+			<div class="col-sm-12">
+				<form (ngSubmit)="save('kpiSbcLicInfo')">
+					<a style="padding-left: 914px;" id="edit" (click)=onClickKpi()> <img src="../assets/edit.gif"
+							style="border: 0px;width: 21px;"></a>
+					<div id="save" style="display: none;padding-left: 882px;">
+						<input type="submit" value="Save">
+					</div>
+					<table class="table table-bordered table-sm">
+						<tr id="height_size" style="height: 5px;" id="kpi1">
+							<br /> {{kpiSbcLicInfo}} <br /><br />
+						</tr>
+						<tr id="height_size" style="height: 5px;display: none" id="kpi2">
+							<textarea rows="10" cols="130" id="kpiSbcLicInfo">
+																{{kpiSbcLicInfo}} 
+															</textarea>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+
+
+		<div class="row" id="left-padding" *ngIf="statGrp=='PSX CPS Licenses'">
+			<div class="col-sm-12">
+				<form (ngSubmit)="save('kpiPsxCpsLic')">
+					<a style="padding-left: 914px;" id="edit" (click)=onClickKpi()> <img src="../assets/edit.gif"
+							style="border: 0px;width: 21px;"></a>
+					<div id="save" style="display: none;padding-left: 882px;">
+						<input type="submit" value="Save">
+					</div>
+					<table class="table table-bordered table-sm">
+						<tr id="height_size" style="height: 5px;" id="kpi1">
+							<br /> {{kpiPsxCpsLic}} <br /><br />
+						</tr>
+						<tr id="height_size" style="height: 5px;display: none" id="kpi2">
+							<textarea rows="10" cols="130" id="kpiPsxCpsLic">
+																{{kpiPsxCpsLic}} 
+															</textarea>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+		<div class="row" id="left-padding" *ngIf="statGrp=='Ethernet Stats Slot wise'">
+			<div class="col-sm-12">
+				<form (ngSubmit)="save('kpiEtStatSlWise')">
+					<a style="padding-left: 914px;" id="edit" (click)=onClickKpi()> <img src="../assets/edit.gif"
+							style="border: 0px;width: 21px;"></a>
+					<div id="save" style="display: none;padding-left: 882px;">
+						<input type="submit" value="Save">
+					</div>
+					<table class="table table-bordered table-sm">
+						<tr id="height_size" style="height: 5px;" id="kpi1">
+							<br /> {{kpiEtStatSlWise}} <br /><br />
+						</tr>
+						<tr id="height_size" style="height: 5px;display: none" id="kpi2">
+							<textarea rows="10" cols="130" id="kpiEtStatSlWise">
+																	{{kpiEtStatSlWise}} 
+																</textarea>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+		<div class="row" id="left-padding" *ngIf="statGrp=='Machine Congestion Stats'">
+			<div class="col-sm-12">
+				<form (ngSubmit)="save('kpiMcConStats')">
+					<a style="padding-left: 914px;" id="edit" (click)=onClickKpi()> <img src="../assets/edit.gif"
+							style="border: 0px;width: 21px;"></a>
+					<div id="save" style="display: none;padding-left: 882px;">
+						<input type="submit" value="Save">
+					</div>
+					<table class="table table-bordered table-sm">
+						<tr id="height_size" style="height: 5px;" id="kpi1">
+							<br /> {{kpiMcConStats}} <br /><br />
+						</tr>
+						<tr id="height_size" style="height: 5px;display: none" id="kpi2">
+							<textarea rows="10" cols="130" id="kpiMcConStats">
+																		{{kpiMcConStats}} 
+																	</textarea>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+
+
+
+	</div>
+
+</div>

@@ -1,0 +1,70 @@
+<breadcrumb #parent>
+  <ol class="breadcrumb">
+    <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+      <div class="crumb my-2 px-3">
+        <a href="#">Service Type</a> / {{ route.displayName }}
+      </div>
+    </ng-template>
+  </ol>
+</breadcrumb>
+
+<div class="filter_box mx-3 py-2 px-3">
+  <h3 class="f_size_18 color-black mt-2 mb-3">Country/Group</h3>
+  <form name="service_form" [formGroup]="service_form" (ngSubmit)="add_serviceKey()" class="form_box py-0 call_log_form">
+    <div class="row mx-0 mb-1">
+      <div class="col-sm-2 pl-0">Service Type</div>
+      <div class="col-sm-4">
+        <ng-multiselect-dropdown [placeholder]="'Select Type'" [data]="service_type" formControlName="selectedTypeValue"
+          [settings]="filterTypeSettings">
+        </ng-multiselect-dropdown>
+      </div>
+    </div>
+    <div class="row mx-0 mb-1">
+      <div class="col-sm-2 pl-0">Country/Group</div>
+      <div class="col-sm-4">
+        <label> <input type="radio" formControlName="type" value='Choose' checked (change)="changeOption($event)">
+          Choose </label>
+        <label> <input type="radio" formControlName="type" value='Add' (change)="changeOption($event)"> Add </label>
+
+        <ng-multiselect-dropdown [settings]="countryGroupSettings" [placeholder]="'Select Country/Group'" [data]="country_list"
+          formControlName="selectedCountryValue" (onSelect)="on_country_select($event)" (onDeSelect)="on_country_deselect($event)"
+          *ngIf="service_form.value.type=='Choose'">
+        </ng-multiselect-dropdown>
+
+        <input type="text" id="padded" formControlName="country_text" class="form_text w-100" *ngIf="service_form.value.type=='Add'">
+
+      </div>
+    </div>
+    <div class="row mx-0 mb-1">
+      <div class="col-sm-2 pl-0">Country Code</div>
+      <div class="col-sm-4">
+        <input type="text" id="padded" formControlName="country_code" class="form_text w-100" *ngIf="service_form.value.type=='Choose'">
+        <input type="text" id="padded" formControlName="country_code_new" class="form_text w-100" *ngIf="service_form.value.type=='Add'">
+
+      </div>
+    </div>
+    <div class=" mx-3"></div>
+    <h3 class="f_size_18 color-black mt-2 mb-3">Service Key</h3>
+    <div class="row mx-0 mb-1">
+      <div class="col-sm-2 pl-0">Service Key</div>
+      <div class="col-sm-4">
+        <input type="text" id="padded" formControlName="service_key" class="form_text w-100">
+
+      </div>
+    </div>
+    <div class="row mx-0 mb-1">
+      <div class="col-sm-2 pl-0">Number Ranges</div>
+      <div class="col-sm-4">
+        <textarea rows="3" cols="20" class="form_text w-100" formControlName="number_range"></textarea>
+      </div>
+
+    </div>
+
+    <div class="row mx-0 mb-1 mt-4">
+      <div class="col-sm-12 pl-0">
+        <button class="btn btn-grey mr-2" type="button" (click)="onCancel()">Cancel</button>
+        <button type="submit" id="padded" class="btn btn-red">Ok</button>
+      </div>
+    </div>
+  </form>
+</div>

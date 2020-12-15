@@ -1,0 +1,47 @@
+<div class="filter_box mx-3 py-2 px-3">
+    <h3 class="f_size_18 color-black mt-2 mb-3">Ngin(5.2) Threshold</h3>
+    <form #threshold="ngForm" (ngSubmit)="threshold_set(threshold.value)" class="form_box py-0 call_log_form">
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-2 pl-0">CPU</div>
+        <div class="col-sm-4 option-input">
+            <input type="text" name='cpu' class="form_text" [disabled]="!userPermission" placeholder="cpu" [(ngModel)]="cpu">
+            <span class="ml-2 mt-2">%</span>
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-2 pl-0">Max Memory</div>
+        <div class="col-sm-4">
+            <input type="text" name='max_memory' class="form_text" [disabled]="!userPermission" placeholder="max_memory"
+                [(ngModel)]="maxMemory">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-2 pl-0">Memory</div>
+        <div class="col-sm-4 option-input">
+            <input type="text" name='memory' class="form_text" [disabled]="!userPermission" placeholder="memory"
+                [(ngModel)]="memory"><span class="ml-2 mt-2">%</span>
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-2 pl-0">Max Port</div>
+        <div class="col-sm-4">
+            <input type="text" name='max_port' class="form_text" [disabled]="!userPermission" placeholder="max_port"
+                [(ngModel)]="maxPort">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-2 pl-0">Port</div>
+        <div class="col-sm-4 option-input">
+            <input type="text" name='port' class="form_text" [disabled]="!userPermission" placeholder="port"
+                [(ngModel)]="port">
+            <span class="ml-2 mt-2">%</span>
+        </div>
+    </div>
+    <div class="row mx-0 mb-1 mt-4">
+        <div class="col-sm-12 pl-0" *ngIf="userPermission">
+            <button class="btn btn-grey mr-2" (click)="cancel()">Cancel</button>
+            <button class="btn btn-red" type="submit">Update</button>
+        </div>
+    </div>
+    </form>
+</div>

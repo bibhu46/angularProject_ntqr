@@ -1,0 +1,552 @@
+<breadcrumb #parent>  
+    <ol class="breadcrumb">
+      <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+          <div class="row mx-0 w-100 pb-1 border-bottom-grey2 mb-1">
+              <div class="col-sm-6 pl-0 pt-2">
+                    <a href="javascript:void()">Settings </a> / {{ route.displayName }}
+              </div>
+
+              <div class="col-sm-6 text-right">
+                    <button class="btn btn-grey btn-border mr-2" (click)="open_global_notification()">Global Notification </button>
+                    <button class="btn btn-red" (click)="open_add_watchlist()">Add Folder</button>
+              </div>
+          </div>        
+      </ng-template>
+    </ol>
+</breadcrumb>
+
+<form class="mx-3 pb-80" name="folder_form" [formGroup]="folder_form">
+    <div class="row mx-0 border-bottom-grey pb-2 mb-0">
+        <div class="col-sm-4 pt-2 pl-0">
+            <strong>{{ type_list.length }}</strong> Folders
+        </div>
+        
+        <div class="col-sm-8 text-right pr-0">
+            
+        </div>
+    </div>
+
+    <div class="row mx-0 border-bottom-grey mt-3 pb-2 color-black">
+        <div class="col-sm-2  bold">
+            Actions
+        </div>
+
+        <div class="col-sm-3 bold">
+            Folder Name
+        </div>
+
+        <div class="col-sm-7 bold">
+            Notification Emails
+        </div>
+    </div>
+    <div class="border-grey my-2">
+      <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" [closeOthers]="true">
+          <ngb-panel *ngFor="let list of type_list; let i = index;">                
+              <ng-template ngbPanelHeader let-opened="closed">                
+                  <button ngbPanelToggle class="btn my-0 p-0 w-100 text-left" (click)="accord_row_click($event, list)">
+                      <div class="row mx-0">
+                          <div class="col-sm-2">
+                              <i class="fas fa-chevron-right color-grey mr-2"></i> 
+                              <i class="fas fa-chevron-down color-green mr-2"></i>
+
+                              <button class="btn-icon mr-2" (click)="open_edit_watchlist(list)">
+                                  <i class="fas fa-pen"></i>
+                              </button>
+
+                              <button class="btn-icon mr-2" (click)="remove_folder(list)">
+                                  <i class="fas fa-trash"></i>
+                              </button>
+
+                              <button class="btn-icon mr-2" (click)="open_share_tg(list)">
+                                  <i class="fas fa-share-square"></i>
+                              </button>
+                          </div>
+                          <div class="col-sm-3 pt-1"> {{ list.name }} ({{ list.quantTkTraffic }})</div>
+                          <div class="col-sm-7 pt-1">
+                             
+                          </div>
+                      </div>                        
+                  </button>                
+                                    
+              </ng-template>
+              <ng-template ngbPanelContent>
+                  <table class="table my-3" cellpadding="0" cellspacing="0">
+                      <thead>
+                          <th class="pl-3">Actions
+                              <label class="custom_check ml-2 mb-0"> &nbsp;
+                                <input type="checkbox" [checked]="false" (change)="check_all($event)">
+                                <span class="checkmark"></span>
+                              </label>
+                          </th>
+                          <th>Trunkgroup Name</th>
+                          <th>Gateway</th>
+                          <th>Description</th>
+                          <th class="text-center">Utilisation</th>
+                          <th class="text-center">Utilisation Threshold</th>
+                          <th>Notification</th>
+                      </thead>
+                      <tbody formArrayName="arr">
+                        <ng-container *ngIf="tg_list.length !== 0">
+                          <tr *ngFor="let item of folder_form_array.controls; let i = index" [formGroupName]="i">
+                              <td class="pl-3">
+                                  <button class="btn-icon mr-2" (click)="remove_tg(tg_list[i].tgName,tg_list[i].tgId, list.name)">
+                                      <i class="fas fa-trash"></i>
+                                  </button>
+                                  <label class="custom_check mr-4 mb-0"> &nbsp;
+                                      <input type="checkbox" formControlName="select_state" (change)="selected_tg()">
+                                      <span class="checkmark"></span>
+                                  </label>
+                                  <input type="hidden" formControlName="tg_id">
+                              </td>
+                              <td>{{ tg_list[i].tgName}}</td>
+                              <td>{{ tg_list[i].gateway }}</td>
+                              <td>{{ tg_list[i].tgDescr }}</td>
+                              <td class="text-center">
+                                <ratings-bar percentage="{{tg_list[i].tgUtilisation}}" tooltip_desc="Busy hour: {{tg_list[i].busyHour}}" display_value="{{tg_list[i].tgUtilisation}}" [show_display]="true" [show_percent]="true" [show_max]="false" [bar_color]="cpu_usage(tg_list[i].tgUtilisation, tg_list[i].thresholdUtilisation)">                                  
+                                </ratings-bar>
+                              </td>
+                              <td class="text-center">{{ tg_list[i].thresholdUtilisation }}</td>
+                              <td class="pl-5">
+                                  <div class="custom-control custom-switch mx-auto">
+                                      <input type="checkbox"  class="custom-control-input" formControlName="notify_state" [id]="i" (change)="enable_notify($event, tg_list[i].tgId, tg_list[i].tgName)">
+                                      <label class="custom-control-label" [for]="i">
+                                      </label>
+                                  </div>
+                              </td>
+                          </tr>
+                        </ng-container>
+
+                        <ng-container>
+                          <tr *ngIf="tg_list.length == 0">
+                            <td colspan="7" class="text-center py-5 f_size_15 color-red">
+                              No trunks added to this folder.
+                            </td>
+                          </tr>
+                        </ng-container>
+                      </tbody>
+                  </table>
+              </ng-template>
+          </ngb-panel>
+      </ngb-accordion>
+    </div>
+
+</form>
+
+<div class="base_status_bar mt-3">
+    <div class="px-3 pt-4 mt-1">
+        Trunkgroup Selected ({{ selected_tg_count }})
+        <div ngbDropdown placement="top-right" class="d-inline-block mx-3">
+            <button class="btn btn-green" id="notify_dropdown" ngbDropdownToggle>Notification</button>
+            <div ngbDropdownMenu aria-labelledby="notify_dropdown">
+              <button ngbDropdownItem (click)='enable_notification(true)'>Send Email</button>
+              <button ngbDropdownItem (click)='enable_notification(false)'>Don't Send Email</button>              
+            </div>
+        </div>
+        
+        <button class="btn btn-green mr-3" (click)="open_move_watchlist()">Move</button>               
+        <button class="btn btn-green mr-3" (click)="open_util_threshold()">Thresholds</button>
+    </div>
+</div>
+
+
+  
+<!-- template for edit watchlist folder -->
+<ng-template #editWatchlist let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Edit Watchlist Folder</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body px-0">
+    <form class="py-0" name="edit_watchlist_form" [formGroup]="edit_watchlist_form" (ngSubmit)="edit_folder()">
+      <div class="row mx-0 mb-3">
+        <div class="col-sm-4">Name</div>
+        <div class="col-sm-8">
+            <input type="text" formControlName="folder_name" class="form_text w-100">
+        </div>
+      </div>
+
+      <div class="row mx-0 mb-3">
+          <div class="col-sm-12">
+              <label class="custom_check mb-0"> &nbsp;
+                <input type="checkbox" [checked]="false"  value="one">
+                <span class="checkmark"></span>
+              </label>
+                Send an email on utilisation alert
+          </div>          
+      </div>
+
+      <div class="row mx-0 mb-3">
+        <div class="col-sm-4">Email Address Receiving Alert</div>
+        <div class="col-sm-8">
+            <textarea formControlName="email_address"  class="form_text w-100" rows="4">test@test.com</textarea>
+        </div>
+      </div>
+
+      <div class="row mx-0 mb-3">
+        <div class="col-sm-4">Alert Period</div>
+        <div class="col-sm-8">
+          <label class="custom_check mr-3 capitalize" *ngFor="let control of edit_notify_arr.controls; let i = index;"> {{ alert_period[i] }}
+              <input type="checkbox" [formControl]="control">
+              <span class="checkmark"></span>
+          </label> 
+        </div>
+      </div>
+      
+      <div class="row mx-0">
+        <div class="col-sm-12 text-right">
+            <button type="button" class="btn btn-grey mr-2" (click)="modal.dismiss('Cross click')">Cancel</button>
+            <button type="button" class="btn btn-red" type="submit">Update</button>
+        </div>
+      </div>
+    </form>
+    
+  </div> 
+  
+</ng-template>
+
+<!-- template for edit watchlist folder -->
+<ng-template #addWatchlist let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">Add Watchlist Folder</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body px-0">
+      <form class="py-0" name="add_watchlist_form" [formGroup]="add_watchlist_form" (ngSubmit)="add_folder()">
+        <div class="row mx-0 mb-3">
+          <div class="col-sm-4">Name</div>
+          <div class="col-sm-8">
+              <input type="text" formControlName="folder_name" class="form_text w-100">
+          </div>
+        </div>
+  
+        <div class="row mx-0 mb-3">
+            <div class="col-sm-12">
+                <label class="custom_check mb-0"> &nbsp;
+                  <input type="checkbox" [checked]="false" formControlName="email_alert" value="one">
+                  <span class="checkmark"></span>
+                </label>
+                  Send an email on utilisation alert
+            </div>          
+        </div>
+  
+        <div class="row mx-0 mb-3">
+          <div class="col-sm-4">Email Address Receiving Alert</div>
+          <div class="col-sm-8">
+              <textarea formControlName="email_address"  class="form_text w-100" rows="4">test@test.com</textarea>
+          </div>
+        </div>
+
+        <div class="row mx-0 mb-3">
+          <div class="col-sm-4">Alert Period</div>
+          <div class="col-sm-8">
+              <label class="custom_check mr-3 capitalize" *ngFor="let control of alert_notify_arr.controls; let i = index;"> {{ alert_period[i] }}
+                  <input type="checkbox" [formControl]="control">
+                  <span class="checkmark"></span>
+              </label>  
+              
+          </div>
+        </div>
+        
+        <div class="row mx-0">
+          <div class="col-sm-12 text-right">
+              <button type="button" class="btn btn-grey mr-2" type="button" (click)="modal.dismiss('Cross click')">Cancel</button>
+              <button type="button" class="btn btn-red" type="submit">Add</button>
+          </div>
+        </div>
+      </form>
+      
+    </div> 
+    
+  </ng-template>
+
+<!-- template for Global Notification Settings -->
+<ng-template #globalNotification let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">Global Notification Settings</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body px-0">
+      <form class="py-0" name="global_watchlist_form" [formGroup]="global_watchlist_form" (ngSubmit)="save_global_notification()">
+        <div class="row mx-0 mb-3">
+          <div class="col-sm-12 px-0">
+              <div class="alert alert-primary p-0 mb-0" role="alert">
+                  <div class="row mx-0">
+                    <div class="col-sm-1 px-2 text-center pt-2">
+                        <i class="fas fa-info-circle text-info tiny-icon"></i>
+                    </div>
+                    <div class="col-sm-11 px-2">
+                      <p class="bold my-1 color-black">Set Notifications for all folders</p>
+                      <p class="my-1 color-black">You can set global notification setting for all folders from here. Any changes made to a single folder or trunkgroup will remove this global setting. </p>
+                    </div>
+                  </div>
+                </div>
+          </div>
+        </div>
+  
+        <div class="row mx-0 mb-3">
+            <div class="col-sm-12">
+                <label class="custom_check mb-0"> &nbsp;
+                  <input type="checkbox" [checked]="false" formControlName="email_alert" value="one">
+                  <span class="checkmark"></span>
+                </label>
+                  Send an email on utilisation alert
+            </div>          
+        </div>
+  
+        <div class="row mx-0 mb-3">
+          <div class="col-sm-4">Email Address Receiving Alert</div>
+          <div class="col-sm-8">
+              <textarea formControlName="email_address"  class="form_text w-100" rows="4">test@test.com</textarea>
+          </div>
+        </div>
+
+        <div class="row mx-0 mb-3">
+          <div class="col-sm-4">Alert Period</div>
+          <div class="col-sm-8">
+              <label class="custom_check mr-3"> Daily
+                  <input type="checkbox" [checked]="true"  value="daily">
+                  <span class="checkmark"></span>
+              </label>
+  
+              <label class="custom_check mr-3"> Weekly
+                  <input type="checkbox" [checked]="false"  value="weekly">
+                  <span class="checkmark"></span>
+              </label>
+  
+              <label class="custom_check mr-3"> Monthly
+                  <input type="checkbox" [checked]="false"  value="monthly">
+                  <span class="checkmark"></span>
+              </label>
+          </div>
+        </div>
+        
+        <div class="row mx-0">
+          <div class="col-sm-12 text-right">
+              <button type="button" class="btn btn-grey mr-2" (click)="modal.dismiss('Cross click')" type="button">Cancel</button>
+              <button type="button" class="btn btn-red" type="submit">Update</button>
+          </div>
+        </div>
+      </form>
+      
+    </div> 
+    
+  </ng-template>
+
+<!-- template for moving watchlist between folders -->
+<ng-template #moveWatchlist let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">Move To Watchlist Folder</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body px-0">
+      <form class="py-0" name="move_watchlist_form" [formGroup]="move_watchlist_form" (ngSubmit)="move_tg()">
+        <div class="row mx-0 mb-3">
+          <div class="col-sm-12 px-0">              
+              <div class="row mx-0 mb-5">
+                <div class="col-sm-4">
+                    Select Folder
+                </div>
+                <div class="col-sm-8 px-2">
+                    <ng-multiselect-dropdown
+                      [placeholder]="'Folder Name'"
+                      [settings]="folderSettings"
+                      [data]="type_list"
+                      formControlName="folder_name"                      
+                      (onSelect)="on_folder_select($event)"
+                      (onDeSelect)="on_folder_deselect($event)"                        
+                      >
+                    </ng-multiselect-dropdown>
+                </div>
+              </div>                
+          </div>
+        </div>
+        
+        <div class="row mx-0 mt-3">
+          <div class="col-sm-12 text-right">
+              <button type="button" class="btn btn-grey mr-2" (click)="modal.dismiss('Cross click')">Cancel</button>
+              <button type="button" class="btn btn-red" type="submit">Move</button>
+          </div>
+        </div>
+      </form>
+      
+    </div> 
+    
+  </ng-template>
+
+  <!-- template for sharing watchlist -->
+<ng-template #shareTg let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">Share To</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body px-0 overflow-hidden">
+      <form class="py-0" name="share_form" [formGroup]="share_form" (ngSubmit)="share_folder()">
+        <div class="row mx-0">
+          <div class="col-sm-12 px-0">              
+              <div class="row mx-0 mb-3">
+                <div class="col-sm-4 pl-0">
+                    Folder Name <span class="color-red">*</span>
+                </div>
+                <div class="col-sm-8 pr-0">
+                    <input type="text" formControlName="folder_name" [readonly]="true" class="form_text w-100">
+                </div>
+              </div>              
+              
+              <div class="row mx-0 mb-4">
+                <div class="col-sm-4 pl-0 mb-3">
+                    Select User <span class="color-red">*</span>                    
+                </div>
+                <div class="col-sm-8 pr-0 mb-3">
+                    <ng-multiselect-dropdown
+                      [placeholder]="'Select User'"
+                      [settings]="userSettings"
+                      [data]="users_list"
+                      formControlName="share_user"                      
+                      (onSelect)="on_folder_select($event)"
+                      (onDeSelect)="on_folder_deselect($event)"                                            
+                      >
+                    </ng-multiselect-dropdown>
+                </div>
+              </div>
+              
+          </div>
+        </div>
+        
+        <div class="row mx-0 mt-4">
+          <div class="col-sm-12 text-right pr-0 pt-4">
+              <button type="button" class="btn btn-grey mr-2" (click)="modal.dismiss('Cross click')">Cancel</button>
+              <button type="submit" class="btn btn-red">Share</button>
+          </div>
+        </div>
+      </form>
+      
+    </div> 
+    
+  </ng-template>
+
+  <!-- template for threshold options -->
+<ng-template #utilThreshold let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Edit Utilisation Thresholds</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body px-0">
+    <p class="f_size_15 my-2"><span class="color-green mr-2">Folder: </span> {{ selected_folder['name'] }}</p>
+    <form class="py-0" name="threshold_form" [formGroup]="threshold_form" (ngSubmit)="threshold_save()">
+      <div class="row mx-0 mb-3">
+        <div class="col-sm-12 px-0">
+            <input type="hidden" formControlName="folder_name">
+            <div class="border-grey my-2">       
+              <table class="table my-2" cellspacing="0" cellpadding="0">
+                <thead>
+                  <tr>
+                    <th>Action</th>
+                    <th class="pl-3">Trunkgroup Name</th>
+                    <th>Gateway</th>
+                    <th>Trunkgroup Description</th>
+                    <th>Utilisation</th>
+                    <th>Utilisation Threshold (in %)</th>
+                    <th>Notification</th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="arr">
+                  <tr *ngFor="let item of folder_form_array.controls; let i = index" [formGroupName]="i">
+                    <td class="pl-3">
+                        <button class="btn-icon mr-2" (click)="remove_tg(tg_list[i].tgName, tg_list[i].tgId, selected_folder['name'])">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                    <td class="pl-3">{{ tg_list[i].tgName }}</td>
+                    <td>{{ tg_list[i].gateway }}</td>
+                    <td>{{ tg_list[i].tgDescr }}</td>
+                    <td class="text-center">
+                      <ratings-bar percentage="{{tg_list[i].tgUtilisation}}" tooltip_desc="Busy hour: {{tg_list[i].busyHour}}" display_value="{{tg_list[i].tgUtilisation}}" [show_display]="true" [show_percent]="true" [show_max]="false" [bar_color]="cpu_usage(tg_list[i].tgUtilisation, tg_list[i].thresholdUtilisation)">                                  
+                      </ratings-bar>
+                    </td>
+                    <td><input type="number" class="form_text w-80pt float-left" value="{{ tg_list[i].thresholdUtilisation }}" formControlName="threshold_util"> <span class="mt-1 ml-2 float-left">%</span></td>
+                    <td class="pl-5">
+                      <div class="custom-control custom-switch mx-auto">
+                        <input type="checkbox"  class="custom-control-input" [id]="'str' + i" formControlName="notify_state" (change)="enable_notify($event, tg_list[i].tgId, tg_list[i].tgName)">
+                        <label class="custom-control-label" [for]="'str' + i">
+                        </label>
+                    </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="tg_list.length == 0">
+                    <td colspan="5" class="text-center py-5 f_size_15 color-red">
+                      No trunks added to this folder.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>     
+        </div>
+      </div>
+      
+      <div class="row mx-0 mt-3">
+        <div class="col-sm-12 text-right">
+            <button type="button" class="btn btn-grey mr-2" type="button" (click)="modal.dismiss('Cross click')">Cancel</button>
+            <button type="button" class="btn btn-red" type="submit">Save</button>
+        </div>
+      </div>
+    </form>
+    
+  </div> 
+  
+</ng-template>
+
+  <!-- template for remove tg permission -->
+<ng-template #removeTgPermission let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Remove {{ remove_tg_name }} ???</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body px-0">
+    <p class="my-2 px-3">Would you like to remove trunkgroup <span class="color-red">{{ remove_tg_name }}</span> from the folder <span class="color-red">{{ remove_tg_from_folder }}</span>?</p>
+
+    <p class="text-right mt-3">      
+      <button type="button" class="btn btn-red mr-2
+      mr-2" (click)="yes_clicked()">Yes</button>
+      <button type="button" class="btn btn-grey" (click)="modal.dismiss('Cross click')">No</button>
+    </p>
+    
+    
+  </div> 
+  
+</ng-template>
+
+  <!-- template for remove folder permission -->
+  <ng-template #removeFolderPermission let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">Remove {{ remove_folder_obj['name'] }} Folder ?</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body px-0">
+      <p class="my-2 px-3">Would you like to remove watchlist folder <span class="color-red">{{ remove_folder_obj['name'] }}</span> and it's Trunkgroups shortlisted ?</p>
+  
+      <p class="text-right mt-3">      
+        <button type="button" class="btn btn-red mr-2
+        mr-2" (click)="yes_clicked_folder()">Yes</button>
+        <button type="button" class="btn btn-grey" (click)="modal.dismiss('Cross click')">No</button>
+      </p>
+      
+      
+    </div> 
+    
+  </ng-template>

@@ -1,0 +1,185 @@
+<div class="filter_box mx-3 py-2 px-3">
+    <h3 class="f_size_18 color-black mt-2 mb-3">Sonus Performance Threshold</h3>
+    <form #threshold="ngForm" (ngSubmit)="threshold_set(threshold.value)" class="form_box py-0 call_log_form" >
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">CPU</div>
+        <div class="col-sm-4 option-input">
+            <input type="text" name='cpu' [disabled]="!userPermission" class="form_text" [(ngModel)]="cpu"><span class="ml-2 mt-2">%</span>
+        </div>
+
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Memory</div>
+        <div class="col-sm-4 option-input">
+            <input type="text" name='memory' [disabled]="!userPermission" class="form_text" [(ngModel)]="memory"><span
+                class="ml-2 mt-2">%</span>
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Disk Space Utilization</div>
+        <div class="col-sm-4 option-input">
+            <input type="text" name='disk' [disabled]="!userPermission" class="form_text" [(ngModel)]="disk"><span
+                class="ml-2 mt-2">%</span>
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">External Timeout</div>
+        <div class="col-sm-4">
+            <input type="text" name='externalTimetout' [disabled]="!userPermission" class="form_text" [(ngModel)]="externalTimetout">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Internal Service Time</div>
+        <div class="col-sm-4">
+            <input type="text" name='internalServiceTime' [disabled]="!userPermission" class="form_text" [(ngModel)]="internalServiceTime">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Machine Congestion Rejects</div>
+        <div class="col-sm-4">
+            <input type="text" name='machineCongestion' [disabled]="!userPermission" class="form_text"
+                [(ngModel)]="machineCongestion">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">PSX Congestion Rejects</div>
+        <div class="col-sm-4">
+            <input type="text" name='psxCongestionRejects' [disabled]="!userPermission" class="form_text" [(ngModel)]="psxCongestionRejects">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">PSX Dip Retries</div>
+        <div class="col-sm-4">
+            <input type="text" name='psxDipRetries' [disabled]="!userPermission" class="form_text" [(ngModel)]="psxDipRetries">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">PSX Dip Failures</div>
+        <div class="col-sm-4">
+            <input type="text" name='psxDipFailures' [disabled]="!userPermission" class="form_text" [(ngModel)]="psxDipFailures">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">VLAN Numbers</div>
+        <div class="col-sm-4">
+            <input type="text" name='vlanNumbers' [disabled]="!userPermission" class="form_text" [(ngModel)]="vlanNumbers">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Trunkgroup Utilisation</div>
+        <div class="col-sm-4 option-input">
+            <input type="text" name='trunkgroupUtilisation' [disabled]="!userPermission" class="form_text" [(ngModel)]="trunkgroupUtilisation"><span
+                class="ml-2 mt-2">%</span>
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Trunkgroup CPS</div>
+        <div class="col-sm-4">
+            <input type="text" name='trunkgroupCPS' [disabled]="!userPermission" class="form_text" [(ngModel)]="trunkgroupCPS">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Utilisation</div>
+        <div class="col-sm-4 option-input">
+            <input type="text" name='utilisation' [disabled]="!userPermission" class="form_text" [(ngModel)]="utilisation"><span
+                class="ml-2 mt-2">%</span>
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Allocation Failure</div>
+        <div class="col-sm-4 option-input">
+            <input type="text" name='allocationFailure' [disabled]="!userPermission" class="form_text" [(ngModel)]="allocationFailure"><span
+                class="ml-2 mt-2">%</span>
+        </div>
+    </div>
+
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Peak Used</div>
+        <div class="col-sm-4">
+            <input type="text" name='peakUsed' [disabled]="!userPermission" class="form_text" [(ngModel)]="peakUsed">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Peak SBC Licence Utilization</div>
+        <div class="col-sm-4">
+            <input type="text" name='peakSbcLicenceUtilization' [disabled]="!userPermission" class="form_text" [(ngModel)]="peakSbcLicenceUtilization">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Average Used</div>
+        <div class="col-sm-4">
+            <input type="text" name='averageUsed' [disabled]="!userPermission" class="form_text" [(ngModel)]="averageUsed">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Average Available</div>
+        <div class="col-sm-4">
+            <input type="text" name='averageAvailable' [disabled]="!userPermission" class="form_text" [(ngModel)]="averageAvailable">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">Call Attempt Rate</div>
+        <div class="col-sm-4">
+            <input type="text" name='callAttemptRate' [disabled]="!userPermission" class="form_text" [(ngModel)]="callAttemptRate">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">SBC Call Attempts</div>
+        <div class="col-sm-4">
+            <input type="text" name='callAttempts' [disabled]="!userPermission" class="form_text" [(ngModel)]="callAttempts">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">SBC Call Completion</div>
+        <div class="col-sm-4">
+            <input type="text" name='callCompletions' [disabled]="!userPermission" class="form_text" [(ngModel)]="callCompletions">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">SBC Active Call Counts</div>
+        <div class="col-sm-4">
+            <input type="text" name='callCounts' [disabled]="!userPermission" class="form_text" [(ngModel)]="callCounts">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">SBC Calls Per Second</div>
+        <div class="col-sm-4">
+            <input type="text" name='callsPerSecond' [disabled]="!userPermission" class="form_text" [(ngModel)]="callsPerSecond">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">SBC Total Call Attempts</div>
+        <div class="col-sm-4">
+            <input type="text" name='totalCallAttempts' [disabled]="!userPermission" class="form_text" [(ngModel)]="totalCallAttempts">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">SBC Busy Hour Call Attempts</div>
+        <div class="col-sm-4">
+            <input type="text" name='busyHourCallAttempts' [disabled]="!userPermission" class="form_text" [(ngModel)]="busyHourCallAttempts">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">SBC Call Attempt Rate</div>
+        <div class="col-sm-4">
+            <input type="text" name='sbcCallAttemptsRate' [disabled]="!userPermission" class="form_text"
+                [(ngModel)]="sbcCallAttemptsRate">
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-3 pl-0">SBC DSP Threshold</div>
+        <div class="col-sm-4 option-input">
+            <input type="text" name='thresholdSbcDsp' [disabled]="!userPermission" class="form_text" [(ngModel)]="thresholdSbcDsp"><span
+                class="ml-2 mt-2">%</span>
+        </div>
+    </div>
+
+    <!-- // -->
+    <div class="row mx-0 mb-1 mt-4">
+        <div class="col-sm-12 pl-0" *ngIf="userPermission">
+            <button class="btn btn-grey mr-2" (click)="cancel()">Cancel</button>
+            <button class="btn btn-red" type="submit">Update</button>
+        </div>
+    </div>
+    </form>
+</div>

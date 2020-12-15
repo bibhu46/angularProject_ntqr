@@ -1,0 +1,120 @@
+<breadcrumb #parent>
+  <ol class="breadcrumb">
+    <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+      <div class="crumb my-2 px-3">
+        <a href="#">NGIN 5.2</a> / {{ route.displayName }}
+      </div>
+    </ng-template>
+  </ol>
+</breadcrumb>
+
+<div class="filter_box mx-3 py-2 px-3">
+  <h3 class="f_size_18 color-black mt-2 mb-3">Installed Numbers</h3>
+  <form #dates="ngForm" (ngSubmit)="onSubmit()" class="form_box py-0 call_log_form">
+    <div class="row mx-0 mb-1">
+      <div class="col-sm-2 pl-0">Date</div>
+      <div class="col-sm-4">
+        <input type="date" id="padded" name='date' class="form_text" placeholder="From Date" [(ngModel)]="date_unit">
+      </div>
+    </div>
+    <div class="row mx-0 mb-1 mt-4">
+      <div class="col-sm-12 pl-0">
+        <button type="submit" id="padded" class="btn btn-red">Run Report</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+<!-- ///// -->
+
+<!-- <div *ngIf="displayTable"> -->
+<div>
+  <div class="hr mx-3"></div>
+  <form class="mx-3">
+    <div class="row mx-0 pb-2  border-bottom-grey2 mb-2">
+      <div class="col-sm-4 pt-2 pl-0">
+        <strong>{{numPortList.length}}</strong> Records
+      </div>
+      <div class="col-sm-4">
+      </div>
+      <div class="col-sm-4 text-right pr-0">
+        <div class="row mx-0 mb-2">
+          <div class="col-sm-6 pl-0">
+
+          </div>
+
+          <div class="col-sm-6 text-right">
+            <button class="btn-icon mr-2" type="submit" (click)="onClickdwnldcsv()" data-toggle="popover"
+              data-toggle="tooltip" title="Download CSV"><i class="fas fa-file-pdf"></i></button>
+
+            <button class="btn-icon mr-2" (click)="acc.expandAll()">
+              <i class="fas fa-plus"></i>
+            </button>
+
+            <button class="btn-icon mt-2" (click)="acc.collapseAll()">
+              <i class="fas fa-minus"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="border-grey py-3 mb-3">
+        <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" class="installed-numbers-table">
+          <ngb-panel *ngFor="let serviceType of numPortList; let i=index">
+            <ng-template ngbPanelHeader let-opened="opened">
+              <button ngbPanelToggle class="btn my-0 p-0 w-100 text-left">
+                <i class="fas fa-chevron-right color-grey mx-2"></i>
+                <i class="fas fa-chevron-down color-green mx-2"></i><span class="bold">{{i+1}}.Service Type:
+                </span>{{serviceType.description}}
+              </button>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <table class="table" cellpadding="0" cellspacing="0">
+                <thead>
+                  <th class="heading pl-3">Country</th>
+                  <th class="heading">Installed Numbers</th>
+                  <th class="heading">Percentage</th>
+                </thead>
+                <tbody>
+    
+                  <tr class="bg_grey f_size_12">
+                    <td class="subheading pl-3">1 a . {{serviceType.subDescription}}</td>
+                    <td class="subheading"></td>
+                    <td class="subheading"></td>
+                  </tr>
+                  <tr *ngFor="let country of serviceType.countryList">
+                    <td class="content  pl-3"><button class="btn-icon mt-2 mr-2"
+                        (click)="showPopUpHistory(country.id, serviceType.subDescription, country.name)"><i
+                          class="fas fa-chart-bar"></i></button>
+                      <button class="link"
+                        (click)="showDetails(country.id, serviceType.subDescription, country.name)">{{country.name}}</button>
+                    </td>
+                    <td class="content">{{country.installedNumbers}}</td>
+                    <td class="content">
+                      <ratings-bar percentage="{{country.percentage}}" [show_max]="false" [show_percent]='true'
+                        bar_color="green">
+                      </ratings-bar>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="total  pl-3">Total</td>
+                    <td class="total">{{serviceType.totalInstalledNumbers}}</td>
+                    <td class="total"></td>
+                  </tr>
+                  <tr>
+                    <td class="total pl-3">Total</td>
+                    <td class="total">{{totalValue}}</td>
+                    <td class="total"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-template>
+          </ngb-panel>
+        </ngb-accordion>
+    </div>
+    
+  </form>
+</div>

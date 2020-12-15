@@ -1,0 +1,171 @@
+/* base colors for NTQR */
+/* colt theme colors --------------------------------- */
+
+$colt_pink: #e40046;
+$colt_dark_pink: #a50034;
+$colt_teal: #00a59b;
+$colt_dark_teal: #00695f;
+$colt_black: #000;
+$colt_snow: #edf0f3;
+$colt_orange: #ff8c2d;
+$colt_dark_orange: #cd5500;
+$colt_blue: #236491;
+$colt_dark_blue: #00466e;
+$colt_gray: #969696;
+$colt_dark_gray: #505050;
+$colt_icon_gray: #656565;
+$colt_faded_gray: #f9fafb;
+$colt_faded_teal: #f2fbfa;
+
+$colt_info_bg: #f6fafe;
+$colt_info_border: #edf2f8;
+
+/* bootstrap & custom sass variables ---------------------------------------- */
+
+$body-bg: #fff;
+$body-color: #656565;
+$body-color-dark: #454545;
+$grey_border: #e4e4e4;
+$disabled: #b6b6b6;
+$form_border: #d6d6d6;
+
+$green_light: #13b9af;
+$filter_stroke: #eaebec;
+$field_border_color: #c9caca; 
+$border-color-2: #e5e5e5;
+$border-color-3: #cbcbcb;
+$border-color-4: #dee2e6;
+
+$switch_green_bg: #9ae5e1;
+
+$yellow_grad_reverse: linear-gradient(to bottom, #fdf9ec, #faecc5);
+
+$white: #fff;
+$black: #000;
+$red: #e40046;
+$green2: #00d607;
+$blue2 : #06528c;
+
+$border-color: #d9d9da; 
+$transparent: transparent;
+
+$footer_bg: #ebe3db;
+$footer_color: #a67b55;
+
+$grey_dark: #454545;
+$grey_light: #fafafa;
+$grey_text: #969696;
+
+$green_border: #7cd0cb;
+
+$theme-colors: (
+  primary: $colt_dark_teal,
+  danger: $colt_dark_pink,
+  secondary: $colt_blue,
+  success: $colt_teal,
+  warning: $colt_dark_orange,
+  info: $colt_dark_blue,
+  dark: #454545,
+  light: #f4f4f4,    
+  light_2: #f9f9f9,
+  light_yelllow: #fef8e9  
+);
+
+$modal_border_color: #e4e4e4;
+
+/* Resolutions ------------------------------------------------------------------------- */
+
+$xl: 1201px; 
+$lg: 1200px;
+$md: 992px;
+$sm: 768px;
+$xs: 500px;
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px
+) !default;
+
+
+/* Setting  components true*/
+
+$enable-transitions: true;
+
+$link-hover-decoration:     none !default;
+
+$grid-gutter-width:           30px !default;
+$border-radius:               5px !default;
+
+$font-family-base:            'Gotham-book' !default;
+$font-family-secondary:       'Gotham-medium' !default;
+
+$font-size-base:              1rem !default; // Assumes the browser default, typically `16px`
+$font-size-lg:                ($font-size-base * 1.25) !default;
+$font-size-sm:                ($font-size-base * 1.2) !default;
+$btn-line-height-sm:          22px !default;
+
+$headings-font-family:        $font-family-base !default;
+
+$btn-padding-y-sm:            4px !default;
+$btn-padding-x-sm:            10px !default;
+
+$modal-dialog-shadow:               0px 0px 8px #08abf4;
+$modal-dialog-radius:               5px;
+$modal-inner-padding:               1.33rem 0rem !default;
+$modal-dialog-margin:               .5rem !default;
+$modal-dialog-margin-y-sm-up:       1.66rem !default;
+$modal-title-font-size:             1.86rem !default;
+$modal-title-line-height:           2rem !default;
+$modal-header-bg:                   #f1f1f1;
+$modal-header-min-height:           2.66rem;
+$modal-content-bg:                  $white !default;
+$modal-content-border-color:        rgba($black, .8) !default;
+$modal-content-border-width:        0rem !default;
+$modal-content-border-radius:       0.33rem !default;
+$modal-content-box-shadow-xs:       0 0 0 rgba($black, .5) !default;
+$modal-content-box-shadow-sm-up:    0 0 0 rgba($black, .5) !default;
+$modal-backdrop-bg:                 $black !default;
+$modal-backdrop-opacity:            .8 !default;
+$modal-header-border-color:         $border-color !default;
+$modal-footer-border-color:         $modal-header-border-color !default;
+$modal-header-border-width:         $modal-content-border-width !default;
+$modal-footer-border-width:         $modal-header-border-width !default;
+$modal-header-padding:              0.73rem 1rem 0.70rem 1rem !default;
+$modal-xl:                          95% !default;
+$modal-lg:                          80% !default;
+$modal-md:                          65% !default;
+$modal-sm:                          40% !default;
+$modal-xs:                          25% !default;
+$modal-transition:                  transform .3s ease-out !default;
+$modal-max-height:                  calc(100vh - 3.36rem);
+
+/* input field styles ---------------------------------------------------- */
+
+$label-margin-bottom: 0.2rem;
+$input-bg: $transparent;
+$input-disabled-bg: $transparent;
+$input-color: $body-color;
+$input-border-width: 0rem;
+$input-focus-width: 0rem;
+$input-focus-box-shadow: none;
+$input-padding-x: 0rem;
+$input-color: $body-color;
+$input-padding-y:  0.075rem;
+$input-height:  1.5rem;
+
+/*tooltip styles ------------------------------------------------------- */
+
+$tooltip-bg: $colt_teal !default;
+$tooltip-arrow-color: $tooltip-bg !default;
+$tooltip-max-width:           200px !default;
+$tooltip-color:               #fff !default;
+$tooltip-opacity:             .9 !default;
+$tooltip-arrow-width:         5px !default;
+
+/* theme NTQR variables ------------------------------------------------------------- */
+
+
+

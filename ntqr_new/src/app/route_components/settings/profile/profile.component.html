@@ -1,0 +1,125 @@
+<!-- <breadcrumb #parent>
+    <ol class="breadcrumb">
+        <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+            <div class="crumb my-2 px-3">
+                <a href="javascript:void()">Settings</a> / {{ route.displayName }}
+            </div>
+        </ng-template>
+    </ol>
+</breadcrumb> -->
+
+
+<div class="filter_box mx-3 py-2 px-3">
+    <h3 class="f_size_18 color-black mt-2 mb-3">Profile Details</h3>
+    <form class="form_box py-0 call_log_form" name="profile_form" [formGroup]="profile_form" (ngSubmit)="profile_form_submit()">
+        <div class="row mx-0 mb-1">
+            <div class="col-sm-2 pl-0">Login Id
+                <i class="fas fa-question-circle color-green ml-2"></i>
+            </div>
+            <div class="col-sm-4">
+                <input type="text" class="form-control mr-2" formControlName="login_id" placeholder="Enter the login id" />
+                <p class="color-red my-0" *ngIf="profile_form.controls.login_id.errors !== null && show_errors_profile">
+                    <span class="mr-3" *ngIf="profile_form.controls.login_id.errors.required"> Login id is required
+                    </span>
+                </p>
+            </div>
+            <div class="col-sm-2 pl-0"> Full Name </div>
+            <div class="col-sm-4">
+                <input type="text" class="form-control mr-2" formControlName="full_Name" placeholder="Enter the full name" />
+                <p class="color-red my-0" *ngIf="profile_form.controls.full_Name.errors !== null && show_errors_profile">
+                    <span class="mr-3" *ngIf="profile_form.controls.full_Name.errors.required"> Full name is required
+                    </span>
+                </p>
+            </div>
+        </div>
+        <div class="row mx-0 mb-1">
+            <div class="col-sm-2 pl-0">Email Address</div>
+            <div class="col-sm-4">
+                <input type="text" class="form-control mr-2" formControlName="email_id" placeholder="Enter the email address" />
+                <p class="color-red my-0" *ngIf="profile_form.controls.email_id.errors !== null && show_errors_profile">
+                    <span class="mr-3" *ngIf="profile_form.controls.email_id.errors.required"> Email address is
+                        required </span>
+                </p>
+            </div>
+            <div class="col-sm-2 pl-0"> Notification Email
+                <i class="fas fa-question-circle color-green ml-2"></i>
+            </div>
+            <div class="col-sm-4">
+                <textarea id="notification" name="notification" rows="4" cols="50" class="form-control mr-2"
+                    formControlName="notification_id" placeholder="Enter the emial ids separated by commas">
+                </textarea>
+                <p class="color-red my-0" *ngIf="profile_form.controls.notification_id.errors !== null && show_errors_profile">
+                    <span class="mr-3" *ngIf="profile_form.controls.notification_id.errors.required">Notification Email
+                        is required </span>
+                </p>
+            </div>
+        </div>
+        <div class="row mx-0 mb-1 mt-4">
+            <div class="col-sm-12 pl-0">
+                <button class="btn btn-grey mr-2" type="button">Cancel</button>
+                <button class="btn btn-red" type="submit">Update</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="hr mx-3"></div>
+<div class="block mx-3">
+    <h3>Reset Password</h3>
+    <p>Press the below button to receive link to reset your password on our colt email address</p>
+    <button class="btn btn-green" (click)="openModal(changePasswordModal)">Change Password</button>
+</div>
+<div class="hr mx-3"></div>
+
+<!-- modal -->
+<ng-template #changePasswordModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Change Password</h5>
+        <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <form name="change_password_form" [formGroup]="change_password_form" (ngSubmit)="changePassword()">
+            <div class="row mx-0 mb-1">
+                <div class="col-sm-4 pl-0">Current Password</div>
+                <div class="col-sm-8">
+                    <input type="password" formControlName="current_pass" class="form-text w-100">
+                    <p class="color-red my-0" *ngIf="change_password_form.controls.current_pass.errors !== null && show_errors">
+                        <span class="mr-3" *ngIf="change_password_form.controls.current_pass.errors.required"> This is
+                            field is required </span>
+                    </p>
+                </div>
+            </div>
+            <div class="row mx-0 mb-1">
+                <div class="col-sm-4 pl-0">New Password</div>
+                <div class="col-sm-8">
+                    <input type="password" formControlName="new_pass" class="form-text w-100">
+                    <p class="color-red my-0" *ngIf="change_password_form.controls.new_pass.errors !== null && show_errors">
+                        <span class="mr-3" *ngIf="change_password_form.controls.new_pass.errors.required"> This is
+                            field
+                            is required </span>
+                    </p>
+                </div>
+            </div>
+            <div class="row mx-0 mb-1">
+                <div class="col-sm-4 pl-0">Retype New Password</div>
+                <div class="col-sm-8">
+                    <input type="password" formControlName="retype_pass" class="form-text w-100">
+                    <p class="color-red my-0" *ngIf="change_password_form.controls.retype_pass.errors !== null && show_errors">
+                        <span class="mr-3" *ngIf="change_password_form.controls.retype_pass.errors.required"> This is
+                            field is required </span>
+                    </p>
+                </div>
+            </div>
+            <div class="row mx-0 mb-1 mt-4">
+                <div class="col-sm-12 pl-0">
+                    <button class="btn btn-grey mr-2" type="submit" (click)="modal.dismiss()">Cancel</button>
+                    <button class="btn btn-red" type="submit">Change Password</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</ng-template>

@@ -1,0 +1,120 @@
+<breadcrumb #parent>  
+    <ol class="breadcrumb">
+      <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+        <div class="crumb my-2 px-3">
+            <a href="#">NGIN 20</a> / {{ route.displayName }}
+        </div>
+      </ng-template>
+    </ol>
+</breadcrumb>
+
+<div class="filter_box mx-3 py-2 px-3">
+    <h3 class="f_size_18 color-black mt-2 mb-3">Call Attempts</h3>
+    <form #dates="ngForm" (ngSubmit)="onSubmit(dates.value)" class="form_box py-0 call_log_form">
+        <div class="row mx-0 mb-1">
+            <div class="col-sm-2 pl-0">From Date</div>
+            <div class="col-sm-4">
+                <input type="date" id="padded" name='fromDate' class="form_text" placeholder="From Date" [(ngModel)]="fromdate" />
+            </div>
+        </div>
+        <div class="row mx-0 mb-1">
+            <div class="col-sm-2 pl-0">To Date</div>
+            <div class="col-sm-4">
+                <input type="date" id="padded" name='toDate' class="form_text" placeholder="To Date" [(ngModel)]="todate" />
+            </div>
+        </div>
+        <div class="row mx-0 mb-1 mt-4">
+            <div class="col-sm-12 pl-0">
+                <button type="submit" id="padded" class="btn btn-red">Run Report</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div *ngIf="loadTable">
+    <div class="hr mx-3"></div>
+    <form class="mx-3">
+        <div class="row mx-0 border-bottom-grey2 pb-2">
+            <div class="col-sm-4 pl-0">
+                <strong>{{callAttemptsAluModelList.length}}</strong> Records
+            </div>
+            <div class="col-sm-4">
+            </div>
+            <div class="col-sm-4 text-right pr-0">
+                <div class="input-group w-200px green d-inline-flex mr-2">
+                    <!-- <mat-form-field>
+                        <mat-label>Filter</mat-label>
+                        <input matInput (keyup)="applyFilter($event)" class="green-search" placeholder="keyword" #input>
+                    </mat-form-field> -->
+                </div>
+                <button class="btn-icon " type="submit" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i
+                        class="fas fa-file-pdf"></i></button>
+            </div>
+        </div>
+        <div class="border-grey py-3 my-3">
+            <table class="table call-attempt-table">
+                <thead>
+                    <tr class="active">
+                        <th class="heading">Date</th>
+                            <th class="heading">Peak Time</th>
+                            <th class="heading">Max for FRC <br><p class ="min compressed">(Calls Per Second)</p> </th>
+                            <th class="heading">Max for FRC</th>
+                            <th class="heading">Peak Time</th>
+                            <th class="heading ">Max for DE-CNP<br><p class ="min compressed">(Calls Per Second)</p></th>
+                            <th class="heading">Max for DE-CNP</th>
+                            <th class="heading">Peak Time</th>
+                            <th class="heading ">Max for FR-CNP<br><p class ="min compressed">(Calls Per Second)</p></th>
+                            <th class="heading">Max for FR-CNP</th>
+                            <th class="heading">Peak Time</th>
+                            <th class="heading">Max for NL-CNP<br><p class ="min compressed">(Calls Per Second)</p></th>
+                            <th class="heading">Max for NL-CNP</th>
+                            <th class="heading">Total CNP<br><p class ="min compressed">(Calls Per Second)</p></th>
+                    </tr>
+                </thead>
+                <tbody > 
+                    <tr *ngFor = "let object of callAttemptsAluModelList">
+                    <td class ="content" [ngClass]="{ 'grayColored': object.maxTotalHighlight == 'true' }"> <button class="btn-icon mt-2 mr-2"  (click)="showPopUpHistory(object.strDate)"><i class="fas fa-chart-bar"></i></button> {{object.strDate}} </td>
+
+                    <td class ="content" [ngClass]="{ 'grayColored': object.maxTotalHighlight == 'true' }" >{{object.hourMaxFRC}}</td>
+
+                    <td class ="content" [ngClass]="{'yellowColored': object.maxFRCHighlight == 'true',
+                    'grayColored': object.maxFRCHighlight != 'true' && object.maxTotalHighlight == 'true', 
+                    '': object.maxFRCHighlight != 'true' && object.maxTotalHighlight != 'true'}">{{object.strMaxFRCCPS}}</td>
+                    
+                    
+                    <td class ="content" [ngClass]="{ 'grayColored': object.maxTotalHighlight == 'true' }">{{object.maxFRC}}</td>
+
+                    <td class ="content" [ngClass]="{ 'grayColored': object.maxTotalHighlight == 'true' }" >{{object.hourMaxCNP}}</td>
+
+                    <td class ="content" [ngClass]="{'yellowColored': object.maxCNPHighlight == 'true',
+                    'grayColored': object.maxCNPHighlight != 'true' && object.maxTotalHighlight == 'true', 
+                    '': object.maxCNPHighlight != 'true' && object.maxTotalHighlight != 'true'}" >{{object.strMaxCNPCPS}}</td>
+
+                    <td class ="content" [ngClass]="{ 'grayColored': object.maxTotalHighlight == 'true' }">{{object.maxCNP}}</td>
+
+                    <td class ="content" [ngClass]="{ 'grayColored': object.maxTotalHighlight == 'true' }" >{{object.hourMaxCNP2}}</td>
+
+                    <td class ="content" [ngClass]="{'yellowColored': object.maxCNP2Highlight == 'true',
+                    'grayColored': object.maxCNP2Highlight != 'true' && object.maxTotalHighlight == 'true', 
+                    '': object.maxCNP2Highlight != 'true' && object.maxTotalHighlight != 'true'}" >{{object.strMaxCNP2CPS}}</td>
+
+                    <td class ="content" [ngClass]="{ 'grayColored': object.maxTotalHighlight == 'true' }">{{object.maxCNP2}}</td>   
+
+                    <td class ="content" [ngClass]="{ 'grayColored': object.maxTotalHighlight == 'true' }" >{{object.hourMaxCNP3}}</td>
+
+                    <td class ="content" [ngClass]="{'yellowColored': object.maxCNP3Highlight == 'true',
+                    'grayColored': object.maxCNP3Highlight != 'true' && object.maxTotalHighlight == 'true', 
+                    '': object.maxCNP3Highlight != 'true' && object.maxTotalHighlight != 'true'}" >{{object.strMaxCNP3CPS}}</td>
+
+                    <td class ="content" [ngClass]="{ 'grayColored': object.maxTotalHighlight == 'true' }">{{object.maxCNP3}}</td>
+
+                    <td class ="content" [ngClass]="{ 'yellowColored': object.maxTotalHighlight == 'true' }" >{{object.strTotal}}</td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+
+

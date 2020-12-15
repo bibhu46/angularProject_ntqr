@@ -1,0 +1,100 @@
+<breadcrumb #parent>
+    <ol class="breadcrumb">
+        <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+            <div class="crumb my-2 px-3">
+                <a href="#">NGIN 20</a> / {{ route.displayName }}
+            </div>
+        </ng-template>
+    </ol>
+</breadcrumb>
+
+<div class="filter_box mx-3 py-2 px-3">
+    <h3 class="f_size_18 color-black mt-2 mb-3">MRF Statistics</h3>
+    <form #dates="ngForm" (ngSubmit)="onSubmit(dates.value)" class="form_box py-0 call_log_form">
+        <div class="row mx-0 mb-1">
+            <div class="col-sm-2 pl-0">From Date</div>
+            <div class="col-sm-4">
+                <input type="date" id="padded" name='fromDate' class="form_text" placeholder="From Date"
+                    [(ngModel)]="fromDate" />
+            </div>
+        </div>
+        <div class="row mx-0 mb-1">
+            <div class="col-sm-2 pl-0">To Date</div>
+            <div class="col-sm-4">
+                <input type="date" id="padded" name='toDate' class="form_text" placeholder="To Date"
+                    [(ngModel)]="toDate" />
+            </div>
+        </div>
+        <div class="row mx-0 mb-1 mt-4">
+            <div class="col-sm-12 pl-0">
+                <button type="submit" id="padded" class="btn btn-red">Run Report</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div *ngIf="loadTable">
+    <div class="hr mx-3"></div>
+    <form class="mx-3">
+        <div class="row mx-0 border-bottom-grey2 pb-2">
+            <div class="col-sm-4 pl-0">
+                <strong>{{mrfStatsModelList.length}}</strong> Records
+            </div>
+            <div class="col-sm-4">
+            </div>
+            <div class="col-sm-4 text-right pr-0">
+                <div class="input-group w-200px green d-inline-flex mr-2">
+                    <!-- <mat-form-field>
+                        <mat-label>Filter</mat-label>
+                        <input type="text"  class="green-search" placeholder="keyword" #input>
+                    </mat-form-field> -->
+                </div>
+                <button class="btn-icon " type="submit" (click)="onClickdwnldcsv()" data-toggle="popover" data-toggle="tooltip"  title="Download CSV"><i
+                        class="fas fa-file-pdf"></i></button>
+            </div>
+        </div>
+
+        <div class="border-grey py-3 my-3">
+            <table class="table mrf-stat-table" id="myTable">
+                <thead>
+                    <tr class="active">
+                        <th class="heading pl-3">Date</th>
+                        <th class="heading">Host</th>
+                        <th class="heading">CPU Peak Time</th>
+                        <th class="heading">Average CPU Load</th>
+                        <th class="heading">Min CPU Load</th>
+                        <th class="heading">Max CPU Load</th>
+                        <th class="heading">Max Port Used</th>
+                        <th class="heading">Memory Utilization</th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let model of mrfStatsModelList">
+                    <tr>
+                        <td rowspan="0" class="content centered date-column pl-3">{{model.monthDay}} </td>
+                    </tr>
+                    <tr *ngFor="let object of model.mrfStatsList">
+                        <td class="content"><button class="btn-icon mt-2 mr-2"
+                                (click)="showPopUpHistory(object.date, object.host)">
+                                <i class="fas fa-chart-bar"></i></button>{{object.host}}
+                        </td>
+                        <td class="content">{{object.dateStr}}</td>
+
+                        <td class="content average-load" [ngClass]="{ 'yellowColored': object.highAvgCpuLoad}">{{object.average_loadStr}}</td>
+
+                        <td class="content min-load" >{{object.min_loadStr}}</td>
+
+                        <td class="content max-load">{{object.max_loadStr}}</td>
+                        <!-- <td class="content max-load" [ngClass]="{ 'yellowColored': object.highMaxCpuLoad}">{{object.max_loadStr}}</td> -->
+
+                        <td class="content port-used" [ngClass]="{ 'yellowColored': object.highMaxPortUsed}">{{object.max_port_usedStr}}</td>
+                        
+                        <td class="content max-memory" [ngClass]="{ 'yellowColored': object.highMaxFreeMemory}">
+                            <ratings-bar [percentage]="object.max_free_memory" [show_max]="false" [show_percent]='true' [bar_color]="getBarColor(object.max_free_memory)"></ratings-bar>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>

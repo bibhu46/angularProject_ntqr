@@ -1,0 +1,46 @@
+<breadcrumb #parent>
+    <ol class="breadcrumb">
+        <ng-template ngFor let-route [ngForOf]="parent.breadcrumbs">
+            <div class="crumb my-2 px-3">
+                <a href="#">Service Type / Country</a> / {{ route.displayName }}
+            </div>
+        </ng-template>
+    </ol>
+</breadcrumb>
+
+<div class="filter_box mx-3 py-2 px-3">
+    <h3 class="f_size_18 color-black mt-2 mb-3">{{countryName}}</h3>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-2 pl-0">Service Type</div>
+        <div class="col-sm-4">
+            {{type}}
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-2 pl-0">Country/Group</div>
+        <div class="col-sm-4">
+            {{countryName}}
+        </div>
+    </div>
+    <h3 class="f_size_18 color-black mt-2 mb-3">{{key}}</h3>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-2 pl-0">Service Key</div>
+        <div class="col-sm-4">
+            {{key}}
+        </div>
+    </div>
+    <div class="row mx-0 mb-1">
+        <div class="col-sm-2 pl-0">Number Range</div>
+        <div class="col-sm-4">
+            {{range}}
+        </div>
+    </div>
+
+    <div class="row mx-0 mb-1 mt-4">
+        <div class="col-sm-12 pl-0">
+            <button class="btn btn-grey mr-2" type="button" (click)="onCancel()">Cancel</button>
+            <button type="submit" id="padded" class="btn btn-red mr-2" (click)="onEdit()">Edit</button>
+            <button type="submit" id="padded" class="btn btn-red" (click)="onDelete()">Delete</button>
+        </div>
+    </div>
+</div>
